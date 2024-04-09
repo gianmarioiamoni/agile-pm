@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-
 import { useSelector } from 'react-redux';
-import { Grid, Typography, Divider, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
-import { AddCircle } from '@mui/icons-material';
-
+import { Grid, Typography, Divider, Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@mui/material';
+import { AddCircle, Delete } from '@mui/icons-material';
 import { v4 as uuidv4 } from 'uuid';
 
 import Header from "../components/Header"
@@ -11,7 +9,7 @@ import ProjectsList from "../components/project/ProjectsList";
 import NewProjectForm from "../components/project/NewProjectForm";
 import EditProjectDialog from "../components/project/EditProjectDialog";
 
-export default function Dashboard () {
+export default function Dashboard() {
     const { currentUser } = useSelector(state => state.user);
 
     const [projects, setProjects] = useState([
@@ -28,44 +26,36 @@ export default function Dashboard () {
     };
 
     const handleEditProject = (editedProject) => {
-
-        // logic implementation to modify the projecs list with the edited project
-        const idx = projects.findIndex((p) => (p.id === editedProject.id));
-        const newProjectsList = [...projects];
-        newProjectsList[idx] = { ...editedProject };
-        setProjects(newProjectsList);
-         
-        setEditProject(null); // close the dialog after editing
+        const updatedProjects = projects.map(project =>
+            project.id === editedProject.id ? editedProject : project
+        );
+        setProjects(updatedProjects);
+        setEditProject(null);
     };
 
     const handleDeleteProject = () => {
-        // Implementa la logica per l'eliminazione del progetto
-        const newProjectsList = projects.filter((p) => p.id != deleteProject.id);
-        setProjects(newProjectsList);
-        setDeleteProject(null); // Chiudi il dialog dopo l'eliminazione
+        const updatedProjects = projects.filter(project =>
+            project.id !== deleteProject.id
+        );
+        setProjects(updatedProjects);
+        setDeleteProject(null);
     };
-
 
     return (
         <>
-            {/* Header */}
             <Header isShowAbout={true} isShowProfile={true} isShowHome={true} />
+            <div style={{ padding: '24px' }}>
+                <Typography variant="h3" gutterBottom>Dashboard</Typography>
 
-            <div className='px-4, py-12 max-w-2xl mx-auto'>
-                <h1 className='text-3xl font-bold mb-4 text-slate-800'>Dashboard</h1>
+                <Grid container spacing={3} alignItems="center">
+                    <Grid item xs={12} md={6}>
+                        <Typography variant="h5">Add New Project</Typography>
+                        <Divider />
+                        <NewProjectForm onCreateProject={handleCreateProject} />
+                    </Grid>
 
-                {/* Projects area */}
-                <div>
-                    <Grid container spacing={3}>
-                        {/* Add New Project Section */}
-                        <Grid item xs={12}>
-                            <Typography variant="h5">Add New Project</Typography>
-                            <Divider />
-                            <NewProjectForm onCreateProject={handleCreateProject} />
-                        </Grid>
-
-                        {/* Projects List Section */}
-                        <Grid item xs={12}>
+                    <Grid item xs={12} md={6}>
+                        <div style={{ maxHeight: '70vh', overflowY: 'auto', border: '1px solid #ccc', borderRadius: '4px', padding: '8px' }}>
                             <Typography variant="h5">Projects List</Typography>
                             <Divider />
                             <ProjectsList
@@ -73,41 +63,43 @@ export default function Dashboard () {
                                 onEdit={(project) => setEditProject(project)}
                                 onDelete={(project) => setDeleteProject(project)}
                             />
-                        </Grid>
-
-                        {/* Additional Components */}
-                        <Grid item xs={12} md={6}>
-                            <Typography variant="h5">Recent Activity</Typography>
-                            <Divider />
-                            {/* Add any additional components here, e.g., recent activity */}
-                        </Grid>
-
-                        <Grid item xs={12} md={6}>
-                            <Typography variant="h5">Team Members</Typography>
-                            <Divider />
-                            {/* Add any additional components here, e.g., team members */}
-                        </Grid>
-
-                        <Grid item xs={12}>
-                            <Typography variant="h5">Statistics</Typography>
-                            <Divider />
-                            {/* Add any additional components here, e.g., project statistics */}
-                        </Grid>
-
-                        <Grid item xs={12}>
-                            <Typography variant="h5">Settings</Typography>
-                            <Divider />
-                            {/* Add any additional components here, e.g., user settings */}
-                        </Grid>
-
-                        {/* Floating Action Button for Quick Add */}
-                        <Grid container justifyContent="flex-end">
-                            <AddCircle color="primary" fontSize="large" />
-                        </Grid>
+                        </div>
                     </Grid>
-                </div>
 
-                {/* Modifica Progetto Dialog */}
+                    {/* Additional Components */}
+                    <Grid item xs={12} md={6}>
+                        <Typography variant="h5">Recent Activity</Typography>
+                        <Divider />
+                        {/* Add any additional components here, e.g., recent activity */}
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                        <Typography variant="h5">Team Members</Typography>
+                        <Divider />
+                        {/* Add any additional components here, e.g., team members */}
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                        <Typography variant="h5">Statistics</Typography>
+                        <Divider />
+                        {/* Add any additional components here, e.g., project statistics */}
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                        <Typography variant="h5">Settings</Typography>
+                        <Divider />
+                        {/* Add any additional components here, e.g., user settings */}
+                    </Grid>
+
+                    {/* Floating Action Button for Quick Add */}
+                    <Grid item xs={12} style={{ textAlign: 'right' }}>
+                        <IconButton color="primary" onClick={() => setEditProject({ id: uuidv4(), name: '', description: '' })}>
+                            <AddCircle />
+                        </IconButton>
+                    </Grid>
+                </Grid>
+
+                {/* Edit Project Dialog */}
                 <EditProjectDialog
                     open={!!editProject}
                     onClose={() => setEditProject(null)}
@@ -115,7 +107,7 @@ export default function Dashboard () {
                     project={editProject}
                 />
 
-                {/* Elimina Progetto Dialog */}
+                {/* Delete Project Dialog */}
                 <Dialog open={!!deleteProject} onClose={() => setDeleteProject(null)}>
                     <DialogTitle>Delete Project</DialogTitle>
                     <DialogContent>
@@ -124,14 +116,11 @@ export default function Dashboard () {
                         </Typography>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={() => setDeleteProject(null)}>Cancel</Button>
-                        <Button onClick={handleDeleteProject} color="error">Delete</Button>
+                        <Button onClick={() => setDeleteProject(null)} color="primary">Cancel</Button>
+                        <Button onClick={handleDeleteProject} color="error" startIcon={<Delete />}>Delete</Button>
                     </DialogActions>
                 </Dialog>
-
             </div>
         </>
     );
-};
-
-
+}
