@@ -29,11 +29,11 @@ const createCookie = (req, res, user) => {
 
 // next() allows to use middleware
 export const signup = async (req, res, next) => {
-    const { username, email, password } = req.body;
+    const { username, email, password, role } = req.body;
 
     const hashedPassword = bcryptjs.hashSync(password, 10);
 
-    const newUser = new User({ username, email, password: hashedPassword });
+    const newUser = new User({ username, email, password: hashedPassword, role });
 
     // the user is authenticated; create a token and put It inside the cookie of the browser
     createCookie(req, res, newUser);

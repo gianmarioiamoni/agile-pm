@@ -1,77 +1,61 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { Link, useNavigate } from "react-router-dom";
-
-import { useDispatch, useSelector } from "react-redux"; // to dispatch action reducer functions
+import { MenuItem, Select } from '@mui/material';
 
 import { resetState, signInStart, signInSuccess, signInFailure } from "../redux/user/userSlice.js";
 
 import OAuth from "../components/OAuth";
+
 import Header from "../components/Header.jsx";
 
+import { RolesContext } from '../utils/RolesProvider.jsx';
+
 const registerImage = "/backgrounds/signup-1.jpg"
+// const roles = ["Product Owner", "Scrum Master", "Team Scrum Member"];
 
 
 export default function SignUp() {
-  const [formData, setFormData] = useState({});
-  // const [isError, setIsError] = useState(false);
-  // const [isLoading, setIsLoading] = useState(false);
-
-  const { isLoading, isError } = useSelector((state) => state.user); // Slice name is "user" in userSlice.js
-
-  const navigate = useNavigate();
+  const [formData, setFormData] = useState({ role: "" }); // Aggiungi il campo del ruolo nell'oggetto formData
+  const { isLoading, isError } = useSelector((state) => state.user);
   
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const roles = useContext(RolesContext); 
+  
   useEffect(() => {
     dispatch(resetState());
   }, []);
-
+  
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
   }
-
+  
   const handleSubmit = async (e) => {
-    // It prevents refreshing the page when we submit the form
     e.preventDefault();
-
     try {
-      // setIsLoading(true);
-      // setIsError(false);
       dispatch(signInStart());
-      // as we added a proxy in vite.config.js, we dont need to specify http://localhost:3000
       const res = await fetch("/server/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-
-
       if (!data.success) {
-        // error message is inside data
-        // setIsError(true);
         dispatch(signInFailure(data));
         return;
       }
-
-      // setIsLoading(false);
       dispatch(signInSuccess(data));
-
-      // sign up is successfull; redirect to /
       navigate("/");
-
     } catch (err) {
-      // setIsLoading(false);
-      // setIsError(true);
       dispatch(signInFailure(err));
     }
-
   }
-
+  
+  
   return (
-  <>
-      {/* Header */}
+    <>
       <Header isShowHome={true} isShowSignIn={true} />
       <div p-3="+true" className='text-black max-w-lg mx-auto'>
         <div className="flex flex-col">
@@ -103,23 +87,29 @@ export default function SignUp() {
             className='bg-slate-100 border-slate-300 border-2 p-3 rounded-lg'
             onChange={handleChange}
           ></input>
+          {/* Role selection */}
+          <select id="role" value={formData.role} onChange={handleChange} className='bg-slate-100 border-slate-300 border-2 p-3 rounded-lg'>
+            <option value="" disabled>Select Role</option>
+            {roles.map((role, index) => (
+              <option key={index} value={role.id}>{role.description}</option>
+            ))}
+          </select>
           <button
             disabled={isLoading}
             className='bg-slate-600 text-slate-300 p-3 rounded-lg uppercase hover:opacity-75 disabled:opacity-50'
           >
             {isLoading ? "Loading..." : "Sign Up"}
-        </button>
-        <OAuth/>
-      </form>
-      <div className="flex gap-2 mt-5">
-        <p>Have an account? </p>
-        <Link to="/sign-in">
-          <span className='text-blue-500'>Sign In</span>
-        </Link>
+          </button>
+          <OAuth />
+        </form>
+        <div className="flex gap-2 mt-5">
+          <p>Have an account? </p>
+          <Link to="/sign-in">
+            <span className='text-blue-500'>Sign In</span>
+          </Link>
+        </div>
+        <p className="text-red-700 mt-5">{isError && (isError.message || "Something went wrong")}</p>
       </div>
-      {/* <p className="text-red-700 mt-5">{isError && "Something went wrong"}</p> */}
-      <p className="text-red-700 mt-5">{isError && (isError.message || "Something went wrong")}</p>
-      </div>
-      </>
+    </>
   )
 }

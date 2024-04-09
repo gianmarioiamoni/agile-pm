@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useContext } from 'react';
 
 import { useSelector } from 'react-redux';
 
@@ -13,7 +13,8 @@ import {
   deleteUserStart, deleteUserFailure, deleteUserSuccess,
   signOut
 } from "../redux/user/userSlice";
-import Header from '../components/Header';
+import Header from "../components/Header";
+import { RolesContext } from '../utils/RolesProvider';
 
 
 export default function Profile() {
@@ -29,6 +30,8 @@ export default function Profile() {
   const [isUpdateSuccess, setIsUpdateSuccess] = useState(false);
 
   const dispatch = useDispatch();
+
+  const roles = useContext(RolesContext);
 
   const handleFileUpload = async (image) => {
     const storage = getStorage(app);
@@ -140,45 +143,51 @@ export default function Profile() {
         isShowAbout={true}
         isShowDashboard={true}
       />
-    <div className="p-3 max-w-lg mx-auto">
-      <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
-      <form onSubmit={handleSubmit}  className="flex flex-col gap-4">
-        <input type="file" ref={fileRef} hidden accept="image/*" onChange={(e) => setImage(e.target.files[0])} />
-        <img
-          src={formData.profilePicture || currentUser.profilePicture}
-          alt="profile picture"
-          className="w-24 h-24 mt-2 self-center rounded-full cursor-pointer object-cover" // object-cover keeps the aspect ratio
-          onClick={() => fileRef.current.click()}
-        />
-        <p className='text-sm text-center'>
-          {isImageError ? (
-            <span className='text-red-700 '>Error uploading image</span>
-          ) :
-            (imagePercent > 0 && imagePercent < 100) ? (
-              <span className='text-slate-700'>{`Uploading: ${imagePercent}%`}</span>
-            ) : (
-              imagePercent === 100 ? (
-                <span className='text-green-700'>Image uploaded successfully</span>
-              ) : ""
-            )
-          }
-        </p>
-        <input type="text" id="username" placeholder="Username" defaultValue={currentUser.username} onChange={handleChange} className="bg-slate-100 rounded-lg p-3"></input>
-        <input type="email" id="email" placeholder="Email" defaultValue={currentUser.email} onChange={handleChange} className="bg-slate-100 rounded-lg p-3"></input>
-        <input type="password" id="password" placeholder="Password" onChange={handleChange} className="bg-slate-100 rounded-lg p-3"></input>
-        <button
-          className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-75 disabled:opacity-50"
-        >
-          {isLoading ? "Loading..." : "Update"}
-        </button>
-      </form>
-      <div className="flex justify-between mt-5">
-        <span onClick={handleDeleteAccount} className="text-red-700 cursor-pointer">Delete Account</span>
-        <span onClick={handleSignOut} className="text-red-700 cursor-pointer">Sign Out</span>
+      <div className="p-3 max-w-lg mx-auto">
+        <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <input type="file" ref={fileRef} hidden accept="image/*" onChange={(e) => setImage(e.target.files[0])} />
+          <img
+            src={formData.profilePicture || currentUser.profilePicture}
+            alt="profile picture"
+            className="w-24 h-24 mt-2 self-center rounded-full cursor-pointer object-cover" // object-cover keeps the aspect ratio
+            onClick={() => fileRef.current.click()}
+          />
+          <p className='text-sm text-center'>
+            {isImageError ? (
+              <span className='text-red-700 '>Error uploading image</span>
+            ) :
+              (imagePercent > 0 && imagePercent < 100) ? (
+                <span className='text-slate-700'>{`Uploading: ${imagePercent}%`}</span>
+              ) : (
+                imagePercent === 100 ? (
+                  <span className='text-green-700'>Image uploaded successfully</span>
+                ) : ""
+              )
+            }
+          </p>
+          <input type="text" id="username" placeholder="Username" defaultValue={currentUser.username} onChange={handleChange} className="bg-slate-100 rounded-lg p-3"></input>
+          <input type="email" id="email" placeholder="Email" defaultValue={currentUser.email} onChange={handleChange} className="bg-slate-100 rounded-lg p-3"></input>
+          <input type="password" id="password" placeholder="Password" onChange={handleChange} className="bg-slate-100 rounded-lg p-3"></input>
+          {/* Role selection */}
+          <select id="role" value={formData.role} onChange={handleChange} className='bg-slate-100 border-slate-300 border-2 p-3 rounded-lg'>
+            {roles.map((role, index) => (
+              <option key={index} value={role.id}>{role.description}</option>
+            ))}
+          </select>
+          <button
+            className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-75 disabled:opacity-50"
+          >
+            {isLoading ? "Loading..." : "Update"}
+          </button>
+        </form>
+        <div className="flex justify-between mt-5">
+          <span onClick={handleDeleteAccount} className="text-red-700 cursor-pointer">Delete Account</span>
+          <span onClick={handleSignOut} className="text-red-700 cursor-pointer">Sign Out</span>
+        </div>
+        <p className='text-red-700 mt-5 text-center'>{isError && "Something went wrong"}</p>
+        <p className='text-green-700 mt-5 text-center'>{isUpdateSuccess && "Profile information correctly updated"}</p>
       </div>
-      <p className='text-red-700 mt-5 text-center'>{isError && "Something went wrong"}</p>
-      <p className='text-green-700 mt-5 text-center'>{isUpdateSuccess && "Profile information correctly updated"}</p>
-      </div>
-      </>
+    </>
   )
 }

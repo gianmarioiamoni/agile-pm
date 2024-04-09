@@ -30,7 +30,8 @@ export const updateUser = async (req, res, next) => {
                 username: req.body.username,
                 email: req.body.email,
                 password: req.body.password,
-                profilePicture: req.body.profilePicture
+                profilePicture: req.body.profilePicture,
+                role: req.body.role
             },
             { new: true } // we get back the updated user
         );
