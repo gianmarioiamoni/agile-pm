@@ -1,18 +1,29 @@
 // ProjectsList.jsx
 import React from 'react';
-import { Grid } from '@mui/material';
-import ProjectComponent from './ProjectComponent';
+import { Grid, Typography, IconButton } from '@mui/material';
+import { Edit, Delete } from '@mui/icons-material';
 
-const ProjectsList = ({ projects }) => {
+export default function ProjectsList ({ projects, onEdit, onDelete }) {
     return (
-        <Grid container spacing={3}>
+        <div>
             {projects.map(project => (
-                <Grid item key={project.id} xs={12} sm={6} md={4}>
-                    <ProjectComponent project={project} />
+                <Grid container key={project.id} spacing={2} alignItems="center">
+                    <Grid item xs={9}>
+                        <Typography variant="subtitle1">{project.name}</Typography>
+                        <Typography variant="body2">{project.description}</Typography>
+                    </Grid>
+                    <Grid item xs={3} container justifyContent="flex-end">
+                        <IconButton onClick={() => onEdit(project)}>
+                            <Edit />
+                        </IconButton>
+                        <IconButton onClick={() => onDelete(project)}>
+                            <Delete />
+                        </IconButton>
+                    </Grid>
                 </Grid>
             ))}
-        </Grid>
+        </div>
     );
 };
 
-export default ProjectsList;
+
