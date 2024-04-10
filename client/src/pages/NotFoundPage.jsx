@@ -25,7 +25,7 @@ export default function NotFoundPage() {
                     The page you are looking for might have been removed or is temporarily unavailable.
                 </p>
                 <button
-                    className='bg-slate-600 text-slate-300 p-3 rounded-lg uppercase hover:opacity-75 disabled:opacity-50 mt-16'
+                    className='bg-primary text-secondary p-3 rounded-lg uppercase hover:opacity-75 disabled:opacity-50 mt-16'
                     type='button'
                     onClick={() => navigate("/")}
                 >

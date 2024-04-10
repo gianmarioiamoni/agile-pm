@@ -23,10 +23,11 @@ export default function Profile() {
 
   const { currentUser, isLoading, isError } = useSelector(state => state.user);
 
+  const [editedUser, setEditedUser] = useState(currentUser);
+
   const [image, setImage] = useState(undefined);
   const [imagePercent, setImagePercent] = useState(0);
   const [isImageError, setIsImageError] = useState(false);
-  const [formData, setFormData] = useState({});
   const [isUpdateSuccess, setIsUpdateSuccess] = useState(false);
 
   const dispatch = useDispatch();
@@ -52,7 +53,7 @@ export default function Profile() {
       
       () => getDownloadURL(uploadTask.snapshot.ref)
         .then((downloadURL) => {
-          setFormData((prev) => ({ ...prev, profilePicture: downloadURL }));
+          setEditedUser((prev) => ({ ...prev, profilePicture: downloadURL }));
         })
     )
   }; // handleFileUpload
@@ -64,7 +65,7 @@ export default function Profile() {
   }, [image]);
 
   const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+    setEditedUser((prev) => ({ ...prev, [e.target.id]: e.target.value }))
   };
 
   const handleSubmit = async (e) => {
@@ -80,11 +81,10 @@ export default function Profile() {
         {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(editedUser)
       });
 
       const data = await res.json();
-      console.log("Profile() - data = ", data);
 
       if (data.success === false) {
         dispatch(updateUserFailure(data));
@@ -148,7 +148,7 @@ export default function Profile() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input type="file" ref={fileRef} hidden accept="image/*" onChange={(e) => setImage(e.target.files[0])} />
           <img
-            src={formData.profilePicture || currentUser.profilePicture}
+            src={editedUser.profilePicture || currentUser.profilePicture}
             alt="profile picture"
             className="w-24 h-24 mt-2 self-center rounded-full cursor-pointer object-cover" // object-cover keeps the aspect ratio
             onClick={() => fileRef.current.click()}
@@ -158,7 +158,7 @@ export default function Profile() {
               <span className='text-red-700 '>Error uploading image</span>
             ) :
               (imagePercent > 0 && imagePercent < 100) ? (
-                <span className='text-slate-700'>{`Uploading: ${imagePercent}%`}</span>
+                <span className='text-text'>{`Uploading: ${imagePercent}%`}</span>
               ) : (
                 imagePercent === 100 ? (
                   <span className='text-green-700'>Image uploaded successfully</span>
@@ -166,17 +166,17 @@ export default function Profile() {
               )
             }
           </p>
-          <input type="text" id="username" placeholder="Username" defaultValue={currentUser.username} onChange={handleChange} className="bg-slate-100 rounded-lg p-3"></input>
-          <input type="email" id="email" placeholder="Email" defaultValue={currentUser.email} onChange={handleChange} className="bg-slate-100 rounded-lg p-3"></input>
-          <input type="password" id="password" placeholder="Password" onChange={handleChange} className="bg-slate-100 rounded-lg p-3"></input>
+          <input type="text" id="username" placeholder="Username" defaultValue={editedUser.username} onChange={handleChange} className="bg-input-bg rounded-lg p-3"></input>
+          <input type="email" id="email" placeholder="Email" defaultValue={editedUser.email} onChange={handleChange} className="bg-input-bg rounded-lg p-3"></input>
+          <input type="password" id="password" placeholder="Password" onChange={handleChange} className="bg-input-bg rounded-lg p-3"></input>
           {/* Role selection */}
-          <select id="role" value={formData.role} onChange={handleChange} className='bg-slate-100 border-slate-300 border-2 p-3 rounded-lg'>
+          <select id="role" value={editedUser.role} onChange={handleChange} className='bg-slate-100 border-border border-2 p-3 rounded-lg'>
             {roles.map((role, index) => (
               <option key={index} value={role.id}>{role.description}</option>
             ))}
           </select>
           <button
-            className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-75 disabled:opacity-50"
+            className="bg-primary text-secondary p-3 rounded-lg uppercase hover:opacity-75 disabled:opacity-50"
           >
             {isLoading ? "Loading..." : "Update"}
           </button>

@@ -39,8 +39,8 @@ export const signup = async (req, res, next) => {
     createCookie(req, res, newUser);
 
     try {
-    await newUser.save();
-        res.status(201).json({ message: "User created successfully" });
+        await newUser.save();
+        return res.status(201).json({ message: "User created successfully" });
     } catch (err) {
         // It uses error management middleware
         next(err);
@@ -71,7 +71,7 @@ export const signin = async (req, res, next) => {
 };
 
 export const google = async (req, res, next) => {
-    const { name, email, photo } = req.body;
+    const { name, email, photo, role } = req.body;
     try {
         const user = await User.findOne({ email });
 
@@ -79,6 +79,7 @@ export const google = async (req, res, next) => {
             // const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
             // the user is authenticated; create a token and put It inside the cookie of the browser
             createCookie(req, res, user);
+            return;
 
         } else {
             const generatedPassword = Math.random().toString(36).slice(-8);
@@ -87,11 +88,12 @@ export const google = async (req, res, next) => {
             // create a username from Google displayName that is unique
             const newUsername = name.split(" ").join("").toLowerCase() + (Math.floor(Math.random() * 10000)).toString();
 
-            const newUser = new User({ username: newUsername, email, password: hashedPassword, profilePicture: photo })
+            const newUser = new User({ username: newUsername, email, password: hashedPassword, role, profilePicture: photo })
 
             await newUser.save();
 
             createCookie(req, res, newUser);
+            return;
         }
     } catch (error) {
         next(error);

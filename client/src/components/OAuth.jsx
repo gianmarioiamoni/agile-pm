@@ -9,7 +9,7 @@ import { signInSuccess } from '../redux/user/userSlice';
 
 import { useNavigate } from 'react-router-dom';
 
-export default function OAuth() {
+export default function OAuth({role = 3}) {
     const dispatch = useDispatch();
 
     const navigate = useNavigate();
@@ -30,11 +30,10 @@ export default function OAuth() {
                 body: JSON.stringify({
                     name: result.user.displayName,
                     email: result.user.email,
-                    photo: result.user.photoURL
+                    photo: result.user.photoURL,
+                    role
                 })
             });
-            // const userData = res.user;
-            // console.log("userData = ", userData);
             const data = await res.json();
             
             dispatch(signInSuccess(data));

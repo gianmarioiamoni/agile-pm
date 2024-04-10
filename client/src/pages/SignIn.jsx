@@ -69,7 +69,7 @@ export default function SignIn() {
             <Header isShowHome={true} isShowSignUp={true} />
             <div p-3="+true" className='text-black max-w-lg mx-auto'>
                 <div className="flex flex-col">
-                    <h1 className="text-3xl text-center font-semibold my-7">Sign In</h1>
+                    <h1 className="text-3xl text-title text-center font-semibold my-7">Sign In</h1>
                     <img className="self-center" src={loginImage} alt="Register Image" style={{ maxWidth: '70%', height: 'auto' }} />
                 </div>
                 <form onSubmit={handleSubmit} className='flex flex-col justify-center gap-4'>
@@ -78,7 +78,7 @@ export default function SignIn() {
                         placeholder='Email'
                         id='email'
                         style={{ padding: "3" }}
-                        className='bg-slate-100 border-slate-300 border-2 p-3 rounded-lg'
+                        className='bg-input-bg border-border border-2 p-3 rounded-lg'
                         onChange={handleChange}
                     ></input>
                     <input
@@ -86,12 +86,12 @@ export default function SignIn() {
                         placeholder='Password'
                         id='password'
                         style={{ padding: "3" }}
-                        className='bg-slate-100 border-slate-300 border-2 p-3 rounded-lg'
+                        className='bg-input-bg border-border border-2 p-3 rounded-lg'
                         onChange={handleChange}
                     ></input>
                     <button
                         disabled={isLoading}
-                        className='bg-slate-600 text-slate-300 p-3 rounded-lg uppercase hover:opacity-75 disabled:opacity-50'
+                        className='bg-primary text-secondary p-3 rounded-lg uppercase hover:opacity-75 disabled:opacity-50'
                     >
                         {isLoading ? "Loading..." : "Sign In"}
                     </button>
