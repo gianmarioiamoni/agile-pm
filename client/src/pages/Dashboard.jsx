@@ -9,6 +9,8 @@ import ProjectsList from "../components/project/ProjectsList";
 import NewProjectForm from "../components/project/NewProjectForm";
 import EditProjectDialog from "../components/project/EditProjectDialog";
 
+import { hasPermission } from '../Authorizations';
+
 export default function Dashboard() {
     const { currentUser } = useSelector(state => state.user);
     const [projects, setProjects] = useState([
@@ -57,9 +59,9 @@ export default function Dashboard() {
 
                 <Grid container spacing={3} alignItems="center">
                     <Grid item xs={12} md={6}>
-                        <Typography variant="h5">Add New Project</Typography>
+                        <Typography variant="h5" sx={!hasPermission(currentUser, "createProject") ? { color: "gray" } : {}}>Add New Project</Typography>
                         <Divider />
-                        <NewProjectForm onCreateProject={handleCreateProject} />
+                        <NewProjectForm onCreateProject={handleCreateProject} isCreable={hasPermission(currentUser, "createProject")} />
                     </Grid>
 
                     <Grid item xs={12} md={6}>
@@ -68,8 +70,12 @@ export default function Dashboard() {
                             <Divider />
                             <ProjectsList
                                 projects={projects}
-                                onEdit={(project) => canEditProject() && setEditProject(project)}
-                                onDelete={(project) => canDeleteProject() && setDeleteProject(project)}
+                                // onEdit={(project) => canEditProject() && setEditProject(project)}
+                                onEdit={(project) => hasPermission(currentUser, "editProject") && setEditProject(project)}
+                                // onDelete={(project) => canDeleteProject() && setDeleteProject(project)}
+                                onDelete={(project) => hasPermission(currentUser, "deleteProject") && setDeleteProject(project)}
+                                isEditable={hasPermission(currentUser, "editProject")}
+                                isDeletable={hasPermission(currentUser, "deleteProject")}
                             />
                         </div>
                     </Grid>

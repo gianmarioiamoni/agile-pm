@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
     // }
     role: {
         type: Number,
-        min: 1,
+        min: 0,
         default: 3 
     }
 }, { timestamps: true });  // each user will have time of creation and time of edit associated

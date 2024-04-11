@@ -3,7 +3,7 @@ import React from 'react';
 import { Grid, Typography, IconButton } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
 
-export default function ProjectsList ({ projects, onEdit, onDelete }) {
+export default function ProjectsList({ projects, onEdit, onDelete, isEditable = true, isDeletable = true }) {
     return (
         <div>
             {projects.map(project => (
@@ -13,10 +13,10 @@ export default function ProjectsList ({ projects, onEdit, onDelete }) {
                         <Typography variant="body2">{project.description}</Typography>
                     </Grid>
                     <Grid item xs={3} container justifyContent="flex-end">
-                        <IconButton onClick={() => onEdit(project)}>
+                        <IconButton onClick={() => onEdit(project)} disabled={!isEditable}>
                             <Edit />
                         </IconButton>
-                        <IconButton onClick={() => onDelete(project)}>
+                        <IconButton onClick={() => onDelete(project)} disabled={!isDeletable}>
                             <Delete />
                         </IconButton>
                     </Grid>
@@ -25,5 +25,6 @@ export default function ProjectsList ({ projects, onEdit, onDelete }) {
         </div>
     );
 };
+
 
 

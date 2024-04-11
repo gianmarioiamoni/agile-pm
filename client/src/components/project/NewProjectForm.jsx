@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button, Grid, TextField } from '@mui/material';
 
-const NewProjectForm = ({ onCreateProject }) => {
+const NewProjectForm = ({ onCreateProject, isCreable = true }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
 
@@ -14,10 +14,12 @@ const NewProjectForm = ({ onCreateProject }) => {
     };
 
     return (
+        // <form onSubmit={handleSubmit} disabled={!isCreable}>
         <form onSubmit={handleSubmit}>
             <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12}>
                     <TextField
+                        disabled={!isCreable}
                         fullWidth
                         label="Project Name"
                         variant="outlined"
@@ -27,6 +29,7 @@ const NewProjectForm = ({ onCreateProject }) => {
                 </Grid>
                 <Grid item xs={12}>
                     <TextField
+                        disabled={!isCreable}
                         fullWidth
                         multiline
                         label="Project Description"
@@ -36,7 +39,7 @@ const NewProjectForm = ({ onCreateProject }) => {
                     />
                 </Grid>
                 <Grid item xs={12}>
-                    <Button type="submit" variant="contained" color="primary">
+                    <Button type="submit" variant="contained" color="primary" disabled={!isCreable}>
                         Create Project
                     </Button>
                 </Grid>

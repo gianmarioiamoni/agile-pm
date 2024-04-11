@@ -24,6 +24,7 @@ import { rolesMap } from "./utils/RolesProvider";
 
 
 export const permissions = {
+    // Project permissions
     createProject: 'createProject',
     editProject: 'editProject',
     deleteProject: 'deleteProject',
@@ -35,27 +36,31 @@ export const permissions = {
 // Usage:
 // // Assume currentUserRole is the role of the current user
 // const currentUserRole = "Product Owner";
-
-
 export const rolePermissions = {
-    "Product Owner": { // role key: 1
+    "Product Owner": //{ // role key: 1
         // Permissions for Product Owner
-        projectManagement: ["create", "edit", "delete"], // Manage projects
-        backlogManagement: ["manage"], // Manage project backlog
-        sprintManagement: ["create"], // Create sprints
-    },
-    "Scrum Master": { // role key: 2
+        // projectManagement: ["createProject", "editProject", "deleteProject"], // Manage project 
+        [permissions.createProject, permissions.editProject, permissions.deleteProject] //, // Manage projects
+        // backlogManagement: ["manage"], // Manage project backlog
+        // sprintManagement: ["create"], // Create sprints
+    //}
+    ,
+    "Scrum Master": //{ // role key: 2
         // Permissions for Scrum Master
-        sprintManagement: ["plan", "monitor"], // Plan and monitor sprints
-        agileSupport: ["support"], // Support team in Agile practices
-        obstacleResolution: ["resolve"], // Resolve obstacles
-    },
-    "Scrum Team Member": { // role key: 3
+        [permissions.viewProject, permissions.deleteProject]
+        // sprintManagement: ["plan", "monitor"], // Plan and monitor sprints
+        // agileSupport: ["support"], // Support team in Agile practices
+        // obstacleResolution: ["resolve"], // Resolve obstacles
+    //}
+    ,
+    "Scrum Team Member": //{ // role key: 3
         // Permissions for Scrum Team Member
-        taskManagement: ["view", "assign"], // View and assign tasks
-        sprintParticipation: ["participate"], // Participate in sprint meetings
-        collaboration: ["collaborate"], // Collaborate with team members
-    },
+        // taskManagement: ["view", "assign"], // View and assign tasks
+        // sprintParticipation: ["participate"], // Participate in sprint meetings
+        // collaboration: ["collaborate"], // Collaborate with team members
+        [permissions.viewProject]
+
+    //},
 };
 
 // Function to check if the current user has permission to perform a specific action
@@ -64,11 +69,24 @@ export const rolePermissions = {
 // console.log(hasPermission("plan")); // false - Product Owner cannot plan sprints
 // console.log(hasPermission("participate")); // false - Product Owner cannot participate in sprint meetings
 export const hasPermission = (currentUser, action) => {
-    const currentUserRole = currentUser.role;
+    // check if the user is Admin
+    if (currentUser.role === 0) {
+        // Admin has all authorizations
+        return true;
+    }
+
+    const currentUserRoleObj = rolesMap.find((r) => {
+        return r.id === currentUser.role
+    });
+    if (currentUserRoleObj == null) {
+        console.log("No user role found")
+        return;
+    }
+    const currentUserRole = currentUserRoleObj.description;
     // Check if the currentUserRole exists in rolePermissions mapping
     if (rolePermissions[currentUserRole]) {
         // Check if the action exists for the currentUserRole
-        if (rolePermissions[currentUserRole][action]) {
+        if (rolePermissions[currentUserRole].includes(action)) {
             return true; // User has permission to perform the action
         }
     }

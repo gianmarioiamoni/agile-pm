@@ -16,7 +16,6 @@ export default function OAuth({role = 3}) {
 
     const handleGoogleClick = async () => {
         try {
-            console.log(import.meta.env.VITE_FIREBASE_API_KEY);
             const provider = new GoogleAuthProvider();
             const auth = getAuth(app);
             const result = await signInWithPopup(auth, provider);
