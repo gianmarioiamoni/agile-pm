@@ -1,10 +1,18 @@
 // models/Project.js
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const projectSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    description: String,
-    // altri campi...
-});
+    name: {
+        type: String,
+        required: true, 
+    },
+    description: {
+        type: String,
+        required: true, 
+    },
+}, { timestamps: true }); // Add timestamp to store creation and update dates 
 
-module.exports = mongoose.model('Project', projectSchema);
+const Project = mongoose.model('Project', projectSchema);
+
+export default Project;
+

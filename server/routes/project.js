@@ -1,14 +1,17 @@
 // routes/projectRoutes.js
 import express from 'express';
-const router = express.Router();
 
 import { verifyUser } from "../utils/verifyUser.js";
-import { getProjects } from "../controllers/project.js"
+import { getProjects, createProject, updateProject, deleteProject } from "../controllers/project.js";
 
+const router = express.Router();
 
 // API routes for projects
 router.get("/projects", verifyUser, getProjects);
+router.post('/projects', createProject);
+router.patch('/projects/:id', updateProject);
+router.delete('/projects/:id', deleteProject);
 
-// altre rotte per creare, modificare ed eliminare progetti...
+export default router;
 
-module.exports = router;
+

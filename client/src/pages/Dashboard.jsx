@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Grid, Typography, Divider, Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@mui/material';
-import { AddCircle, Delete } from '@mui/icons-material';
+import { Delete } from '@mui/icons-material';
 import { v4 as uuidv4 } from 'uuid';
 
 import Header from "../components/Header"
@@ -14,26 +14,40 @@ import {
     canEditProject,
     canDeleteProject,
     canViewProject
-} from '../Authorizations';
+} from "../Authorizations";
+
+import { getAllProjects, createProject, updateProject, removeProject } from "../services/projectService";
 
 export default function Dashboard() {
     const { currentUser } = useSelector(state => state.user);
-    const [projects, setProjects] = useState([
-        { id: uuidv4(), name: 'Project 1', description: 'Description of Project 1' },
-        { id: uuidv4(), name: 'Project 2', description: 'Description of Project 2' },
-        // Add more dummy projects as needed
-    ]);
+    // const [projects, setProjects] = useState([
+    //     { id: uuidv4(), name: 'Project 1', description: 'Description of Project 1' },
+    //     { id: uuidv4(), name: 'Project 2', description: 'Description of Project 2' },
+    //     // Add more dummy projects as needed
+    // ]);
+    const [projects, setProjects] = useState([]);
     const [editProject, setEditProject] = useState(null);
     const [deleteProject, setDeleteProject] = useState(null);
 
+    // useEffects
+    useEffect(() => {
+        const projectsList = getAllProjects();
+        setProjects(projectsList);
+    }, []);
+
+    // callbacks for event handling
     const handleCreateProject = (newProject) => {
-        setProjects([...projects, { id: uuidv4(), ...newProject }]);
+        const createdProject = createProject(newProject)
+        setProjects([...projects, { ...newProject }]);
     };
 
     const handleEditProject = (editedProject) => {
+        updateProject(editedProject);
+
         const updatedProjects = projects.map(project =>
             project.id === editedProject.id ? editedProject : project
         );
+
         setProjects(updatedProjects);
         setEditProject(null);
     };
@@ -43,6 +57,7 @@ export default function Dashboard() {
             project.id !== deleteProject.id
         );
         setProjects(updatedProjects);
+        removeProject(deleteProject.id);
         setDeleteProject(null);
     };
 
