@@ -16,7 +16,7 @@ import {
     canViewProject
 } from "../Authorizations";
 
-import { getAllProjects, createProject, updateProject, removeProject } from "../services/projectService";
+import { getAllProjects, createProject, updateProject, removeProject } from "../services/projectServices";
 
 export default function Dashboard() {
     const { currentUser } = useSelector(state => state.user);
@@ -31,8 +31,12 @@ export default function Dashboard() {
 
     // useEffects
     useEffect(() => {
-        const projectsList = getAllProjects();
-        setProjects(projectsList);
+        const getProjects = async () => {
+            const projectsList = await getAllProjects();
+            setProjects(projectsList);
+        }
+        getProjects();
+        
     }, []);
 
     // callbacks for event handling
@@ -67,7 +71,8 @@ export default function Dashboard() {
             <div style={{ padding: '24px' }}>
                 <Typography variant="h3" gutterBottom>Dashboard</Typography>
 
-                <Grid container spacing={3} alignItems="center">
+                {/* <Grid container spacing={3} alignItems="center"> */}
+                <Grid container spacing={3} alignItems="flex-start">
                     <Grid item xs={12} md={6}>
                         <Typography variant="h5" sx={!canCreateProject(currentUser) ? { color: "gray" } : {}}>Add New Project</Typography>
                         <Divider />

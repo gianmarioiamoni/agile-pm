@@ -1,4 +1,6 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, useEffect } from 'react';
+
+import { getCurrentRoles } from '../services/userServices';
 
 export const rolesMap = [
     { id: 1, description: 'Product Owner' },
@@ -7,10 +9,21 @@ export const rolesMap = [
     // Add other roles if needed
 ];
 
+let currentRoles;
+
 export const RolesContext = createContext();
 
+
+
 export const RolesProvider = ({ children }) => {
-    const [roles] = useState(rolesMap);
+    const [roles] = useState(currentRoles);
+    
+    useEffect(() => {
+
+    // get current roles from services; if default roles doesn't exist, It will create it
+    currentRoles = getCurrentRoles();
+    
+}, [])
 
     return (
         <RolesContext.Provider value={roles}>

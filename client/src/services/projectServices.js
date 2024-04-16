@@ -6,6 +6,7 @@ const serverUrl = "http://localhost:3000";
 export async function getAllProjects() {
     try {
         const projectsListArray = await axios.get('/server/projects');
+        console.log("projectServices.js - getAllProjects() - projectsListArray:", projectsListArray)
 
         return projectsListArray.data;
 
