@@ -32,7 +32,9 @@ export default function Dashboard() {
     // useEffects
     useEffect(() => {
         const getProjects = async () => {
-            const projectsList = await getAllProjects();
+            const projectsListFromDB = await getAllProjects();
+            const projectsList = projectsListFromDB.map((p) => ({ ...p, id: p._id }));
+
             setProjects(projectsList);
         }
         getProjects();

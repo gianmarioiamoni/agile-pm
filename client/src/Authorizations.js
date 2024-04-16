@@ -1,6 +1,9 @@
 // Authorizations.js
 
-import { rolesMap } from "./utils/RolesProvider";
+// import { rolesMap } from "./utils/RolesProvider";
+
+import { getCurrentRoles } from "./services/userServices";
+
 
 // Authorizations are defined as an object with keys corresponding to the endpoints or to actions in the application
 // Usage:
@@ -76,6 +79,8 @@ const hasPermission = (currentUser, action) => {
         return true;
     }
 
+    const rolesMap = getCurrentRoles();
+    
     const currentUserRoleObj = rolesMap.find((r) => {
         return r.id === currentUser.role
     });

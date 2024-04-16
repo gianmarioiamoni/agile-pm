@@ -8,15 +8,15 @@ import { Provider } from 'react-redux';
 import { store, persistor } from "./redux/store.js";
 import { PersistGate } from 'redux-persist/integration/react';
 
-import { RolesProvider } from './utils/RolesProvider.jsx';
+// import { RolesProvider } from './utils/RolesProvider.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   // <Provider> makes store available in the whole application
   <Provider store={store}>
     <PersistGate persistor={persistor} loading={null}>
-      <RolesProvider>
+      {/* <RolesProvider> */}
         <App />
-      </RolesProvider>
+      {/* </RolesProvider> */}
 
     </PersistGate>
   </Provider>

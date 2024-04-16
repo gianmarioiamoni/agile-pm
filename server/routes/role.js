@@ -7,7 +7,7 @@ import { verifyUser } from "../utils/verifyUser.js";
 
 const router = express.Router();
 
-router.get("/", verifyUser, getRoles);
+router.get("/:name", verifyUser, getRoles);
 router.post("/", verifyUser, addRoles);
 
 export default router;

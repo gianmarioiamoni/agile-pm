@@ -14,7 +14,8 @@ import {
   signOut
 } from "../redux/user/userSlice";
 import Header from "../components/Header";
-import { RolesContext } from '../utils/RolesProvider';
+// import { RolesContext } from '../utils/RolesProvider';
+import { getCurrentRoles } from '../services/userServices';
 
 
 export default function Profile() {
@@ -32,7 +33,8 @@ export default function Profile() {
 
   const dispatch = useDispatch();
 
-  const roles = useContext(RolesContext);
+  // const roles = useContext(RolesContext);
+  const [roles, setRoles] = useState([]);
 
   const handleFileUpload = async (image) => {
     const storage = getStorage(app);
@@ -57,6 +59,15 @@ export default function Profile() {
         })
     )
   }; // handleFileUpload
+
+  useEffect(() => {
+    const getRoles = async () => {
+      const r = await getCurrentRoles();
+      setRoles(r);
+    };
+    getRoles();
+
+  } , []);
 
   useEffect(() => {
     if (image) {

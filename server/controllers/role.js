@@ -5,6 +5,8 @@ export const addRoles = async (req, res) => {
     try {
         if (req.body.name = "default") {
             await Role.findOneAndDelete({ name: "current" });
+            const currentRole = new Role({ name: "current", roles: [...req.body.roles] });
+            await currentRole.save();
         }
         const newRole = await roles.save();
         res.status(201).json(newRole);
@@ -14,10 +16,9 @@ export const addRoles = async (req, res) => {
 };
 
 export const getRoles = async (req, res) => {
-    console.log("role.js - getRoles() - req.params ", req.params)
     const name = req.params.name;
     try {
-        const roles = await Project.findOne({name});
+        const roles = await Role.findOne({ name });
         res.json(roles);
     } catch (error) {
         res.status(500).json({ message: error.message });

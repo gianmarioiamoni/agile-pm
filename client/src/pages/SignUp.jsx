@@ -10,7 +10,8 @@ import OAuth from "../components/OAuth";
 
 import Header from "../components/Header.jsx";
 
-import { RolesContext } from '../utils/RolesProvider.jsx';
+// import { RolesContext } from '../utils/RolesProvider.jsx';
+import { getCurrentRoles } from '../services/userServices.js';
 
 const registerImage = "/backgrounds/signup-1.jpg"
 // const roles = ["Product Owner", "Scrum Master", "Team Scrum Member"];
@@ -24,10 +25,17 @@ export default function SignUp() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const roles = useContext(RolesContext);
+  // const roles = useContext(RolesContext);
+  const [roles, setRoles] = useState([]);
 
   useEffect(() => {
     dispatch(resetState());
+
+    const getRoles = async () => {
+      const r = await getCurrentRoles()
+      setRoles(r);
+    };
+    getRoles();
   }, []);
 
   const handleChange = (e) => {
