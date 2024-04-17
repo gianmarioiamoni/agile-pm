@@ -10,6 +10,7 @@ import Profile from "./pages/Profile";
 import Dashboard from "./pages/Dashboard";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+import AdminPage from './pages/AdminPage';
 import NotFoundPage from "./pages/NotFoundPage";
 import PrivateRoute from "./components/PrivateRoute";
 
@@ -62,6 +63,7 @@ export default function App() {
         </Route>
         <Route path="/sign-in" element={currentUser ? <Home /> : <SignIn />} > </Route>
         <Route path="/sign-up" element={currentUser ? <Home /> : <SignUp />} > </Route>
+        <Route path="/admin" element={currentUser ? <AdminPage /> : <SignIn />} > </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>

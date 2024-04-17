@@ -78,38 +78,6 @@ export const defaultRolePermissionsMap = [
     }];
 
 
-// const rolePermissionsMap = [
-//     {
-//         role: "Product Owner", // role key: 1
-//         permissions: [
-//             projectPermissions.create,
-//             projectPermissions.edit,
-//             projectPermissions.delete
-//         ]
-//         // backlogManagement: ["manage"], // Manage project backlog
-//         // sprintManagement: ["create"], // Create sprints
-//     },
-//     {
-//         role: "Scrum Master", // role key: 2
-//         permissions: [
-//             projectPermissions.create,
-//             projectPermissions.delete
-//         ]
-//         // sprintManagement: ["plan", "monitor"], // Plan and monitor sprints
-//         // agileSupport: ["support"], // Support team in Agile practices
-//         // obstacleResolution: ["resolve"], // Resolve obstacles
-//     },
-//     {
-//         role: "Scrum Team Member", // role key: 3
-//         // taskManagement: ["view", "assign"], // View and assign tasks
-//         // sprintParticipation: ["participate"], // Participate in sprint meetings
-//         // collaboration: ["collaborate"], // Collaborate with team members
-//         permissions: [
-//             projectPermissions.view
-//         ]
-
-//     }];
-
 // Function to check if the current user has permission to perform a specific action
 // Usage:
 // console.log(hasPermission(currentUser, "create")); // true - Product Owner can create projects
