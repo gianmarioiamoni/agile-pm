@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 
-import { defaultRolesMap } from './Authorizations'; 
+import { defaultRolesMap, defaultRolePermissionsMap } from './Authorizations'; 
 
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -13,7 +13,7 @@ import SignUp from "./pages/SignUp";
 import NotFoundPage from "./pages/NotFoundPage";
 import PrivateRoute from "./components/PrivateRoute";
 
-import { getDefaultRoles, createNewRoles } from './services/userServices';
+import { getDefaultRoles, getDefaultPermissions, createNewRoles, createNewPermissions } from './services/userServices';
 
 
 export default function App() {
@@ -34,9 +34,22 @@ export default function App() {
         console.log("default roles map exists");
       }
 
-      // set authorization default configuration
+      // set permissions default configuration
+      const defaultPermissions = await getDefaultPermissions();
+
+      if (!defaultPermissions) {
+        console.log("default permissions map doesn't exist");
+        const defaultPermissionsObj = { name: "default", permissions: [...defaultRolePermissionsMap] };
+        await createNewPermissions(defaultPermissionsObj);
+
+      } else {
+        console.log("default perissions map exists");
+      }
+      
     };
     setDefaultConfig();
+
+
   }, []);
 
   return (
