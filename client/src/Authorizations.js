@@ -2,7 +2,7 @@
 
 // import { rolesMap } from "./utils/RolesProvider";
 
-import { getCurrentRoles } from "./services/userServices";
+import { getCurrentRoles, getCurrentPermissions } from "./services/userServices";
 
 export const defaultRolesMap = [
     { id: 1, description: 'Product Owner' },
@@ -77,37 +77,38 @@ export const defaultRolePermissionsMap = [
 
     }];
 
-const rolePermissionsMap = [
-    {
-        role: "Product Owner", // role key: 1
-        permissions: [
-            projectPermissions.create,
-            projectPermissions.edit,
-            projectPermissions.delete
-        ]
-        // backlogManagement: ["manage"], // Manage project backlog
-        // sprintManagement: ["create"], // Create sprints
-    },
-    {
-        role: "Scrum Master", // role key: 2
-        permissions: [
-            projectPermissions.create,
-            projectPermissions.delete
-        ]
-        // sprintManagement: ["plan", "monitor"], // Plan and monitor sprints
-        // agileSupport: ["support"], // Support team in Agile practices
-        // obstacleResolution: ["resolve"], // Resolve obstacles
-    },
-    {
-        role: "Scrum Team Member", // role key: 3
-        // taskManagement: ["view", "assign"], // View and assign tasks
-        // sprintParticipation: ["participate"], // Participate in sprint meetings
-        // collaboration: ["collaborate"], // Collaborate with team members
-        permissions: [
-            projectPermissions.view
-        ]
 
-    }];
+// const rolePermissionsMap = [
+//     {
+//         role: "Product Owner", // role key: 1
+//         permissions: [
+//             projectPermissions.create,
+//             projectPermissions.edit,
+//             projectPermissions.delete
+//         ]
+//         // backlogManagement: ["manage"], // Manage project backlog
+//         // sprintManagement: ["create"], // Create sprints
+//     },
+//     {
+//         role: "Scrum Master", // role key: 2
+//         permissions: [
+//             projectPermissions.create,
+//             projectPermissions.delete
+//         ]
+//         // sprintManagement: ["plan", "monitor"], // Plan and monitor sprints
+//         // agileSupport: ["support"], // Support team in Agile practices
+//         // obstacleResolution: ["resolve"], // Resolve obstacles
+//     },
+//     {
+//         role: "Scrum Team Member", // role key: 3
+//         // taskManagement: ["view", "assign"], // View and assign tasks
+//         // sprintParticipation: ["participate"], // Participate in sprint meetings
+//         // collaboration: ["collaborate"], // Collaborate with team members
+//         permissions: [
+//             projectPermissions.view
+//         ]
+
+//     }];
 
 // Function to check if the current user has permission to perform a specific action
 // Usage:
@@ -132,9 +133,10 @@ const hasPermission = async (currentUser, action) => {
         return;
     }
     const currentUserRole = currentUserRoleObj.description;
+    const rolePermissionsMap = await getCurrentPermissions();
 
     // Check if the currentUserRole exists in rolePermissions mapping
-    const currentUserPermissions = rolePermissionsMap.find((rp) => rp.role === currentUserRole);
+    const currentUserPermissions = rolePermissionsMap ? rolePermissionsMap.find((rp) => rp.role === currentUserRole) : null;
     // if (rolePermissionsMap[currentUserRole]) {
     if (currentUserPermissions) {
         // Check if the action exists for the currentUserRole
@@ -150,8 +152,8 @@ export const canEditProject = (currentUser) => {
     return hasPermission(currentUser, projectPermissions.edit);
 };
 
-export const canCreateProject = (currentUser) => {
-    return hasPermission(currentUser, projectPermissions.create);
+export const canCreateProject = async (currentUser) => {
+    return await hasPermission(currentUser, projectPermissions.create);
 };
 
 export const canDeleteProject = (currentUser) => {

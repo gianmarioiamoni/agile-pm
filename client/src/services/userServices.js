@@ -8,7 +8,6 @@ export async function getDefaultRoles() {
     const roleName = "default";
     try {
         const defaultRolesArray = await axios.get(`/server/roles/${roleName}`);
-        console.log("defaultRoleArray: ", defaultRolesArray)
 
         return defaultRolesArray.data.roles;
     } catch (error) {
@@ -20,7 +19,6 @@ export async function getDefaultPermissions() {
     const permissionsName = "default";
     try {
         const defaultPermissionsArray = await axios.get(`/server/permissions/${permissionsName}`);
-        console.log("defaultPermissionsArray: ", defaultPermissionsArray)
 
         return defaultPermissionsArray.data.permissions;
     } catch (error) {
@@ -32,7 +30,6 @@ export async function getCurrentRoles() {
     const roleName = "current";
     try {
         const currentRolesArray = await axios.get(`/server/roles/${roleName}`);
-        console.log("currentRoleArray: ", currentRolesArray)
 
         return currentRolesArray.data.roles;
     } catch (error) {
@@ -43,10 +40,9 @@ export async function getCurrentRoles() {
 export async function getCurrentPermissions() {
     const permissionName = "current";
     try {
-        const defaultPermissionsArray = await axios.get(`/server/permissions/${permissionName}`);
-        console.log("currentPermissionsArray: ", currentPermissionsArray)
+        const currentPermissionsArray = await axios.get(`/server/permissions/${permissionName}`);
 
-        return defaultPermissionsArray.data.permissions;
+        return currentPermissionsArray.data.permissions;
     } catch (error) {
 
     }
@@ -54,7 +50,6 @@ export async function getCurrentPermissions() {
 
 export async function createNewRoles(rolesObj) {
     try {
-        console.log("userServices() - createNewRoles() - rolesObj: ", rolesObj)
         await axios.post("/server/roles", rolesObj);
     } catch (error) {
         
@@ -63,7 +58,6 @@ export async function createNewRoles(rolesObj) {
 
 export async function createNewPermissions(permissionsObj) {
     try {
-        console.log("userServices() - createNewPermissions() - permissionsObj: ", permissionsObj)
         await axios.post("/server/permissions", permissionsObj);
     } catch (error) {
 

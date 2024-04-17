@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Grid, Typography, Divider, Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@mui/material';
 import { Delete } from '@mui/icons-material';
-import { v4 as uuidv4 } from 'uuid';
 
 import Header from "../components/Header"
 import ProjectsList from "../components/project/ProjectsList";
@@ -20,14 +19,16 @@ import { getAllProjects, createProject, updateProject, removeProject } from "../
 
 export default function Dashboard() {
     const { currentUser } = useSelector(state => state.user);
-    // const [projects, setProjects] = useState([
-    //     { id: uuidv4(), name: 'Project 1', description: 'Description of Project 1' },
-    //     { id: uuidv4(), name: 'Project 2', description: 'Description of Project 2' },
-    //     // Add more dummy projects as needed
-    // ]);
     const [projects, setProjects] = useState([]);
     const [editProject, setEditProject] = useState(null);
     const [deleteProject, setDeleteProject] = useState(null);
+
+    const [canProjects, setCanProjects] = useState({
+        create: false,
+        edit: false,
+        delete: false,
+        view: false
+    });
 
     // useEffects
     useEffect(() => {
@@ -38,7 +39,24 @@ export default function Dashboard() {
             setProjects(projectsList);
         }
         getProjects();
-        
+
+
+        const checkPermissions = async () => {
+            // get Projects permissions
+            const createProject = await canCreateProject(currentUser);
+            const editProject = await canEditProject(currentUser);
+            const deleteProject = await canDeleteProject(currentUser);
+            const viewProject = await canViewProject(currentUser);
+
+            setCanProjects((prev) => ({...prev,
+                create: createProject,
+                edit: editProject,
+                delete: deleteProject,
+                view: viewProject
+            }));
+        }
+        checkPermissions();
+
     }, []);
 
     // callbacks for event handling
@@ -66,6 +84,7 @@ export default function Dashboard() {
         removeProject(deleteProject.id);
         setDeleteProject(null);
     };
+    
 
     return (
         <>
@@ -73,26 +92,30 @@ export default function Dashboard() {
             <div style={{ padding: '24px' }}>
                 <Typography variant="h3" gutterBottom>Dashboard</Typography>
 
-                {/* <Grid container spacing={3} alignItems="center"> */}
                 <Grid container spacing={3} alignItems="flex-start">
+                    
+                    {/* New Projects form */}
                     <Grid item xs={12} md={6}>
-                        <Typography variant="h5" sx={!canCreateProject(currentUser) ? { color: "gray" } : {}}>Add New Project</Typography>
+                        <Typography variant="h5" sx={!canProjects.create ? { color: "gray" } : {}}>Add New Project</Typography>
                         <Divider />
                         <NewProjectForm
                             onCreateProject={handleCreateProject}
-                            isCreable={canCreateProject(currentUser)} />
+                            isCreable={canProjects.create} />
                     </Grid>
 
+                    {/* Projects List */}
                     <Grid item xs={12} md={6}>
+                        <Typography variant="h5">Projects List</Typography>
+                        <Divider />
                         <div style={{ maxHeight: '70vh', overflowY: 'auto', border: '1px solid #ccc', borderRadius: '4px', padding: '8px' }}>
-                            <Typography variant="h5">Projects List</Typography>
-                            <Divider />
+                            {/* <Typography variant="h5">Projects List</Typography> */}
+                            {/* <Divider /> */}
                             <ProjectsList
                                 projects={projects}
-                                onEdit={(project) => canEditProject(currentUser) && setEditProject(project)}
-                                onDelete={(project) => canDeleteProject(currentUser) && setDeleteProject(project)}
-                                isEditable={canEditProject(currentUser)}
-                                isDeletable={canDeleteProject((currentUser))}
+                                onEdit={(project) => canProjects.edit && setEditProject(project)}
+                                onDelete={(project) => canProjects.delete && setDeleteProject(project)}
+                                isEditable={canProjects.edit}
+                                isDeletable={canProjects.delete}
                             />
                         </div>
                     </Grid>

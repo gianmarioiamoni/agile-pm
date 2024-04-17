@@ -4,7 +4,7 @@ import { Grid, Typography, IconButton } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
 
 export default function ProjectsList({ projects, onEdit, onDelete, isEditable = true, isDeletable = true }) {
-    console.log("ProjectsList() - projects: ", projects)
+    
     return (
         <div>
             {projects != null && projects.map(project => (
