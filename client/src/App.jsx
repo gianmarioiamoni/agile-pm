@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 
-import { defaultRolesMap } from "../defaultConfig";
+import { defaultRolesMap } from './Authorizations'; 
 
 import Home from "./pages/Home";
 import About from "./pages/About";
