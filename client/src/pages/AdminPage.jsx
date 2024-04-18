@@ -37,8 +37,8 @@ export default function AdminPage() {
         { id: 2, name: 'User 2', role: 2 },
         { id: 3, name: 'User 3', role: 3 },
     ]);
-    const [openDialog, setOpenDialog] = useState(false);
-    const [editUserDialogOpen, setEditUserDialogOpen] = useState(false);
+    const [openNewUserDialog, setOpenNewUserDialog] = useState(false);
+    const [openEditUserDialog, setOpenEditUserDialog] = useState(false);
     const [editFormData, setEditFormData] = useState({
         name: "",
         role: "",
@@ -46,16 +46,16 @@ export default function AdminPage() {
     });
 
     // New User dialog callback functions
-    const handleOpenDialog = () => {
-        setOpenDialog(true);
+    const handleOpenNewUserDialog = () => {
+        setOpenNewUserDialog(true);
     };
 
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
+    const handleCloseNewUserDialog = () => {
+        setOpenNewUserDialog(false);
     };
 
     const handleAddUser = () => {
-        setOpenDialog(false);
+        setOpenNewUserDialog(false);
     };
     
     const [selectedUserId, setSelectedUserId] = useState(null);
@@ -64,7 +64,6 @@ export default function AdminPage() {
 
     // states and dialog for Roles Management
     const [currentRolesMap, setCurrentRolesMap] = useState([]);
-    // const [roles, setRoles] = useState([]);
 
     // Stato per il dialog di aggiunta/aggiornamento ruolo
     const [openRoleEditDialog, setOpenRoleEditDialog] = useState(false);
@@ -86,28 +85,24 @@ export default function AdminPage() {
     // Function to add or edit a role
     const handleSaveRole = () => {
         // Verify if we are adding a new role or editing an existing one
-        // const existingRole = roles.find(role => role.id === editFormData.id);
-        const existingRole = currentRolesMap.find(role => role.id === editFormData.id);
+        const existingRole = currentRolesMap.find(role => role.id === roleEditFormData.id);
         if (existingRole) {
             // Editing of an existing role
-            // const updatedRoles = roles.map(role => {
             const updatedRoles = currentRolesMap.map(role => {
-                if (role.id === editFormData.id) {
+                if (role.id === roleEditFormData.id) {
                     return {
                         ...role,
-                        description: editFormData.description
+                        description: roleEditFormData.description
                     };
                 }
                 return role;
             });
-            // setRoles(updatedRoles);
             setCurrentRolesMap(updatedRoles);
         } else {
             // Adding a new role
-            // const newRoleId = roles.length + 1; // generate a new Id based on the roles array length
-            const newRoleId = currentRolesMap.length + 1; // generate a new Id based on the roles array length
-            const newRole = { id: newRoleId, description: editFormData.description };
-            // setRoles([...roles, newRole]);
+            // const newRoleId = currentRolesMap.length + 1; // generate a new Id based on the roles array length
+            const newRoleId = currentRolesMap[currentRolesMap.length - 1].id + 1;
+            const newRole = { id: newRoleId, description: roleEditFormData.description };
             setCurrentRolesMap((prev) => ([...prev, newRole]));
         }
 
@@ -118,11 +113,10 @@ export default function AdminPage() {
     // Function to open the role edit dialog
     const handleEditRole = (roleId) => {
         // find the selected role
-        // const selectedRole = roles.find(role => role.id === roleId);
         const selectedRole = currentRolesMap.find(role => role.id === roleId);
         if (selectedRole) {
             // setup role data into the edit form
-            setEditFormData({ id: selectedRole.id, description: selectedRole.description });
+            setRoleEditFormData({ id: selectedRole.id, description: selectedRole.description });
             // open the role edit dialog
             setOpenRoleEditDialog(true);
         }
@@ -131,7 +125,6 @@ export default function AdminPage() {
     // Function to delete a role
     const handleDeleteRole = (roleId) => {
         // filter the roles excluding the one to be deleted
-        // const updatedRoles = roles.filter(role => role.id !== roleId);
         const updatedRoles = currentRolesMap.filter(role => role.id !== roleId);
         // setRoles(updatedRoles);
         setCurrentRolesMap(updatedRoles);
@@ -140,11 +133,11 @@ export default function AdminPage() {
     // Edit and Delete User callback functions
     const handleEditUser = (userId) => {
         setSelectedUserId(userId);
-        setEditUserDialogOpen(true);
+        setOpenEditUserDialog(true);
     };
 
     const handleCloseEditUserDialog = () => {
-        setEditUserDialogOpen(false);
+        setOpenEditUserDialog(false);
         setSelectedUserId(null);
     };
 
@@ -234,13 +227,13 @@ export default function AdminPage() {
                 <Button
                     variant="contained"
                     startIcon={<Add />}
-                    onClick={handleOpenDialog}
+                    onClick={handleOpenNewUserDialog}
                 >
                     Add User
                 </Button>
 
                 {/* New User Dialog */}
-                <Dialog open={openDialog} onClose={handleCloseDialog}>
+                <Dialog open={openNewUserDialog} onClose={handleCloseNewUserDialog}>
                     <DialogTitle>Add User</DialogTitle>
                     <DialogContent>
                         <TextField
@@ -262,13 +255,13 @@ export default function AdminPage() {
                         {/* Aggiungere altri campi per l'inserimento dell'utente */}
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleCloseDialog}>Cancel</Button>
+                        <Button onClick={handleCloseNewUserDialog}>Cancel</Button>
                         <Button onClick={handleAddUser} variant="contained" color="primary">Add</Button>
                     </DialogActions>
                 </Dialog>
 
                 {/* Edit User dialog */}
-                <Dialog open={editUserDialogOpen} onClose={handleCloseEditUserDialog}>
+                <Dialog open={openEditUserDialog} onClose={handleCloseEditUserDialog}>
                     <DialogTitle>Edit User</DialogTitle>
                     <DialogContent>
                         <TextField
@@ -299,20 +292,23 @@ export default function AdminPage() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {/* {roles.map((role) => ( */}
                             {currentRolesMap.map((role) => (
                                 <TableRow key={role.id}>
                                     <TableCell>{role.description}</TableCell>
-                                    <TableCell>
-                                        {/* Button to open the role edit dialog */}
-                                        <IconButton onClick={() => handleEditRole(role.id)} aria-label="edit">
-                                            <Edit />
-                                        </IconButton>
-                                        {/* button to delete the role */}
-                                        <IconButton onClick={() => handleDeleteRole(role.id)} aria-label="delete">
-                                            <Delete />
-                                        </IconButton>
-                                    </TableCell>
+                                    {/* Buttons to edit and delete roles. Visible only for custom roles */}
+                                    {role.id > 3 ? (
+                                        <TableCell>
+                                            <IconButton onClick={() => handleEditRole(role.id)} aria-label="edit">
+                                                <Edit />
+                                            </IconButton>
+                                            <IconButton onClick={() => handleDeleteRole(role.id)} aria-label="delete">
+                                                <Delete />
+                                            </IconButton>
+                                        </TableCell>
+                                    ) : (
+                                        ""
+                                    )}
+
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -329,8 +325,8 @@ export default function AdminPage() {
                 </Button>
 
                 {/* Dialog to add/edit a role */}
-                <Dialog open={openDialog} onClose={handleCloseRoleEditDialog}>
-                    <DialogTitle>{editFormData.id ? 'Edit Role' : 'Add Role'}</DialogTitle>
+                <Dialog open={openRoleEditDialog} onClose={handleCloseRoleEditDialog}>
+                    <DialogTitle>{roleEditFormData.id ? 'Edit Role' : 'Add Role'}</DialogTitle>
                     <DialogContent>
                         <TextField
                             autoFocus
@@ -339,8 +335,8 @@ export default function AdminPage() {
                             label="Role Description"
                             type="text"
                             fullWidth
-                            value={editFormData.description}
-                            onChange={(e) => setRoleEditFormData({ ...roleEditFormData, description: e.target.value })}
+                            value={roleEditFormData.description}
+                            onChange={(e) => setRoleEditFormData((prev) => ({ ...prev, description: e.target.value }))}
                         />
                     </DialogContent>
                     <DialogActions>
