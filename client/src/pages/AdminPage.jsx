@@ -5,13 +5,33 @@ import {
     TextField,
     IconButton,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-    Paper, Typography
+    Paper, Typography,
+    Grid,
 } from '@mui/material';
 import { Edit, Delete, Add } from '@mui/icons-material';
 
 import { getCurrentRoles } from "../services/userServices";
 
 export default function AdminPage() {
+
+    // USE EFFECT
+
+    useEffect(() => {
+        // get current rolesMap from the DB
+        const setCurrentRoles = async () => {
+            const r = await getCurrentRoles()
+            console.log("AdminPage() - useEffect() - r: ", r)
+            setCurrentRolesMap(r);
+            // setRoles(r);
+        };
+        setCurrentRoles();
+
+    }, []);
+
+
+    // USER MANAGEMENT 
+
+    // states and Edit dialog for User Management
     const [users, setUsers] = useState([
         { id: 1, name: 'User 1', role: 1 },
         { id: 2, name: 'User 2', role: 2 },
@@ -24,17 +44,6 @@ export default function AdminPage() {
         role: "",
         // Aggiungi altri campi del form qui, se necessario
     });
-    const [selectedUserId, setSelectedUserId] = useState(null);
-    const [currentRolesMap, setCurrentRolesMap] = useState([]);
-
-    useEffect(() => {
-        // get current rolesMap from the DB
-        const setRoles = async () => {
-            setCurrentRolesMap(await getCurrentRoles());
-        };
-        setRoles();
-
-    } , []);
 
     // New User dialog callback functions
     const handleOpenDialog = () => {
@@ -48,12 +57,88 @@ export default function AdminPage() {
     const handleAddUser = () => {
         setOpenDialog(false);
     };
+    
+    const [selectedUserId, setSelectedUserId] = useState(null);
+
+    // ROLES MANAGEMENT
+
+    // states and dialog for Roles Management
+    const [currentRolesMap, setCurrentRolesMap] = useState([]);
+    // const [roles, setRoles] = useState([]);
+
+    // Stato per il dialog di aggiunta/aggiornamento ruolo
+    const [openRoleEditDialog, setOpenRoleEditDialog] = useState(false);
+    const [roleEditFormData, setRoleEditFormData] = useState({
+        id: "",
+        description: "",
+    });
+
+    // Function to open the add/edit role dialog
+    const handleOpenRoleEditDialog = () => {
+        setOpenRoleEditDialog(true);
+    };
+
+    // Function to close the dialog
+    const handleCloseRoleEditDialog = () => {
+        setOpenRoleEditDialog(false);
+    };
+
+    // Function to add or edit a role
+    const handleSaveRole = () => {
+        // Verify if we are adding a new role or editing an existing one
+        // const existingRole = roles.find(role => role.id === editFormData.id);
+        const existingRole = currentRolesMap.find(role => role.id === editFormData.id);
+        if (existingRole) {
+            // Editing of an existing role
+            // const updatedRoles = roles.map(role => {
+            const updatedRoles = currentRolesMap.map(role => {
+                if (role.id === editFormData.id) {
+                    return {
+                        ...role,
+                        description: editFormData.description
+                    };
+                }
+                return role;
+            });
+            // setRoles(updatedRoles);
+            setCurrentRolesMap(updatedRoles);
+        } else {
+            // Adding a new role
+            // const newRoleId = roles.length + 1; // generate a new Id based on the roles array length
+            const newRoleId = currentRolesMap.length + 1; // generate a new Id based on the roles array length
+            const newRole = { id: newRoleId, description: editFormData.description };
+            // setRoles([...roles, newRole]);
+            setCurrentRolesMap((prev) => ([...prev, newRole]));
+        }
+
+        // close the dialog
+        handleCloseRoleEditDialog();
+    };
+
+    // Function to open the role edit dialog
+    const handleEditRole = (roleId) => {
+        // find the selected role
+        // const selectedRole = roles.find(role => role.id === roleId);
+        const selectedRole = currentRolesMap.find(role => role.id === roleId);
+        if (selectedRole) {
+            // setup role data into the edit form
+            setEditFormData({ id: selectedRole.id, description: selectedRole.description });
+            // open the role edit dialog
+            setOpenRoleEditDialog(true);
+        }
+    };
+
+    // Function to delete a role
+    const handleDeleteRole = (roleId) => {
+        // filter the roles excluding the one to be deleted
+        // const updatedRoles = roles.filter(role => role.id !== roleId);
+        const updatedRoles = currentRolesMap.filter(role => role.id !== roleId);
+        // setRoles(updatedRoles);
+        setCurrentRolesMap(updatedRoles);
+    };
 
     // Edit and Delete User callback functions
     const handleEditUser = (userId) => {
-        // Implementare l'azione di modifica utente
-        console.log(`Editing user with ID: ${userId}`);
-
         setSelectedUserId(userId);
         setEditUserDialogOpen(true);
     };
@@ -63,14 +148,14 @@ export default function AdminPage() {
         setSelectedUserId(null);
     };
 
-    // Function to handle chenges in the edit form fields
+    // Function to handle changes in the edit form fields
     const handleEditChange = (e) => {
         const { id, value } = e.target;
         setEditFormData({ ...editFormData, [id]: value });
     };
 
 
-    // Function to save modifucations to user information
+    // Function to save modifications to user information
     const handleSaveUserChanges = () => {
         // find the user in the users state
         const editedUserIndex = users.findIndex(user => user.id === selectedUserId);
@@ -83,7 +168,7 @@ export default function AdminPage() {
             updatedUsers[editedUserIndex] = {
                 ...updatedUsers[editedUserIndex],
                 // update user fields with the information from the edit form dialog
-                name: editFormData.name, 
+                name: editFormData.name,
                 // Aggiorna altri campi dell'utente se necessario
             };
             setUsers(updatedUsers);
@@ -99,114 +184,172 @@ export default function AdminPage() {
 
     // Callback per l'azione di eliminazione utente
     const handleDeleteUser = (userId) => {
-        console.log(`Deleting user with ID: ${userId}`);
-
         // delete user from the users state
-        const idx = users.find((u) => u.id === userId);
-        const newUsers = [...users];
-        newUsers.splice(idx, 1);
+        const newUsers = users.filter((u) => u.id !== userId);
         setUsers(newUsers);
 
         // delete user from DB
-
     };
 
     // get role description from role id
     const getRoleDescription = (roleId) => {
         const roleObj = currentRolesMap.find((r) => r.id === roleId);
-        if (!roleObj) {
-            return null;
-        }
-        return roleObj.description;
-    }
-
+        return roleObj ? roleObj.description : null;
+    };
 
     return (
-        <div>
-            <Typography variant="h3" gutterBottom>Admin Console</Typography>
-            {/* Registered Users table */}
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>User Name</TableCell>
-                            <TableCell>Role</TableCell>
-                            {/* <TableCell>Actions</TableCell> */}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {users.map((user) => (
-                            <TableRow key={user.id}>
-                                <TableCell>{user.name}</TableCell>
-                                <TableCell>{getRoleDescription(user.role)}</TableCell>
-                                <TableCell>
-                                    <IconButton onClick={() => handleEditUser(user.id)} aria-label="edit">
-                                        <Edit />
-                                    </IconButton>
-                                    <IconButton onClick={() => handleDeleteUser(user.id)} aria-label="delete">
-                                        <Delete />
-                                    </IconButton>
-                                </TableCell>
+        <Grid container spacing={2}>
+            {/* Users Management */}
+            <Grid item xs={6}>
+                <Typography variant="h3" gutterBottom>Users Management</Typography>
+                <TableContainer component={Paper}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>User Name</TableCell>
+                                <TableCell>Role</TableCell>
+                                <TableCell>Actions</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                        </TableHead>
+                        <TableBody>
+                            {users.map((user) => (
+                                <TableRow key={user.id}>
+                                    <TableCell>{user.name}</TableCell>
+                                    <TableCell>{getRoleDescription(user.role)}</TableCell>
+                                    <TableCell>
+                                        <IconButton onClick={() => handleEditUser(user.id)} aria-label="edit">
+                                            <Edit />
+                                        </IconButton>
+                                        <IconButton onClick={() => handleDeleteUser(user.id)} aria-label="delete">
+                                            <Delete />
+                                        </IconButton>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
 
-            {/* Add New User Button */}
-            <Button
-                variant="contained"
-                startIcon={<Add />}
-                onClick={handleOpenDialog}
-            >
-                Add User
-            </Button>
+                {/* Add New User Button */}
+                <Button
+                    variant="contained"
+                    startIcon={<Add />}
+                    onClick={handleOpenDialog}
+                >
+                    Add User
+                </Button>
 
-            {/* New User Dialog */}
-            <Dialog open={openDialog} onClose={handleCloseDialog}>
-                <DialogTitle>Add User</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="name"
-                        label="Name"
-                        type="text"
-                        fullWidth
-                    />
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="role"
-                        label="Role"
-                        type="number"
-                        fullWidth
-                    />
-                    {/* Aggiungere altri campi per l'inserimento dell'utente */}
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseDialog}>Cancel</Button>
-                    <Button onClick={handleAddUser} variant="contained" color="primary">Add</Button>
-                </DialogActions>
-            </Dialog>
+                {/* New User Dialog */}
+                <Dialog open={openDialog} onClose={handleCloseDialog}>
+                    <DialogTitle>Add User</DialogTitle>
+                    <DialogContent>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="name"
+                            label="Name"
+                            type="text"
+                            fullWidth
+                        />
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="role"
+                            label="Role"
+                            type="number"
+                            fullWidth
+                        />
+                        {/* Aggiungere altri campi per l'inserimento dell'utente */}
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseDialog}>Cancel</Button>
+                        <Button onClick={handleAddUser} variant="contained" color="primary">Add</Button>
+                    </DialogActions>
+                </Dialog>
 
-            {/* Edit User dialog */}
-            <Dialog open={editUserDialogOpen} onClose={handleCloseEditUserDialog}>
-                <DialogTitle>Edit User</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        id="name"
-                        label="Name"
-                        defaultValue={selectedUserId ? users.find(user => user.id === selectedUserId).name : ''}
-                        onChange={handleEditChange} 
-                    />
-                    {/* Altri campi per la modifica dell'utente */}
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseEditUserDialog}>Cancel</Button>
-                    <Button onClick={handleSaveUserChanges}>Save Changes</Button>
-                </DialogActions>
-            </Dialog>
-        </div>
+                {/* Edit User dialog */}
+                <Dialog open={editUserDialogOpen} onClose={handleCloseEditUserDialog}>
+                    <DialogTitle>Edit User</DialogTitle>
+                    <DialogContent>
+                        <TextField
+                            id="name"
+                            label="Name"
+                            defaultValue={selectedUserId ? users.find(user => user.id === selectedUserId).name : ''}
+                            onChange={handleEditChange}
+                        />
+                        {/* Altri campi per la modifica dell'utente */}
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseEditUserDialog}>Cancel</Button>
+                        <Button onClick={handleSaveUserChanges}>Save Changes</Button>
+                    </DialogActions>
+                </Dialog>
+            </Grid>
+
+            {/* Roles Management */}
+            <Grid item xs={6}>
+                <Typography variant="h3" gutterBottom>Roles Management</Typography>
+                {/* Code to manage roles */}
+                <TableContainer component={Paper}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Role Description</TableCell>
+                                <TableCell>Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {/* {roles.map((role) => ( */}
+                            {currentRolesMap.map((role) => (
+                                <TableRow key={role.id}>
+                                    <TableCell>{role.description}</TableCell>
+                                    <TableCell>
+                                        {/* Button to open the role edit dialog */}
+                                        <IconButton onClick={() => handleEditRole(role.id)} aria-label="edit">
+                                            <Edit />
+                                        </IconButton>
+                                        {/* button to delete the role */}
+                                        <IconButton onClick={() => handleDeleteRole(role.id)} aria-label="delete">
+                                            <Delete />
+                                        </IconButton>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+
+                {/* button to add a new role */}
+                <Button
+                    variant="contained"
+                    startIcon={<Add />}
+                    onClick={handleOpenRoleEditDialog}
+                >
+                    Add Role
+                </Button>
+
+                {/* Dialog to add/edit a role */}
+                <Dialog open={openDialog} onClose={handleCloseRoleEditDialog}>
+                    <DialogTitle>{editFormData.id ? 'Edit Role' : 'Add Role'}</DialogTitle>
+                    <DialogContent>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="description"
+                            label="Role Description"
+                            type="text"
+                            fullWidth
+                            value={editFormData.description}
+                            onChange={(e) => setRoleEditFormData({ ...roleEditFormData, description: e.target.value })}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseRoleEditDialog}>Cancel</Button>
+                        <Button onClick={handleSaveRole} variant="contained" color="primary">Save</Button>
+                    </DialogActions>
+                </Dialog>
+
+            </Grid>
+        </Grid>
     );
 }
