@@ -11,17 +11,13 @@ import { Edit, Delete, Add } from '@mui/icons-material';
 
 import RoleSelect from './elements/RoleSelect';
 
-export default function UserManagement({ currentRolesMap }) {
-    const [users, setUsers] = useState([
-        { id: 1, name: 'User 1', role: 1 },
-        { id: 2, name: 'User 2', role: 2 },
-        { id: 3, name: 'User 3', role: 3 },
-    ]);
+export default function UserManagement({ users, setUsers, currentRolesMap }) {
+    
 
     const [openNewUserDialog, setOpenNewUserDialog] = useState(false);
     const [openEditUserDialog, setOpenEditUserDialog] = useState(false);
     const [editFormData, setEditFormData] = useState({
-        name: "",
+        username: "",
         role: "",
     });
 
@@ -62,7 +58,7 @@ export default function UserManagement({ currentRolesMap }) {
             const updatedUsers = [...users];
             updatedUsers[editedUserIndex] = {
                 ...updatedUsers[editedUserIndex],
-                name: editFormData.name,
+                username: editFormData.username,
                 role: editFormData.role,
             };
             setUsers(updatedUsers);
@@ -98,7 +94,7 @@ export default function UserManagement({ currentRolesMap }) {
                     <TableBody>
                         {users.map((user) => (
                             <TableRow key={user.id}>
-                                <TableCell>{user.name}</TableCell>
+                                <TableCell>{user.username}</TableCell>
                                 <TableCell>{getRoleDescription(user.role)}</TableCell>
                                 <TableCell>
                                     <IconButton onClick={() => handleEditUser(user.id)} aria-label="edit">
@@ -128,8 +124,8 @@ export default function UserManagement({ currentRolesMap }) {
                     <TextField
                         autoFocus
                         margin="dense"
-                        id="name"
-                        label="Name"
+                        id="username"
+                        label="Username"
                         type="text"
                         fullWidth
                         onChange={handleEditChange}
@@ -150,9 +146,9 @@ export default function UserManagement({ currentRolesMap }) {
                 <DialogTitle>Edit User</DialogTitle>
                 <DialogContent>
                     <TextField
-                        id="name"
-                        label="Name"
-                        defaultValue={selectedUserId ? users.find((user) => user.id === selectedUserId).name : ''}
+                        id="username"
+                        label="User Name"
+                        defaultValue={selectedUserId ? users.find((user) => user.id === selectedUserId).username : ''}
                         onChange={handleEditChange}
                     />
                 </DialogContent>

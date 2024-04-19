@@ -4,6 +4,8 @@ import axios from 'axios';
 const serverUrl = "http://localhost:3000";
 
 
+// ROLES
+
 export async function getDefaultRoles() {
     const roleName = "default";
     try {
@@ -59,6 +61,20 @@ export async function createNewRoles(rolesObj) {
 export async function createNewPermissions(permissionsObj) {
     try {
         await axios.post("/server/permissions", permissionsObj);
+    } catch (error) {
+
+    }
+}
+
+// USERS
+
+export async function getCurrentUsers() {
+    try {
+        const res = await axios.get(`/server/user`);
+
+        const usersArray = res.data.map((u) => ({ ...u, id: u._id }));
+
+        return usersArray;
     } catch (error) {
 
     }

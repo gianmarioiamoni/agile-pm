@@ -3,11 +3,29 @@ import bcryptjs from 'bcryptjs';
 import { errorHandler } from "../utils/error.js"
 import User from '../models/user.js';
 
-export const getMessage = (req, res) => {
-    res.json({
-        message: "Hello World!"
-    });
+
+export const getUsers = async (req, res, next) => {
+    try {
+        //// check if the user is trying to get users list is an Admin
+        // if (req.user.role !== 0) {
+        //     return next(errorHandler(401, "Only Admin can get users list"));
+        // }
+        
+        const usersList = await User.find({});
+
+        // remove the password from the response to be send to the client
+        const restList = usersList.map((u) => {
+            const { password, ...rest } = u._doc;
+            return rest;
+        });
+
+        // send back the users list to the client, without the password
+        res.status(200).json(restList);
+    } catch (error) {
+        next(error);
+    }
 };
+
 
 // next() allows to use the middleware to handle errors
 export const updateUser = async (req, res, next) => {
