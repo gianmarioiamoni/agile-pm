@@ -73,8 +73,12 @@ export default function SignUp() {
           <img className="self-center" src={registerImage} alt="Register Image" style={{ maxWidth: '70%', height: 'auto' }} />
         </div>
         {/* Role selection */}
-        <h3 className='text-title font-bold mt-3'>Role selection</h3>
-        <select id="role" value={formData.role} onChange={handleChange} className='bg-input-bg border-border border-2 p-2 rounded-lg'>
+        <h3 className='text-title font-bold mt-3'>Role</h3>
+        <select
+          id="role"
+          value={formData.role}
+          onChange={handleChange}
+          className='bg-input-bg border-border border-2 p-2 rounded-lg'>
           <option value="" disabled>Select Role</option>
           {roles.map((role, index) => (
             <option key={index} value={role.id}>{role.description}</option>
