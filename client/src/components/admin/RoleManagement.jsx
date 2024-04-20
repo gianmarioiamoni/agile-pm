@@ -12,7 +12,6 @@ import { Edit, Delete, Add } from '@mui/icons-material';
 
 export default function RoleManagement({currentRolesMap, setCurrentRolesMap}) {
 
-
     // State for role add/edit dialog
     const [openRoleEditDialog, setOpenRoleEditDialog] = useState(false);
     const [roleEditFormData, setRoleEditFormData] = useState({
@@ -70,10 +69,21 @@ export default function RoleManagement({currentRolesMap, setCurrentRolesMap}) {
     };
 
     // Function to delete a role
-    const handleDeleteRole = (roleId) => {
+    const handleDeleteRole = async (roleId) => {
         // filter the roles excluding the one to be deleted
+        const roleDescrToDelete = currentRolesMap.find((r) => r.id === roleId).description;
         const updatedRoles = currentRolesMap.filter(role => role.id !== roleId);
+        // update the current roles map
         setCurrentRolesMap(updatedRoles);
+
+        // // update the DB
+        // const res = await deleteRole(roleId);
+        // if (res) {
+        //     alert(`role ${roleDescr} deleted`);
+        // } else {
+        //     alert("Impossible to delete the role");
+        // }
+
     };
 
     // get role description from role id

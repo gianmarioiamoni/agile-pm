@@ -9,10 +9,11 @@ import {
 } from '@mui/material';
 import { Edit, Delete, Add } from '@mui/icons-material';
 
-import RoleSelect from './elements/RoleSelect';
+import RoleSelect from "./elements/RoleSelect";
+
+import { deleteUser } from '../../services/userServices';
 
 export default function UserManagement({ users, setUsers, currentRolesMap }) {
-    
 
     const [openNewUserDialog, setOpenNewUserDialog] = useState(false);
     const [openEditUserDialog, setOpenEditUserDialog] = useState(false);
@@ -70,9 +71,21 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
         }
     };
 
-    const handleDeleteUser = (userId) => {
+    const handleDeleteUser = async (userId) => {
+        const userDescr = users.find((u) => u.id === userId).username;
         const newUsers = users.filter((user) => user.id !== userId);
         setUsers(newUsers);
+
+        // delete role from the DB
+        const res = await deleteUser(userId);
+
+        console.log("res: ", res)
+
+        if (res.status === 200) {
+            alert(`User ${userDescr} successfully deleted`);
+        } else {
+            alert("Impossible to delete the user");
+        }
     };
 
     const getRoleDescription = (roleId) => {

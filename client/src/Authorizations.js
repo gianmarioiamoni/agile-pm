@@ -5,6 +5,7 @@
 import { getCurrentRoles, getCurrentPermissions } from "./services/userServices";
 
 export const defaultRolesMap = [
+    { id: 0, description: 'Admin' },
     { id: 1, description: 'Product Owner' },
     { id: 2, description: 'Scrum Master' },
     { id: 3, description: 'Scrum Team Member' }

@@ -13,7 +13,7 @@ export async function getDefaultRoles() {
 
         return defaultRolesArray.data.roles;
     } catch (error) {
-        
+        console.log(error);
     }
 }
 
@@ -24,7 +24,7 @@ export async function getDefaultPermissions() {
 
         return defaultPermissionsArray.data.permissions;
     } catch (error) {
-
+        console.log(error);
     }
 }
 
@@ -35,7 +35,7 @@ export async function getCurrentRoles() {
 
         return currentRolesArray.data.roles;
     } catch (error) {
-
+        console.log(error);
     }
 }
 
@@ -46,7 +46,7 @@ export async function getCurrentPermissions() {
 
         return currentPermissionsArray.data.permissions;
     } catch (error) {
-
+        console.log(error);
     }
 }
 
@@ -54,7 +54,7 @@ export async function createNewRoles(rolesObj) {
     try {
         await axios.post("/server/roles", rolesObj);
     } catch (error) {
-        
+        console.log(error);
     }
 }
 
@@ -62,7 +62,7 @@ export async function createNewPermissions(permissionsObj) {
     try {
         await axios.post("/server/permissions", permissionsObj);
     } catch (error) {
-
+        console.log(error);
     }
 }
 
@@ -76,6 +76,15 @@ export async function getCurrentUsers() {
 
         return usersArray;
     } catch (error) {
+        console.log(error);
+    }
+}
 
+export async function deleteUser(id) {
+    try {
+        const res = axios.delete(`/server/user/delete/${id}`);
+        return res;
+    } catch (error) {
+        console.log(error);
     }
 }

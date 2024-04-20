@@ -65,9 +65,13 @@ export const updateUser = async (req, res, next) => {
 }
 
 export const deleteUser = async (req, res, next) => {
-    // check if the user is trying to delete his own account
+    // check if the user is trying to delete his own account or if is an Admin
     // req.user comes from validateUser middleware
-    if (req.user.id !== req.params.id) {
+    const userArray = await User.find({ _id: req.user.id }).exec();
+    const role = userArray[0].role;
+    console.log("deleteUser() - role: ", role)
+
+    if (role !== 0 && req.user.id !== req.params.id ) {
         return next(errorHandler(401, "You can delete your account only"));
     }
 
