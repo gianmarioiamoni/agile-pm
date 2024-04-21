@@ -11,7 +11,8 @@ import { Edit, Delete, Add } from '@mui/icons-material';
 
 import RoleSelect from "./elements/RoleSelect";
 
-import { deleteUser } from '../../services/userServices';
+import { deleteUser, addUser, sendNewUserEmail } from "../../services/userServices";
+import { generateRandomPassword } from "../../utils/utilities";
 
 export default function UserManagement({ users, setUsers, currentRolesMap }) {
 
@@ -32,10 +33,23 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
         setOpenNewUserDialog(false);
     };
 
-    const handleAddUser = () => {
-        const newUser = { ...editFormData, id: users.length + 1 };
+    const handleAddUser = async () => {
+        const newPassword = generateRandomPassword();
+        const newUser = { ...editFormData, id: users.length + 1, password: newPassword };
+        // const newUser = { ...editFormData, id: users.length + 1 };
         setUsers((prevUsers) => [...prevUsers, newUser]);
+        
+
+        // create new user to the DB
+        await addUser(newUser);
+
+        // Send email to the new user email address
+        sendNewUserEmail(newUser.email, newUser.username, newPassword);
+
+        // close dialog
         setOpenNewUserDialog(false);
+
+
     };
 
     const handleEditUser = (userId) => {
@@ -143,6 +157,12 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
                         fullWidth
                         onChange={handleEditChange}
                     />
+                    <TextField
+                        id="email"
+                        label="Email"
+                        defaultValue={selectedUserId ? users.find((user) => user.id === selectedUserId).email : ''}
+                        onChange={handleEditChange}
+                    />
                     <RoleSelect
                         value={editFormData.role}
                         onChange={(e) => setEditFormData((prevFormData) => ({ ...prevFormData, role: e.target.value }))}
@@ -154,7 +174,7 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
                     <Button onClick={handleAddUser} variant="contained" color="primary">Add</Button>
                 </DialogActions>
             </Dialog>
-
+            {/* Edit User Dialog */}
             <Dialog open={openEditUserDialog} onClose={handleCloseEditUserDialog}>
                 <DialogTitle>Edit User</DialogTitle>
                 <DialogContent>
@@ -162,6 +182,12 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
                         id="username"
                         label="User Name"
                         defaultValue={selectedUserId ? users.find((user) => user.id === selectedUserId).username : ''}
+                        onChange={handleEditChange}
+                    />
+                    <TextField
+                        id="email"
+                        label="Email"
+                        defaultValue={selectedUserId ? users.find((user) => user.id === selectedUserId).email : ''}
                         onChange={handleEditChange}
                     />
                 </DialogContent>

@@ -88,3 +88,37 @@ export async function deleteUser(id) {
         console.log(error);
     }
 }
+
+export async function addUser(user) {
+    try {
+        const res = axios.post("/server/user", user)
+    } catch (error) {
+        console.log(err);
+    }
+}
+
+function sendUserEmail(email, subject, body) {
+    axios.post('/server/user/send-email', {
+        to: email,
+        subject,
+        body
+    })
+        .then(response => {
+            console.log(response);
+            alert('Email sent successfully!');
+        })
+        .catch(error => {
+            console.error(error);
+            alert('Failed to send email. Please try again later.');
+        });
+};
+
+export const sendNewUserEmail = (email, username, password) => {
+    // Costruisci il contenuto dell'email
+    const subject = "AgileProjectManager: new user created";
+    const body = `Hello ${username},\n\nA new user has been created for you on AgileProjectManager.\n\nUsername: ${username}\nTemporary Password: ${password}\n\nPlease login and change your password.\n\nBest regards,\nThe AgileProjectManager Team`;
+
+    // Send email
+    sendUserEmail(email, subject, body);
+    // Qui puoi utilizzare una libreria per inviare l'email, ad esempio Axios per fare una richiesta HTTP a un server che invia l'email, o puoi usare un servizio di invio email come SendGrid o Nodemailer
+};
