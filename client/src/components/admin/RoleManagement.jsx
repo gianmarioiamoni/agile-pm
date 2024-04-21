@@ -1,5 +1,4 @@
-// RoleManagement.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Button,
     Dialog, DialogTitle, DialogContent, DialogActions,
@@ -8,28 +7,45 @@ import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     Paper,
 } from '@mui/material';
-import { Edit, Delete, Add } from '@mui/icons-material';
+import { Edit, Delete, Add, ArrowDownward } from '@mui/icons-material';
 
-export default function RoleManagement({currentRolesMap, setCurrentRolesMap}) {
+export default function RoleManagement({ currentRolesMap, setCurrentRolesMap }) {
 
-    // State for role add/edit dialog
     const [openRoleEditDialog, setOpenRoleEditDialog] = useState(false);
     const [roleEditFormData, setRoleEditFormData] = useState({
         id: "",
         description: "",
     });
 
-    // Function to open the add/edit role dialog
+    const [hasScrollableContent, setHasScrollableContent] = useState(false);
+    const tableRef = useRef(null);
+
+    useEffect(() => {
+        const updateScrollableContent = () => {
+            setHasScrollableContent(tableRef.current && tableRef.current.scrollHeight > tableRef.current.clientHeight);
+        };
+
+        // Update initial state
+        updateScrollableContent();
+
+        // Update the state everytime there is a change in the 'currentRolesMap' array
+        const handleResize = () => {
+            updateScrollableContent();
+        };
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [currentRolesMap]);
+
     const handleOpenRoleEditDialog = () => {
         setOpenRoleEditDialog(true);
     };
 
-    // Function to close the dialog
     const handleCloseRoleEditDialog = () => {
         setOpenRoleEditDialog(false);
     };
 
-    // Function to add or edit a role
     const handleSaveRole = () => {
         // Verify if we are adding a new role or editing an existing one
         const existingRole = currentRolesMap.find(role => role.id === roleEditFormData.id);
@@ -56,7 +72,6 @@ export default function RoleManagement({currentRolesMap, setCurrentRolesMap}) {
         handleCloseRoleEditDialog();
     };
 
-    // Function to open the role edit dialog
     const handleEditRole = (roleId) => {
         // find the selected role
         const selectedRole = currentRolesMap.find(role => role.id === roleId);
@@ -68,7 +83,6 @@ export default function RoleManagement({currentRolesMap, setCurrentRolesMap}) {
         }
     };
 
-    // Function to delete a role
     const handleDeleteRole = async (roleId) => {
         // filter the roles excluding the one to be deleted
         const roleDescrToDelete = currentRolesMap.find((r) => r.id === roleId).description;
@@ -76,32 +90,31 @@ export default function RoleManagement({currentRolesMap, setCurrentRolesMap}) {
         // update the current roles map
         setCurrentRolesMap(updatedRoles);
 
-        // // update the DB
-        // const res = await deleteRole(roleId);
-        // if (res) {
-        //     alert(`role ${roleDescr} deleted`);
-        // } else {
-        //     alert("Impossible to delete the role");
-        // }
+        // update the DB
+        const res = await deleteRole(roleId);
+        if (res) {
+            alert(`role ${roleDescr} deleted`);
+        } else {
+            alert("Impossible to delete the role");
+        }
 
-    };
-
-    // get role description from role id
-    const getRoleDescription = (roleId) => {
-        const roleObj = currentRolesMap.find((r) => r.id === roleId);
-        return roleObj ? roleObj.description : null;
     };
 
     return (
-        // JSX per la gestione dei ruoli
-        // <Typography variant="h3" gutterBottom>Roles Management</Typography>
         <>
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper} ref={tableRef} sx={{ position: "relative", height: '30vh', overflowY: "auto" }}>
+                {hasScrollableContent && (
+                    <div style={{ position: "absolute", right: "10px", bottom: "10px" }}>
+                        <IconButton>
+                            <ArrowDownward />
+                        </IconButton>
+                    </div>
+                )}
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Role Description</TableCell>
-                            <TableCell>Actions</TableCell>
+                            <TableCell><b>Role Description</b></TableCell>
+                            <TableCell><b>Actions</b></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -156,8 +169,7 @@ export default function RoleManagement({currentRolesMap, setCurrentRolesMap}) {
                     <Button onClick={handleCloseRoleEditDialog}>Cancel</Button>
                     <Button onClick={handleSaveRole} variant="contained" color="primary">Save</Button>
                 </DialogActions>
-            </Dialog>  
+            </Dialog>
         </>
-
-    )
+    );
 }

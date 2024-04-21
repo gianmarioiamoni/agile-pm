@@ -1,17 +1,16 @@
-// AdminPage.jsx
-
 import { useState, useEffect } from 'react';
-import { Grid, Typography } from '@mui/material';
-import UserManagement from '../components/admin/UserManagement';
-import RoleManagement from '../components/admin/RoleManagement';
+import { Grid, Typography, Box, Divider } from '@mui/material';
+import UserManagement from "../components/admin/UserManagement";
+import RoleManagement from "../components/admin/RoleManagement";
+import PermissionManagement from "../components/admin/PermissionManagement";
+import Header from '../components/Header';
 
 import { getCurrentUsers, getCurrentRoles } from '../services/userServices';
 
 export default function AdminPage() {
 
-    // state for users management
+    // states for users management
     const [users, setUsers] = useState([]);
-    
 
     // state for Roles Management
     const [currentRolesMap, setCurrentRolesMap] = useState([]);
@@ -34,21 +33,38 @@ export default function AdminPage() {
 
     }, []);
 
-
     return (
-        <Grid container spacing={2}>
-            {/* Users Management */}
-            <Grid item xs={6}>
-                <Typography variant="h3" gutterBottom>Users Management</Typography>
-                <UserManagement users={users} setUsers={setUsers} currentRolesMap={currentRolesMap} />
-            </Grid>
+        <>
+            <Header isShowAbout={true} isShowProfile={true} isShowHome={true} />
+            <Grid container direction="column" spacing={2} padding={3}>
+                {/* Top Section */}
 
-            {/* Roles Management */}
-            <Grid item xs={6}>
-                <Typography variant="h3" gutterBottom>Roles Management</Typography>
-                <RoleManagement currentRolesMap={currentRolesMap} setCurrentRolesMap={setCurrentRolesMap} />
+                <Grid item container xs={12} sx={{ height: "40%", display: "flex" }}>
+                    {/* Left side */}
+                    <Grid item xs={6} sx={{ display: "flex", flexDirection: "column" }}>
+                        <Box sx={{ flex: 1, overflow: "auto" }}>
+                            <Typography variant="h5" gutterBottom fontWeight="bold">Users Management</Typography>
+                            <Divider />
+                            <UserManagement users={users} setUsers={setUsers} currentRolesMap={currentRolesMap} />
+                        </Box>
+                    </Grid>
+                    {/* Right side */}
+                    <Grid item xs={6} sx={{ display: "flex", flexDirection: "column" }}>
+                        <Box sx={{ flex: 1, overflow: "auto" }}>
+                            <Typography variant="h5" gutterBottom fontWeight="bold">Roles Management</Typography>
+                            <Divider />
+                            <RoleManagement currentRolesMap={currentRolesMap} setCurrentRolesMap={setCurrentRolesMap} />
+                        </Box>
+                    </Grid>
+                </Grid>
+
+                {/* Bottom Section */}
+                <Grid item xs={12}>
+                    <Typography variant="h5" gutterBottom fontWeight="bold">Permissions Management</Typography>
+                    <Divider />
+                    <PermissionManagement />
+                </Grid>
             </Grid>
-        </Grid>
+        </>
     );
 }
-

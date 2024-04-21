@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Button,
     Dialog, DialogTitle, DialogContent, DialogActions,
@@ -7,7 +7,7 @@ import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     Paper,
 } from '@mui/material';
-import { Edit, Delete, Add } from '@mui/icons-material';
+import { Edit, Delete, Add, ArrowDownward } from '@mui/icons-material';
 
 import RoleSelect from "./elements/RoleSelect";
 
@@ -24,6 +24,26 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
     });
 
     const [selectedUserId, setSelectedUserId] = useState(null);
+    const [hasScrollableContent, setHasScrollableContent] = useState(false);
+    const tableRef = useRef(null);
+
+    useEffect(() => {
+        const updateScrollableContent = () => {
+            setHasScrollableContent(tableRef.current && tableRef.current.scrollHeight > tableRef.current.clientHeight);
+        };
+
+        // Update initial state
+        updateScrollableContent();
+
+        // Update the state everytime there is a change in the 'users' array
+        const handleResize = () => {
+            updateScrollableContent();
+        };
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [users]);
 
     const handleOpenNewUserDialog = () => {
         setOpenNewUserDialog(true);
@@ -36,9 +56,7 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
     const handleAddUser = async () => {
         const newPassword = generateRandomPassword();
         const newUser = { ...editFormData, id: users.length + 1, password: newPassword };
-        // const newUser = { ...editFormData, id: users.length + 1 };
         setUsers((prevUsers) => [...prevUsers, newUser]);
-        
 
         // create new user to the DB
         await addUser(newUser);
@@ -48,8 +66,6 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
 
         // close dialog
         setOpenNewUserDialog(false);
-
-
     };
 
     const handleEditUser = (userId) => {
@@ -109,13 +125,20 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
 
     return (
         <>
-            <TableContainer component={Paper}>
+            {hasScrollableContent && (
+                <div style={{ position: "absolute", right: "10px", bottom: "10px" }}>
+                    <IconButton>
+                        <ArrowDownward />
+                    </IconButton>
+                </div>
+            )}
+            <TableContainer component={Paper} ref={tableRef} sx={{ position: "relative", height: '30vh', overflowY: "auto" }}>
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>User Name</TableCell>
-                            <TableCell>Role</TableCell>
-                            <TableCell>Actions</TableCell>
+                            <TableCell><b>User Name</b></TableCell>
+                            <TableCell><b>Role</b></TableCell>
+                            <TableCell><b>Actions</b></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

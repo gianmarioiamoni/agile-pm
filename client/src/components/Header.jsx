@@ -13,7 +13,8 @@ export default function Header({
     isShowDashboard = false,
     isShowProfile = false,
     isShowSignIn = false,
-    isShowSignUp = false
+    isShowSignUp = false,
+    isShowAdmin = false
 }) {
     const { currentUser } = useSelector(state => {
         return state.user;
@@ -30,6 +31,11 @@ export default function Header({
                     {isShowHome &&
                         <Link to="/">
                             <li>Home</li>
+                        </Link>
+                    }
+                    {isShowAdmin &&
+                        <Link to="/admin">
+                            <li>Admin</li>
                         </Link>
                     }
                     {isShowAbout &&

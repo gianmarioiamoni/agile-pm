@@ -63,7 +63,7 @@ export default function App() {
         </Route>
         <Route path="/sign-in" element={currentUser ? <Home /> : <SignIn />} > </Route>
         <Route path="/sign-up" element={currentUser ? <Home /> : <SignUp />} > </Route>
-        <Route path="/admin" element={currentUser ? <AdminPage /> : <SignIn />} > </Route>
+        <Route path="/admin" element={currentUser && currentUser.role === 0 ? <AdminPage /> : <SignIn />} > </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
