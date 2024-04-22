@@ -1,15 +1,30 @@
 import React, { useState } from 'react';
-import { Typography, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
+import { Typography, FormGroup, FormControlLabel, Checkbox, Box, Button } from '@mui/material';
 
-import { defaultRolePermissionsMap, projectPermissions } from '../../Authorizations';
+import { defaultRolePermissionsMap, permissions, projectPermissions, projectPermissionsLabel } from '../../Authorizations';
 
 export default function PermissionManagement() {
     const [rolePermissionsMap, setRolePermissionsMap] = useState(defaultRolePermissionsMap);
 
-    const handlePermissionChange = (roleIndex, permissionIndex) => {
+    const handlePermissionChange = (roleIndex, permissionKey) => {
         const updatedPermissionsMap = [...rolePermissionsMap];
-        updatedPermissionsMap[roleIndex].permissions[permissionIndex] = !updatedPermissionsMap[roleIndex].permissions[permissionIndex];
+        const permissionIndex = Object.keys(projectPermissions).indexOf(permissionKey);
+        const permissionValue = projectPermissions[permissionKey];
+        const isChecked = !!updatedPermissionsMap[roleIndex].permissions.includes(permissionValue);
+
+        if (isChecked) {
+            // Remove permission if already present
+            updatedPermissionsMap[roleIndex].permissions = updatedPermissionsMap[roleIndex].permissions.filter(permission => permission !== permissionValue);
+        } else {
+            // Add permission if not present
+            updatedPermissionsMap[roleIndex].permissions.push(permissionValue);
+        }
+
         setRolePermissionsMap(updatedPermissionsMap);
+    };
+
+    const handleSaveChanges = () => {
+        console.log('Changes to permissions saved:', rolePermissionsMap);
     };
 
     return (
@@ -19,22 +34,32 @@ export default function PermissionManagement() {
                     <Typography variant="h6" gutterBottom fontWeight="bold">
                         {role.role}
                     </Typography>
-                    <FormGroup>
-                        {role.permissions.map((permission, permissionIndex) => (
-                            <FormControlLabel
-                                key={permissionIndex}
-                                control={
-                                    <Checkbox
-                                        checked={!!permission}
-                                        onChange={() => handlePermissionChange(roleIndex, permissionIndex)}
-                                    />
-                                }
-                                label={Object.keys(projectPermissions)[permissionIndex]}
-                            />
-                        ))}
-                    </FormGroup>
+                    {/* Projects permissions */}
+                    <Box display="flex" alignItems="center" marginBottom={2}>
+                        <Typography variant="h8" gutterBottom fontWeight="bold" marginRight={3}>
+                            {projectPermissionsLabel}
+                        </Typography>
+                        <FormGroup row>
+                            {Object.keys(projectPermissions).map((permissionKey, permissionIndex) => (
+                                <FormControlLabel
+                                    key={permissionKey}
+                                    control={
+                                        <Checkbox
+                                            checked={role.permissions.includes(projectPermissions[permissionKey])}
+                                            onChange={() => handlePermissionChange(roleIndex, permissionKey)}
+                                        />
+                                    }
+                                    label={permissionKey}
+                                />
+                            ))}
+                        </FormGroup>
+                    </Box>
                 </div>
             ))}
+            {/* Save button */}
+            <Button variant="contained" onClick={handleSaveChanges}>
+                Save
+            </Button>
         </div>
     );
 }

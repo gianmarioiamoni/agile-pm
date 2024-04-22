@@ -30,19 +30,34 @@ export const defaultRolesMap = [
 // }
 
 
+// export const permissions = {
+//     // Project permissions
+//     project: {
+//         create: 'createProject',
+//         edit: 'editProject',
+//         delete: 'deleteProject',
+//         view: 'viewProject'
+//     }
+//     // Aggiungi altre autorizzazioni secondo necessità
+// };
+
 export const permissions = {
     // Project permissions
     project: {
-        create: 'createProject',
-        edit: 'editProject',
-        delete: 'deleteProject',
-        view: 'viewProject'
+        label: 'Projects',
+        actions: {
+            create: 'createProject',
+            edit: 'editProject',
+            delete: 'deleteProject',
+            view: 'viewProject'
+        }
     }
     // Aggiungi altre autorizzazioni secondo necessità
 };
 
 // shortcuts to access permissions
-export const projectPermissions = permissions.project;
+export const projectPermissions = permissions.project.actions;
+export const projectPermissionsLabel  = permissions.project.label;
 
 //  mapping between user roles and associated permissions 
 
