@@ -30,7 +30,7 @@ export const defaultRolesMap = [
 // }
 
 
-const permissions = {
+export const permissions = {
     // Project permissions
     project: {
         create: 'createProject',
@@ -41,8 +41,8 @@ const permissions = {
     // Aggiungi altre autorizzazioni secondo necessità
 };
 
-// shortcutes to access permissions
-const projectPermissions = permissions.project;
+// shortcuts to access permissions
+export const projectPermissions = permissions.project;
 
 //  mapping between user roles and associated permissions 
 
