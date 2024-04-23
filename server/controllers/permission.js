@@ -19,6 +19,7 @@ export const getPermissions = async (req, res) => {
     const name = req.params.name;
     try {
         const permissions = await Permission.findOne({ name });
+        console.log("permissions: ", permissions)
         res.json(permissions);
     } catch (error) {
         res.status(500).json({ message: error.message });

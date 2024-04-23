@@ -44,12 +44,39 @@ export const defaultRolesMap = [
 export const permissions = {
     // Project permissions
     project: {
-        label: 'Projects',
+        label: 'Project',
         actions: {
-            create: 'createProject',
-            edit: 'editProject',
-            delete: 'deleteProject',
-            view: 'viewProject'
+            create: 'projectCreate',
+            edit: 'projectEdit',
+            delete: 'projectDelete',
+            view: 'projectView'
+        }
+    },
+    sprint: {
+        label: 'Sprint',
+        actions: {
+            create: 'sprintCreate',
+            plan: 'sprintPlan',
+            monitor: 'sprintMonitor',
+            participate: 'sprintParticipate'
+        }
+    },
+    backlog: {
+        label: 'Backlog',
+        actions: {
+            manage: 'backlogManage'
+        }
+    },
+    agile: {
+        label: 'Agile',
+        actions: {
+            support: 'agileSupport'
+        }
+    },
+    obstacle: {
+        label: 'Obstacle',
+        actions: {
+            resolve: 'obstacleResolve'
         }
     }
     // Aggiungi altre autorizzazioni secondo necessità
@@ -57,40 +84,123 @@ export const permissions = {
 
 // shortcuts to access permissions
 export const projectPermissions = permissions.project.actions;
-export const projectPermissionsLabel  = permissions.project.label;
+export const projectPermissionsLabel = permissions.project.label;
+
+export const sprintPermissions = permissions.sprint.actions;
+export const sprintPermissionsLabel = permissions.sprint.label;
+
+export const backlogPermissions = permissions.backlog.actions;
+export const backlogPermissionsLabel = permissions.backlog.label;
+
+export const agilePermissions = permissions.agile.actions;
+export const agilePermissionsLabel = permissions.agile.label;
+
+export const obstaclePermissions = permissions.obstacle.actions;
+export const obstaclePermissionsLabel = permissions.obstacle.label;
 
 //  mapping between user roles and associated permissions 
+
+// export const defaultRolePermissionsMap = [
+//     {
+//         role: "Product Owner", // role key: 1
+//         permissions: [
+//             projectPermissions.create,
+//             projectPermissions.edit,
+//             projectPermissions.delete,
+//             sprintPermissions.create
+//         ]
+//         // backlogManagement: ["manage"], // Manage project backlog
+//         // sprintManagement: ["create"], // Create sprints
+//     },
+//     {
+//         role: "Scrum Master", // role key: 2
+//         permissions: [
+//             projectPermissions.create,
+//             projectPermissions.delete
+//         ]
+//         // sprintManagement: ["plan", "monitor"], // Plan and monitor sprints
+//         // agileSupport: ["support"], // Support team in Agile practices
+//         // obstacleResolution: ["resolve"], // Resolve obstacles
+//     },
+//     {
+//         role: "Scrum Team Member", // role key: 3
+//         // taskManagement: ["view", "assign"], // View and assign tasks
+//         // sprintParticipation: ["participate"], // Participate in sprint meetings
+//         // collaboration: ["collaborate"], // Collaborate with team members
+//         permissions: [
+//             projectPermissions.view
+//         ]
+
+//     }];
 
 export const defaultRolePermissionsMap = [
     {
         role: "Product Owner", // role key: 1
         permissions: [
-            projectPermissions.create,
-            projectPermissions.edit,
-            projectPermissions.delete
+            {
+                project: [
+                    projectPermissions.create,
+                    projectPermissions.edit,
+                    projectPermissions.delete
+                ]
+            },
+            {
+                sprint: [
+                    sprintPermissions.create,
+                ]
+            },
+            {
+                backlog: [
+                    backlogPermissions.manage
+                ]
+            }
         ]
-        // backlogManagement: ["manage"], // Manage project backlog
-        // sprintManagement: ["create"], // Create sprints
     },
     {
         role: "Scrum Master", // role key: 2
         permissions: [
-            projectPermissions.create,
-            projectPermissions.delete
+            {
+                project: [
+                    projectPermissions.create,
+                    projectPermissions.delete
+                ]
+            },
+            {
+                sprint: [
+                    sprintPermissions.plan,
+                    sprintPermissions.monitor,
+                ]
+            },
+            {
+                agile: [
+                    agilePermissions.support,
+                ]
+            },
+            {
+                obstacle: [
+                    obstaclePermissions.resolve
+                ]
+            }
         ]
-        // sprintManagement: ["plan", "monitor"], // Plan and monitor sprints
         // agileSupport: ["support"], // Support team in Agile practices
         // obstacleResolution: ["resolve"], // Resolve obstacles
     },
     {
         role: "Scrum Team Member", // role key: 3
         // taskManagement: ["view", "assign"], // View and assign tasks
-        // sprintParticipation: ["participate"], // Participate in sprint meetings
         // collaboration: ["collaborate"], // Collaborate with team members
         permissions: [
-            projectPermissions.view
+            {
+                project: [
+                    projectPermissions.view
+                ]
+            },
+            {
+                sprint: [
+                    sprintPermissions.participate
+                ]
+            }
         ]
-
     }];
 
 
@@ -124,9 +234,15 @@ const hasPermission = async (currentUser, action) => {
     // if (rolePermissionsMap[currentUserRole]) {
     if (currentUserPermissions) {
         // Check if the action exists for the currentUserRole
-        if (currentUserPermissions.permissions.includes(action)) {
-            return true; // User has permission to perform the action
-        }
+        // if (currentUserPermissions.permissions.includes(action)) {
+        //     return true; // User has permission to perform the action
+        // }
+        currentUserPermissions.permissions.map((up) => {
+            const permissionsArray = Object.values(up);
+            if (permissionsArray.includes(action)) {
+                return true;
+            }
+        })
     }
     return false; // User does not have permission to perform the action
 };

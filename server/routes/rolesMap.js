@@ -4,8 +4,8 @@ import { getRolesMap, createRolesMap, updateRolesMap } from "../controllers/role
 
 const router = express.Router();
 
-router.get('/:type', getRolesMap);
+router.get('/:name', getRolesMap);
 router.post('/', createRolesMap);
-router.put('/:type', updateRolesMap);
+router.put('/:name', updateRolesMap);
 
 export default router;

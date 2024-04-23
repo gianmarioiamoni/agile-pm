@@ -1,12 +1,12 @@
 import RolesMap from "../models/rolesMap.js"
 
 export const getRolesMap = async (req, res) => {
-    const { type } = req.params;
+    const { name } = req.params;
     try {
-        const map = await RolesMap.findOne({ type });
-        if (!map) {
-            return res.status(404).json({ message: `Roles map of type '${type}' not found.` });
-        }
+        const map = await RolesMap.findOne({ name });
+        // if (!map) {
+        //     return res.status(404).json({ message: `Roles map of type '${name}' not found.` });
+        // }
         res.json(map);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -25,12 +25,12 @@ export const createRolesMap = async (req, res) => {
 };
 
 export const updateRolesMap = async (req, res) => {
-    const { type } = req.params;
+    const { name } = req.params;
     const updatedMapData = req.body;
     try {
-        const existingMap = await RolesMap.findOne({ type });
+        const existingMap = await RolesMap.findOne({ name });
         if (!existingMap) {
-            return res.status(404).json({ message: `Roles map of type '${type}' not found.` });
+            return res.status(404).json({ message: `Roles map of type '${name}' not found.` });
         }
         existingMap.set(updatedMapData);
         await existingMap.save();

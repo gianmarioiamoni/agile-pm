@@ -15,6 +15,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import PrivateRoute from "./components/PrivateRoute";
 
 import { getDefaultRoles, getDefaultPermissions, createNewRoles, createNewPermissions } from './services/userServices';
+import { getRolesMap, createRolesMap, updateRolesMap } from './services/rolesMapServices';
 
 
 export default function App() {
@@ -30,17 +31,21 @@ export default function App() {
         // default roles map is not available; create it and add to the DB
         const defaultRolesObj = { name: "default", roles: [...defaultRolesMap] };
         await createNewRoles(defaultRolesObj);
-
+        // const currentRolesObj = { name: "current", roles: [...defaultRolesMap] };
+        // await createNewRoles(currentRolesObj); 
       } 
 
       // set permissions default configuration
-      const defaultPermissions = await getDefaultPermissions();
+      // const defaultPermissions = await getDefaultPermissions();
+      // if (!defaultPermissions) {
+      //   await createNewPermissions({name: "default", permissions: []})
+      // }
 
-      if (!defaultPermissions) {
-        const defaultPermissionsObj = { name: "default", permissions: [...defaultRolePermissionsMap] };
-        await createNewPermissions(defaultPermissionsObj);
+      // const defRolesMap = await getRolesMap("default");
 
-      } 
+      // if (!defRolesMap) {
+      //   await createRolesMap("default", defaultRolePermissionsMap);
+      // }
       
     };
     setDefaultConfig();

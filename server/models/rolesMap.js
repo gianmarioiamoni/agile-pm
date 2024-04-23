@@ -9,7 +9,7 @@ const rolePermissionsSchema = new mongoose.Schema({
 
 // Schema for roles collection
 const rolesMapSchema = new mongoose.Schema({
-    type: { type: String, enum: ['Default', 'Current'] }, // "Default" or "Current"
+    name: { type: String, enum: ['default', 'current'] }, 
     roles: [rolePermissionsSchema], // Array role objects
 });
 

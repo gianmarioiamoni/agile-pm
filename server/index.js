@@ -47,7 +47,7 @@ app.use("/server/auth", authRoutes);
 app.use("/server/projects", projectsRoutes);
 app.use("/server/roles", roleRoutes);
 app.use("/server/permissions", permissionRoutes);
-app.use("/server/rolesmap", rolesMapRoutes);
+app.use("/server/roles-map", rolesMapRoutes);
 
 // middleware to manage errors
 app.use((err, req, res, next) => {
