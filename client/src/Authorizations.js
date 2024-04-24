@@ -98,6 +98,14 @@ export const agilePermissionsLabel = permissions.agile.label;
 export const obstaclePermissions = permissions.obstacle.actions;
 export const obstaclePermissionsLabel = permissions.obstacle.label;
 
+export const permissionsLabelValueArray = [
+    { label: projectPermissionsLabel, permissions: projectPermissions },
+    { label: sprintPermissionsLabel, permissions: sprintPermissions },
+    { label: backlogPermissionsLabel, permissions: backlogPermissions },
+    { label: agilePermissionsLabel, permissions: agilePermissions },
+    { label: obstaclePermissionsLabel, permissions: obstaclePermissions },
+]
+
 //  mapping between user roles and associated permissions 
 
 // export const defaultRolePermissionsMap = [
