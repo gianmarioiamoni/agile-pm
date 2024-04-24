@@ -54,24 +54,41 @@ export default function PermissionManagement() {
 
         const isChecked = isPermissionIncluded(updatedPermissionsMap[roleIndex].permissions, permissionValue);
 
-        const rolePermisssionsArray = updatedPermissionsMap[roleIndex].permissions;
-        console.log("rolePermissionsArray: ", rolePermisssionsArray)
+        const rolePermissionsArray = updatedPermissionsMap[roleIndex].permissions;
+        console.log("rolePermissionsArray: ", rolePermissionsArray)
 
         if (isChecked) {
             // Permission is present: remove It
             const idx = getIndexPermissionIncluded(updatedPermissionsMap[roleIndex].permissions, permissionValue);
-            const catPermArray = Object.values(updatedPermissionsMap[roleIndex].permissions[idx]);
-            const catPermKey = Object.keys(updatedPermissionsMap[roleIndex].permissions[idx])[0];
-            console.log("catPermKey: ", catPermKey)
-            catPermArray[0] = catPermArray[0].filter((p) => p !== permissionValue);
+            const groupPermArray = Object.values(updatedPermissionsMap[roleIndex].permissions[idx]);
+            const groupPermKey = Object.keys(updatedPermissionsMap[roleIndex].permissions[idx])[0];
+            console.log("groupPermKey: ", groupPermKey)
+            console.log("permissionKey: ", permissionKey)
+            groupPermArray[0] = groupPermArray[0].filter((p) => p !== permissionValue);
 
-            updatedPermissionsMap[roleIndex].permissions[idx][catPermKey] = catPermArray[0];
+            updatedPermissionsMap[roleIndex].permissions[idx][groupPermKey] = groupPermArray[0];
 
             // updatedPermissionsMap[roleIndex].permissions = updatedPermissionsMap[roleIndex].permissions.filter(permission => permission !== permissionValue);
         } else {
             // Permission is not present: add It
-            
-            updatedPermissionsMap[roleIndex].permissions.push(permissionValue);
+
+            // get group key from permission value. es. createProject => project
+            const lowPermValue = permissionValue.toLowerCase();
+            console.log("lowPermValue: ", lowPermValue)
+            console.log("permissionKey: ", permissionKey)
+            console.log("lowPermValue.length: ", lowPermValue.length)
+            console.log("permissionKey.length: ", permissionKey.length)
+            const groupPermKey = lowPermValue.slice(0, lowPermValue.length - permissionKey.length);
+            console.log("groupPermKey: ", groupPermKey)
+
+            updatedPermissionsMap[roleIndex].permissions.map((p) => {
+                if (Object.keys(p)[0] === groupPermKey) {
+                    p[groupPermKey].push(permissionValue)
+                }
+            })
+
+
+            // updatedPermissionsMap[roleIndex].permissions.push(permissionValue);
         }
 
         setRolePermissionsMap(updatedPermissionsMap);
