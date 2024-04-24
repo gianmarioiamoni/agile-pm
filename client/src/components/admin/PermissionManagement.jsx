@@ -1,123 +1,90 @@
 import React, { useState } from 'react';
-import { Typography, FormGroup, FormControlLabel, Checkbox, Box, Button } from '@mui/material';
-import { v4 as uuidv4 } from 'uuid';
-
-import {
-    defaultRolePermissionsMap,
-    projectPermissions, projectPermissionsLabel,
-    sprintPermissions, sprintPermissionsLabel,
-    permissionsLabelValueArray
-} from "../../Authorizations";
+import { Button, IconButton, Tab, Tabs, Paper, Container } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
 
 import PermissionsBox from "./elements/PermissionsBox";
-
-import { getRolesMap, createRolesMap, updateRolesMap } from '../../services/rolesMapServices';
-
+import { defaultRolePermissionsMap, permissionsLabelValueArray } from "../../Authorizations";
 
 export default function PermissionManagement() {
     const [rolePermissionsMap, setRolePermissionsMap] = useState(defaultRolePermissionsMap);
+    const [selectedTab, setSelectedTab] = useState(0);
 
-    // const getIndexPermissionIncluded = (permissionsArray, permission) => {
-    //     for (let i = 0; i < permissionsArray.length; i++) {
-    //         const permArray = Object.values(permissionsArray[i]);
-
-    //         if (permArray[0].includes(permission)) {
-    //             return i;
-    //         }
-    //     }
-    //     return -1;
-    // };
-
-
-
-    // const isPermissionIncluded = (permissionsArray, permission) => {
-    //     return getIndexPermissionIncluded(permissionsArray, permission) !== -1;
-    // }
-
-    // const handlePermissionChange = (roleIndex, permissionKey) => {
-    //     const updatedPermissionsMap = [...rolePermissionsMap];
-    //     const permissionIndex = Object.keys(projectPermissions).indexOf(permissionKey);
-    //     const permissionValue = projectPermissions[permissionKey];
-    //     // const isChecked = !!updatedPermissionsMap[roleIndex].permissions.includes(permissionValue);
-    //     console.log("permissionValue: ", permissionValue)
-    //     console.log("updatedPermissionsMap: ", updatedPermissionsMap)
-    //     console.log("roleIndex: ", roleIndex)
-    //     console.log("updatedPermissionsMap[roleIndex]: ", updatedPermissionsMap[roleIndex])
-    //     console.log("updatedPermissionsMap[roleIndex].permissions: ", updatedPermissionsMap[roleIndex].permissions)
-
-    //     const isChecked = isPermissionIncluded(updatedPermissionsMap[roleIndex].permissions, permissionValue);
-
-    //     const rolePermissionsArray = updatedPermissionsMap[roleIndex].permissions;
-    //     console.log("rolePermissionsArray: ", rolePermissionsArray)
-
-    //     if (isChecked) {
-    //         // Permission is present: remove It
-    //         const idx = getIndexPermissionIncluded(updatedPermissionsMap[roleIndex].permissions, permissionValue);
-    //         const groupPermArray = Object.values(updatedPermissionsMap[roleIndex].permissions[idx]);
-    //         const groupPermKey = Object.keys(updatedPermissionsMap[roleIndex].permissions[idx])[0];
-    //         console.log("groupPermKey: ", groupPermKey)
-    //         console.log("permissionKey: ", permissionKey)
-    //         groupPermArray[0] = groupPermArray[0].filter((p) => p !== permissionValue);
-
-    //         updatedPermissionsMap[roleIndex].permissions[idx][groupPermKey] = groupPermArray[0];
-
-    //         // updatedPermissionsMap[roleIndex].permissions = updatedPermissionsMap[roleIndex].permissions.filter(permission => permission !== permissionValue);
-    //     } else {
-    //         // Permission is not present: add It
-
-    //         // get group key from permission value. es. createProject => project
-    //         const lowPermValue = permissionValue.toLowerCase();
-    //         console.log("lowPermValue: ", lowPermValue)
-    //         console.log("permissionKey: ", permissionKey)
-    //         console.log("lowPermValue.length: ", lowPermValue.length)
-    //         console.log("permissionKey.length: ", permissionKey.length)
-    //         const groupPermKey = lowPermValue.slice(0, lowPermValue.length - permissionKey.length);
-    //         console.log("groupPermKey: ", groupPermKey)
-
-    //         updatedPermissionsMap[roleIndex].permissions.map((p) => {
-    //             if (Object.keys(p)[0] === groupPermKey) {
-    //                 p[groupPermKey].push(permissionValue)
-    //             }
-    //         })
-
-
-    //         // updatedPermissionsMap[roleIndex].permissions.push(permissionValue);
-    //     }
-
-    //     setRolePermissionsMap(updatedPermissionsMap);
-    // };
+    const handleChangeTab = (event, newValue) => {
+        setSelectedTab(newValue);
+    };
 
     const handleSaveChanges = () => {
         console.log('Changes to permissions saved:', rolePermissionsMap);
     };
 
     return (
-        <div>
-            {rolePermissionsMap.map((role, roleIndex) => (
-                <div key={roleIndex}>
-                    <Typography variant="h6" gutterBottom fontWeight="bold">
-                        {role.role}
-                    </Typography>
-                    {/* Permissions Boxes */}
-                    {permissionsLabelValueArray.map((p, idx) =>
-                        <PermissionsBox
-                            permissionsLabel={p.label}
-                            permissions={p.permissions}
-                            rolePermissionsMap={rolePermissionsMap}
-                            setRolePermissionsMap={setRolePermissionsMap}
+        <>
+            <Container component={Paper} >
+                <Tabs value={selectedTab} onChange={handleChangeTab} aria-label="Role Tabs">
+                    {rolePermissionsMap.map((role, roleIndex) => (
+                        <Tab label={role.role} key={roleIndex} />
+                    ))}
+                </Tabs>
+                {rolePermissionsMap.map((role, roleIndex) => (
+                    <TabPanel value={selectedTab} index={roleIndex} key={roleIndex}>
+                        <PermissionsBoxContainer
                             role={role}
                             roleIndex={roleIndex}
-                            key={idx}
+                            rolePermissionsMap={rolePermissionsMap}
+                            setRolePermissionsMap={setRolePermissionsMap}
                         />
-                    )}
-                </div>
-            ))}
-            {/* Save button */}
-            <Button variant="contained" onClick={handleSaveChanges}>
+                    </TabPanel>
+                ))}
+            </Container>
+            <Button
+                variant="contained"
+                startIcon={<SaveIcon />} 
+                onClick={handleSaveChanges}
+            >
                 Save
             </Button>
+        </>
+    );
+}
+
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`tabpanel-${index}`}
+            aria-labelledby={`tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <div>
+                    {children}
+                </div>
+            )}
         </div>
     );
 }
 
-
+function PermissionsBoxContainer({ role, roleIndex, rolePermissionsMap, setRolePermissionsMap }) {
+    return (
+        <>
+            <div style={{ maxHeight: "350px", overflowY: "auto", marginBottom: "3"}}>
+                {/* <h3>{role.role}</h3> */}
+                {/* Permissions Boxes */}
+                {permissionsLabelValueArray.map((p, idx) => (
+                    <PermissionsBox
+                        key={idx}
+                        permissionsLabel={p.label}
+                        permissions={p.permissions}
+                        rolePermissionsMap={rolePermissionsMap}
+                        setRolePermissionsMap={setRolePermissionsMap}
+                        role={role}
+                        roleIndex={roleIndex}
+                    />
+                ))}
+            </div>
+        </>
+    );
+}

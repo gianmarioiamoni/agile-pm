@@ -74,18 +74,16 @@ export default function PermissionsBox({permissionsLabel, permissions, rolePermi
 
 
     return (
-        <Box display="flex" alignItems="center" marginBottom={2}>
-            <Typography key={uuidv4()} variant="h8" gutterBottom fontWeight="bold" marginRight={3}>
+        <Box display="flex" flexDirection="column" alignItems="flexStart" marginBottom={2}>
+            <Typography key={uuidv4()} variant="h8" gutterBottom fontWeight="bold" marginRight={3} marginBottom={-1}>
                 {permissionsLabel}
             </Typography>
             <FormGroup key={uuidv4()} row>
                 {Object.keys(permissions).map((permissionKey) => (
                     <FormControlLabel
-                        // key={uuidv4()}
                         key={permissionKey}
                         control={
                             <Checkbox
-                                // key={uuidv4()}
                                 checked={isPermissionIncluded(role.permissions, permissions[permissionKey])}
                                 onChange={() => handlePermissionChange(roleIndex, permissionKey)}
                             />

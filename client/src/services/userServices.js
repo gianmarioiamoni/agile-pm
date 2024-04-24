@@ -32,7 +32,6 @@ export async function getCurrentRoles() {
     const roleName = "current";
     try {
         const currentRolesArray = await axios.get(`/server/roles/${roleName}`);
-        console.log("currentRolesArray: ", currentRolesArray)
 
         return currentRolesArray.data.roles;
     } catch (error) {

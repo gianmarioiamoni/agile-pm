@@ -110,7 +110,7 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap }) 
                         </IconButton>
                     </div>
                 )}
-                <Table>
+                <Table size="small" dense>
                     <TableHead>
                         <TableRow>
                             <TableCell><b>Role Description</b></TableCell>
@@ -125,10 +125,10 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap }) 
                                 {role.id > 3 ? (
                                     <TableCell>
                                         <IconButton onClick={() => handleEditRole(role.id)} aria-label="edit">
-                                            <Edit />
+                                            <Edit fontSize="small" />
                                         </IconButton>
                                         <IconButton onClick={() => handleDeleteRole(role.id)} aria-label="delete">
-                                            <Delete />
+                                            <Delete fontSize="small" />
                                         </IconButton>
                                     </TableCell>
                                 ) : (

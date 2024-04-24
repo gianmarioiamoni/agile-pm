@@ -133,7 +133,7 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
                 </div>
             )}
             <TableContainer component={Paper} ref={tableRef} sx={{ position: "relative", height: '30vh', overflowY: "auto" }}>
-                <Table>
+                <Table size="small" dense>
                     <TableHead>
                         <TableRow>
                             <TableCell><b>User Name</b></TableCell>
@@ -143,15 +143,15 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
                     </TableHead>
                     <TableBody>
                         {users.map((user) => (
-                            <TableRow key={user.id}>
+                            <TableRow key={user.id} >
                                 <TableCell>{user.username}</TableCell>
                                 <TableCell>{getRoleDescription(user.role)}</TableCell>
                                 <TableCell>
                                     <IconButton onClick={() => handleEditUser(user.id)} aria-label="edit">
-                                        <Edit />
+                                        <Edit fontSize="small" />
                                     </IconButton>
                                     <IconButton onClick={() => handleDeleteUser(user.id)} aria-label="delete">
-                                        <Delete />
+                                        <Delete fontSize="small" />
                                     </IconButton>
                                 </TableCell>
                             </TableRow>
