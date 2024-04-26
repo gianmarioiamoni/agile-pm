@@ -28,24 +28,18 @@ export default function App() {
       const defaultRoles = await getDefaultRoles();
 
       if (!defaultRoles) {
-        // default roles map is not available; create it and add to the DB
+        // default roles map is not available; create it and add to the DBa
+        console.log("defaultRoles non available: creating it!")
         const defaultRolesObj = { name: "default", roles: [...defaultRolesMap] };
         await createNewRoles(defaultRolesObj);
-        // const currentRolesObj = { name: "current", roles: [...defaultRolesMap] };
-        // await createNewRoles(currentRolesObj); 
       } 
 
-      // set permissions default configuration
-      // const defaultPermissions = await getDefaultPermissions();
-      // if (!defaultPermissions) {
-      //   await createNewPermissions({name: "default", permissions: []})
-      // }
+      // set default role-permissions map
+      const defRolesMap = await getRolesMap("default");
 
-      // const defRolesMap = await getRolesMap("default");
-
-      // if (!defRolesMap) {
-      //   await createRolesMap("default", defaultRolePermissionsMap);
-      // }
+      if (!defRolesMap) {
+        await createRolesMap("default", defaultRolePermissionsMap);
+      }
       
     };
     setDefaultConfig();

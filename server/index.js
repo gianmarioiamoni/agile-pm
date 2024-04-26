@@ -10,6 +10,8 @@ import roleRoutes from "./routes/role.js";
 import permissionRoutes from "./routes/permission.js";
 import rolesMapRoutes from "./routes/rolesMap.js";
 
+import { initDB } from "./Authorizations.js";
+
 import cors from 'cors';
 
 
@@ -33,10 +35,26 @@ const corsOptions = {
 
 app.use(cors(corsOptions));  // Use cors middleware
 
+// DB Initialization
+async function initializeDatabase() {
+    try {
+        await mongoose.connect(process.env.MONGO_DB);
+
+        await initDB();
+
+        console.log("Database successfully initialized.");
+    } catch (error) {
+        console.error("Error during database initialization:", error);
+    } finally {
+        mongoose.disconnect(); 
+    }
+}
+initializeDatabase();
+
+
 mongoose.connect(process.env.MONGO_DB)
     .then(() => console.log("CONNECTED TO DATABASE"))
     .catch((err) => console.log(err))
-
 
 app.listen(3000, () => {
     console.log("SERVER LISTENING ON PORT 3000");

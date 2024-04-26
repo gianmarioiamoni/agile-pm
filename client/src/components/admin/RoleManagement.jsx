@@ -110,7 +110,7 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap }) 
                         </IconButton>
                     </div>
                 )}
-                <Table size="small" dense>
+                <Table size="small" dense="true">
                     <TableHead>
                         <TableRow>
                             <TableCell><b>Role Description</b></TableCell>

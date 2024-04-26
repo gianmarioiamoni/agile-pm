@@ -1,19 +1,35 @@
 import mongoose from 'mongoose';
 
-// Schema for permission of a role
-const rolePermissionsSchema = new mongoose.Schema({
-    role: String,
-    projectPermissions: [{ type: String }],
-    // Altri tipi di permessi
+const { Schema } = mongoose;
+
+// Define Schema for permissions of a single role
+const PermissionSchema = new Schema({
+    project: [String],
+    sprint: [String],
+    backlog: [String],
+    agile: [String],
+    obstacle: [String],
+    task: [String],
+    collaboration: [String],
 });
 
-// Schema for roles collection
-const rolesMapSchema = new mongoose.Schema({
-    name: { type: String, enum: ['default', 'current'] }, 
-    roles: [rolePermissionsSchema], // Array role objects
+// Define Schema for a role with relative permissions
+const RolePermissionsSchema = new Schema({
+    role: { type: String, required: true },
+    permissions: [{ type: Object }] // Accetta un array di oggetti
 });
 
-const RolesMap = mongoose.model('RolesMap', rolesMapSchema);
+// Define Schema for the whole collection
+const RolesMapSchema = new Schema({
+    name: { type: String, enum: ['default', 'current'], required: true },
+    roles: [{
+        role: { type: String, required: true },
+        permissions: [{ type: Object }] // Accetta un array di oggetti
+    }]
+});
+
+const RolesMap = mongoose.model('RolesMap', RolesMapSchema);
+
 
 export default RolesMap;
 

@@ -1,10 +1,147 @@
 // Authorizations.js
+import bcryptjs from 'bcryptjs';
+
+import Role from "./models/role.js";
+import RolesMap from "./models/rolesMap.js";
+import User from "./models/user.js";
 
 
-import { getCurrentRoles, getCurrentPermissions } from "./services/userServices";
+// DB INITIALIZATION
+
+// Init user
+const initUser = async () => {
+    const hashedPassword = bcryptjs.hashSync(process.env.DEFAULT_ADMIN_PWD, 10);
+    const adminUserData = {
+        username: "admin",
+        email: "agileprojectmanagerinfo@gmail.com",
+        password: hashedPassword,
+        role: 0
+    }
+    
+    // role = 0 is Admin
+    const adminUser = await User.findOne({ role: 0 });
+
+    if (adminUser == null || adminUser == undefined) {
+        console.log("default Admin user created")
+        await User.create(adminUserData);
+    }
+};
+
+// Init Roles
+const initRoles = async () => {
+    try {
+        const defaultRolesData = {
+            name: 'default',
+            roles: defaultRolesMap,
+        };
+
+        const currentRolesData = {
+            name: 'current',
+            roles: defaultRolesMap,
+        };
+
+        const defRoles = await Role.findOne({ name: "default" });
+        const currRoles = await Role.find({ name: "current" });
+
+        if (defRoles == null || defRoles == undefined) {
+            await Role.create(defaultRolesData);
+            console.log("default Roles Map created");
+            if (currRoles) {
+                await Role.deleteOne({ name: "current" });
+            }
+            await Role.create(currentRolesData);
+            console.log("default Roles Map copied in current Roles Map")
+            return;
+        }
+
+        if (!currRoles) {
+            await Role.create(currentRolesData);
+            console.log("current Roles Map restore as default")
+        }
+
+    } catch (error) {
+        console.log(error);
+    }
+
+};
+
+// Init RolePermissionsMap
+const initRolePermissions = async () => {
+
+    try {
+        const defaultRolePermissionsData = {
+            name: 'default',
+            roles: [...defaultRolePermissionsMap],
+        };
+
+        const currentRolePermissionsData = {
+            name: 'current',
+            roles: [ ...defaultRolePermissionsMap ],
+        };
+
+        const defRolePermissionsMap = await RolesMap.findOne({ name: "default" });
+        const currRolePermissionsMap = await RolesMap.findOne({ name: "current" });
+
+        if (defRolePermissionsMap == null || defRolePermissionsMap == undefined) {
+            await RolesMap.create(defaultRolePermissionsData);
+            console.log("default Role-Permissions Map created");
+            if (currRolePermissionsMap) {
+                await RolesMap.deleteOne({ name: "current" });
+            }
+            await RolesMap.create(currentRolePermissionsData);
+            console.log("default Role-Permissions Map copied in current Roles Map")
+            return;
+        }
+
+        if (!currRolePermissionsMap) {
+            await RolesMap.create(currentRolePermissionsData);
+            console.log("current Role-Permissions Map restore as default")
+        }
+        
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const initDB = async () => {
+    await initUser();
+    await initRoles();
+    await initRolePermissions();
+};
 
 
-// SERVER
+// GETTERS
+
+const getCurrentRoles = async () => {
+    try {
+        const name = "current";
+        const roles = await Role.findOne({ name });
+        if (!roles) {
+            await initRoles();
+            roles = await Role.findOne({ name });
+        }
+        res.json(roles);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const getCurrentRolesMap = async () => {
+    try {
+        const name = "current";
+        const rolePermissionsMap = await RolesMap.findOne({ name });
+        if (!rolePermissionsMap) {
+            await initRolePermissions();
+            rolePermissionsMap = await RolesMap.findOne({ name });
+        }
+        res.json(rolePermissionsMap);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// DEFAULT CONFIGURATIONS
+
 export const defaultRolesMap = [
     { id: 0, description: 'Admin' },
     { id: 1, description: 'Product Owner' },
@@ -12,7 +149,6 @@ export const defaultRolesMap = [
     { id: 3, description: 'Scrum Team Member' }
 ];
 
-// SERVER
 export const permissions = {
     // Project permissions
     project: {
@@ -64,10 +200,8 @@ export const permissions = {
             collaborate: 'collaborationCollaborate',
         }
     },
-    // Aggiungi altre autorizzazioni secondo necessità
 };
 
-// SERVER
 // shortcuts to access permissions
 const projectPermissions = permissions.project.actions;
 const projectPermissionsLabel = permissions.project.label;
@@ -91,7 +225,7 @@ const collaborationPermissions = permissions.collaboration.actions;
 const collaborationPermissionsLabel = permissions.collaboration.label;
 
 
-// SERVER + API call to provide permissionsLabelValueArray 
+//  add API call to provide permissionsLabelValueArray 
 export const permissionsLabelValueArray = [
     { label: projectPermissionsLabel, permissions: projectPermissions },
     { label: sprintPermissionsLabel, permissions: sprintPermissions },
@@ -102,12 +236,11 @@ export const permissionsLabelValueArray = [
     { label: collaborationPermissionsLabel, permissions: collaborationPermissions },
 ];
 
-//  mapping between user roles and associated permissions 
 
-// SERVER
+//  mapping between user roles and associated permissions 
 export const defaultRolePermissionsMap = [
     {
-        role: "Product Owner", 
+        role: "Product Owner",
         permissions: [
             {
                 project: [
@@ -129,7 +262,7 @@ export const defaultRolePermissionsMap = [
         ]
     },
     {
-        role: "Scrum Master", 
+        role: "Scrum Master",
         permissions: [
             {
                 project: [
@@ -156,7 +289,7 @@ export const defaultRolePermissionsMap = [
         ]
     },
     {
-        role: "Scrum Team Member", 
+        role: "Scrum Team Member",
         permissions: [
             {
                 project: [
@@ -180,9 +313,8 @@ export const defaultRolePermissionsMap = [
                 ]
             }
         ]
-    }];
-
-// SERVER
+    }
+];
 
 // Function to check if the current user has permission to perform a specific action
 const hasPermission = async (currentUser, action) => {
@@ -203,7 +335,7 @@ const hasPermission = async (currentUser, action) => {
         return;
     }
     const currentUserRole = currentUserRoleObj.description;
-    const rolePermissionsMap = await getCurrentPermissions();
+    const rolePermissionsMap = await getCurrentRolesMap();
 
     // Check if the currentUserRole exists in rolePermissions mapping
     const currentUserPermissions = rolePermissionsMap ? rolePermissionsMap.find((rp) => rp.role === currentUserRole) : null;
@@ -219,7 +351,7 @@ const hasPermission = async (currentUser, action) => {
     return false; // User does not have permission to perform the action
 };
 
-// SERVER + API Call
+// + API Call
 // utility functions to check permissions in components
 export const canEditProject = (currentUser) => {
     return hasPermission(currentUser, projectPermissions.edit);

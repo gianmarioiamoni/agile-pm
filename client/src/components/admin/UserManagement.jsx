@@ -133,7 +133,7 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
                 </div>
             )}
             <TableContainer component={Paper} ref={tableRef} sx={{ position: "relative", height: '30vh', overflowY: "auto" }}>
-                <Table size="small" dense>
+                <Table size="small" dense="true">
                     <TableHead>
                         <TableRow>
                             <TableCell><b>User Name</b></TableCell>

@@ -17,7 +17,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       {/* <RolesProvider> */}
         <App />
       {/* </RolesProvider> */}
-
     </PersistGate>
   </Provider>
 )
