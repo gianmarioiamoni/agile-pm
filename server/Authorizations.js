@@ -110,19 +110,20 @@ export const initDB = async () => {
 };
 
 
-// GETTERS
+// GETTERS - internal usage
 
 const getCurrentRoles = async () => {
     try {
         const name = "current";
         const roles = await Role.findOne({ name });
-        if (!roles) {
-            await initRoles();
-            roles = await Role.findOne({ name });
-        }
-        res.json(roles);
+        // if (!roles) {
+        //     await initRoles();
+        //     roles = await Role.findOne({ name });
+        // }
+        console.log("getCurrentRoles() - roles.roles: ", roles.roles)
+        return roles.roles;
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.log(error)
     }
 };
 
@@ -134,23 +135,21 @@ const getCurrentRolesMap = async () => {
             await initRolePermissions();
             rolePermissionsMap = await RolesMap.findOne({ name });
         }
-        res.json(rolePermissionsMap);
+        return rolePermissionsMap.permissions;
     } catch (error) {
-        res.status(500).json({ message: error.message });
+       console.log(error);
     }
 };
 
 // DEFAULT CONFIGURATIONS
-
-export const defaultRolesMap = [
+const defaultRolesMap = [
     { id: 0, description: 'Admin' },
     { id: 1, description: 'Product Owner' },
     { id: 2, description: 'Scrum Master' },
     { id: 3, description: 'Scrum Team Member' }
 ];
 
-export const permissions = {
-    // Project permissions
+const permissions = {
     project: {
         label: 'Project',
         actions: {
@@ -225,7 +224,7 @@ const collaborationPermissions = permissions.collaboration.actions;
 const collaborationPermissionsLabel = permissions.collaboration.label;
 
 
-//  add API call to provide permissionsLabelValueArray 
+//  Permissions Label and Value mapping 
 export const permissionsLabelValueArray = [
     { label: projectPermissionsLabel, permissions: projectPermissions },
     { label: sprintPermissionsLabel, permissions: sprintPermissions },
@@ -238,6 +237,7 @@ export const permissionsLabelValueArray = [
 
 
 //  mapping between user roles and associated permissions 
+// API call for rolePermissionsMap
 export const defaultRolePermissionsMap = [
     {
         role: "Product Owner",
@@ -318,6 +318,7 @@ export const defaultRolePermissionsMap = [
 
 // Function to check if the current user has permission to perform a specific action
 const hasPermission = async (currentUser, action) => {
+    console.log("hasPermission() - currentUser: ", currentUser)
     // check if the user is Admin
     if (currentUser.role === 0) {
         // Admin has all authorizations
@@ -327,6 +328,8 @@ const hasPermission = async (currentUser, action) => {
     const rolesMap = await getCurrentRoles();
 
     const currentUserRoleObj = rolesMap ? rolesMap.find((r) => {
+        console.log("r.id: ", r.id)
+        console.log("currentUser.role: ", currentUser.role)
         return r.id === currentUser.role
     }) : null;
 

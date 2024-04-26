@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { Button, IconButton, Tab, Tabs, Paper, Container } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Button, Tab, Tabs, Paper, Container } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 
 import PermissionsBox from "./elements/PermissionsBox";
-import { defaultRolePermissionsMap, permissionsLabelValueArray } from "../../Authorizations";
+import { getPermissionsLabelValues, getRolesMap } from '../../services/rolesMapServices';
 
 export default function PermissionManagement() {
-    const [rolePermissionsMap, setRolePermissionsMap] = useState(defaultRolePermissionsMap);
+    const [rolePermissionsMap, setRolePermissionsMap] = useState([]);
     const [selectedTab, setSelectedTab] = useState(0);
 
     const handleChangeTab = (event, newValue) => {
@@ -16,6 +16,17 @@ export default function PermissionManagement() {
     const handleSaveChanges = () => {
         console.log('Changes to permissions saved:', rolePermissionsMap);
     };
+
+    useEffect(() => {
+        const initStates = async () => {
+
+            // init rolePermissionsMap
+            const rpm = await getRolesMap("current");
+            setRolePermissionsMap([...rpm]);
+        };
+        initStates();
+        
+    }, [])
 
     return (
         <>
@@ -68,6 +79,21 @@ function TabPanel(props) {
 }
 
 function PermissionsBoxContainer({ role, roleIndex, rolePermissionsMap, setRolePermissionsMap }) {
+    
+    const [permissionsLabelValueArray, setPermissionsLabelValueArray] = useState([]);
+
+    useEffect(() => {
+        const initStates = async () => {
+            // init permissionsLabelValueArray
+            const plv = await getPermissionsLabelValues();
+            setPermissionsLabelValueArray([...plv]);
+
+        };
+        initStates();
+
+    }, [])
+
+
     return (
         <>
             <div style={{ maxHeight: "350px", overflowY: "auto", marginBottom: "3"}}>

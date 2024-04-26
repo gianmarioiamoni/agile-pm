@@ -8,7 +8,7 @@ export const getRolesMap = async (name) => {
         if (!response) {
             return null;
         }
-        return response.data;
+        return response.data.roles;
     } catch (error) {
         console.error('Error during getting roles map from the server:', error);
         throw error;
@@ -36,3 +36,17 @@ export const updateRolesMap = async (name, mapData) => {
         throw error;
     }
 };
+
+export const getPermissionsLabelValues = async () => {
+    const res = await axios.get("/server/roles-map/permissions-label-values");
+
+    return res.data;
+}
+
+export const canCreateProject = async (user) => {
+    console.log("canCreateProject() - user: ", user);
+    const res = await axios.put(`/server/roles-map/can-create-project/`, user);
+    console.log("canCreateProject() - res: ", res)
+
+    return res.data;
+}

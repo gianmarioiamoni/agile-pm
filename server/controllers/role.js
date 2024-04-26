@@ -3,11 +3,13 @@ import Role from "../models/role.js";
 export const addRoles = async (req, res) => {
     const roles = new Role(req.body);
     try {
-        if (req.body.name = "default") {
-            await Role.findOneAndDelete({ name: "current" });
-            const currentRole = new Role({ name: "current", roles: [...req.body.roles] });
-            await currentRole.save();
-        }
+        // if (req.body.name = "default") {
+        //     await Role.findOneAndDelete({ name: "current" });
+        //     const currentRole = new Role({ name: "current", roles: [...req.body.roles] });
+        //     await currentRole.save();
+        // }
+
+        await Role.findOneAndDelete({ name: "current" });
         const newRole = await roles.save();
         res.status(201).json(newRole);
     } catch (error) {

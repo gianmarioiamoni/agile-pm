@@ -2,8 +2,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 
-import { defaultRolesMap, defaultRolePermissionsMap } from './Authorizations'; 
-
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Profile from "./pages/Profile";
@@ -22,27 +20,27 @@ export default function App() {
   const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
-    // set default configurations for roles and authorizations
-    const setDefaultConfig = async () => {
-      // set default roles consfiguration
-      const defaultRoles = await getDefaultRoles();
+    // // set default configurations for roles and authorizations
+    // const setDefaultConfig = async () => {
+    //   // set default roles consfiguration
+    //   const defaultRoles = await getDefaultRoles();
 
-      if (!defaultRoles) {
-        // default roles map is not available; create it and add to the DBa
-        console.log("defaultRoles non available: creating it!")
-        const defaultRolesObj = { name: "default", roles: [...defaultRolesMap] };
-        await createNewRoles(defaultRolesObj);
-      } 
+    //   if (!defaultRoles) {
+    //     // default roles map is not available; create it and add to the DBa
+    //     console.log("defaultRoles non available: creating it!")
+    //     const defaultRolesObj = { name: "default", roles: [...defaultRolesMap] };
+    //     await createNewRoles(defaultRolesObj);
+    //   } 
 
-      // set default role-permissions map
-      const defRolesMap = await getRolesMap("default");
+    //   // set default role-permissions map
+    //   const defRolesMap = await getRolesMap("default");
 
-      if (!defRolesMap) {
-        await createRolesMap("default", defaultRolePermissionsMap);
-      }
+    //   if (!defRolesMap) {
+    //     await createRolesMap("default", defaultRolePermissionsMap);
+    //   }
       
-    };
-    setDefaultConfig();
+    // };
+    // setDefaultConfig();
 
 
   }, []);

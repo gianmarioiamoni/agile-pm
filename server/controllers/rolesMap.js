@@ -1,4 +1,10 @@
-import RolesMap from "../models/rolesMap.js"
+import RolesMap from "../models/rolesMap.js";
+
+import {
+    permissionsLabelValueArray,
+    canCreateProject
+} from "../Authorizations.js";
+
 
 export const getRolesMap = async (req, res) => {
     const { name } = req.params;
@@ -39,6 +45,19 @@ export const updateRolesMap = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
+export const getPermissionsLabelValues = (req, res) => {
+    res.json(permissionsLabelValueArray);
+};
+
+export const checkCreateProject = async (req, res) => {
+    console.log("checkCreateProject() - req.body: ", req.body)
+    const  user = req.body;
+    console.log("checkCreateProject() - user: ", user)
+    const resp = await canCreateProject(user);
+    console.log("checkCreateProject() - resp: ", resp)
+    res.json(resp);
+}
 
 
 
