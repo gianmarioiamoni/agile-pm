@@ -41,7 +41,7 @@ export const getPermissionsLabelValues = async () => {
     const res = await axios.get("/server/roles-map/permissions-label-values");
 
     return res.data;
-}
+};
 
 export const canCreateProject = async (user) => {
     console.log("canCreateProject() - user: ", user);
@@ -49,4 +49,22 @@ export const canCreateProject = async (user) => {
     console.log("canCreateProject() - res: ", res)
 
     return res.data;
-}
+};
+
+export const canViewProject = async (user) => {
+    const res = await axios.put(`/server/roles-map/can-view-project/`, user);
+
+    return res.data;
+};
+
+export const canEditProject = async (user) => {
+    const res = await axios.put(`/server/roles-map/can-edit-project/`, user);
+
+    return res.data;
+};
+
+export const canDeleteProject = async (user) => {
+    const res = await axios.put(`/server/roles-map/can-delete-project/`, user);
+
+    return res.data;
+};

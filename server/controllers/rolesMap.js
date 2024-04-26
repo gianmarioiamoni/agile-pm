@@ -2,7 +2,10 @@ import RolesMap from "../models/rolesMap.js";
 
 import {
     permissionsLabelValueArray,
-    canCreateProject
+    canCreateProject,
+    canViewProject,
+    canEditProject,
+    canDeleteProject
 } from "../Authorizations.js";
 
 
@@ -51,13 +54,28 @@ export const getPermissionsLabelValues = (req, res) => {
 };
 
 export const checkCreateProject = async (req, res) => {
-    console.log("checkCreateProject() - req.body: ", req.body)
-    const  user = req.body;
-    console.log("checkCreateProject() - user: ", user)
+    const user = req.body;
     const resp = await canCreateProject(user);
-    console.log("checkCreateProject() - resp: ", resp)
     res.json(resp);
-}
+};
+
+export const checkViewProject = async (req, res) => {
+    const user = req.body;
+    const resp = await canViewProject(user);
+    res.json(resp);
+};
+
+export const checkEditProject = async (req, res) => {
+    const user = req.body;
+    const resp = await canEditProject(user);
+    res.json(resp);
+};
+
+export const checkDeleteProject = async (req, res) => {
+    const user = req.body;
+    const resp = await canDeleteProject(user);
+    res.json(resp);
+};
 
 
 
