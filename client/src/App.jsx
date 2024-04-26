@@ -19,32 +19,6 @@ import { getRolesMap, createRolesMap, updateRolesMap } from './services/rolesMap
 export default function App() {
   const { currentUser } = useSelector((state) => state.user);
 
-  useEffect(() => {
-    // // set default configurations for roles and authorizations
-    // const setDefaultConfig = async () => {
-    //   // set default roles consfiguration
-    //   const defaultRoles = await getDefaultRoles();
-
-    //   if (!defaultRoles) {
-    //     // default roles map is not available; create it and add to the DBa
-    //     console.log("defaultRoles non available: creating it!")
-    //     const defaultRolesObj = { name: "default", roles: [...defaultRolesMap] };
-    //     await createNewRoles(defaultRolesObj);
-    //   } 
-
-    //   // set default role-permissions map
-    //   const defRolesMap = await getRolesMap("default");
-
-    //   if (!defRolesMap) {
-    //     await createRolesMap("default", defaultRolePermissionsMap);
-    //   }
-      
-    // };
-    // setDefaultConfig();
-
-
-  }, []);
-
   return (
     <BrowserRouter>
       
