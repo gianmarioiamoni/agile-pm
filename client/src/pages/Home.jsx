@@ -1,5 +1,5 @@
-import { useNavigate, Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useNavigate, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import Header from "../components/Header";
 

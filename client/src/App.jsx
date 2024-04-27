@@ -12,7 +12,6 @@ import AdminPage from './pages/AdminPage';
 import NotFoundPage from "./pages/NotFoundPage";
 import PrivateRoute from "./components/PrivateRoute";
 
-import { getDefaultRoles, getDefaultPermissions, createNewRoles, createNewPermissions } from './services/userServices';
 import { getRolesMap, createRolesMap, updateRolesMap } from './services/rolesMapServices';
 
 

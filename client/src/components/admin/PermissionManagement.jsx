@@ -52,7 +52,7 @@ export default function PermissionManagement() {
                 startIcon={<SaveIcon />} 
                 onClick={handleSaveChanges}
             >
-                Save
+                Save Permissions
             </Button>
         </>
     );

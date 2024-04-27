@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useContext } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 import { useSelector } from 'react-redux';
 
@@ -15,7 +15,7 @@ import {
 } from "../redux/user/userSlice";
 import Header from "../components/Header";
 // import { RolesContext } from '../utils/RolesProvider';
-import { getCurrentRoles } from '../services/userServices';
+import { getCurrentRoles } from "../services/roleServices";
 
 
 export default function Profile() {

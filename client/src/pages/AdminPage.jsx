@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Grid, Typography, Box, Divider } from '@mui/material';
+
 import UserManagement from "../components/admin/UserManagement";
 import RoleManagement from "../components/admin/RoleManagement";
 import PermissionManagement from "../components/admin/PermissionManagement";
-import Header from '../components/Header';
+import Header from "../components/Header";
 
-import { getCurrentUsers, getCurrentRoles } from '../services/userServices';
+import { getCurrentUsers } from "../services/userServices";
+import { getCurrentRoles } from "../services/roleServices";
+
 
 export default function AdminPage() {
 

@@ -11,7 +11,7 @@ import { Edit, Delete, Add, ArrowDownward } from '@mui/icons-material';
 
 import RoleSelect from "./elements/RoleSelect";
 
-import { deleteUser, addUser, sendNewUserEmail } from "../../services/userServices";
+import { deleteUser, addUser, editUser, sendNewUserEmail } from "../../services/userServices";
 import { generateRandomPassword } from "../../utils/utilities";
 
 export default function UserManagement({ users, setUsers, currentRolesMap }) {
@@ -55,11 +55,16 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
 
     const handleAddUser = async () => {
         const newPassword = generateRandomPassword();
-        const newUser = { ...editFormData, id: users.length + 1, password: newPassword };
-        setUsers((prevUsers) => [...prevUsers, newUser]);
+        const newUser = { ...editFormData, password: newPassword };
 
         // create new user to the DB
-        await addUser(newUser);
+        const savedUser = await addUser(newUser);
+
+        const updatedUserWithId = { ...newUser, id: savedUser?._id };
+        setUsers((prevUsers) => [...prevUsers, updatedUserWithId]);
+
+        console.log("users: ", users);
+
 
         // Send email to the new user email address
         sendNewUserEmail(newUser.email, newUser.username, newPassword);
@@ -83,16 +88,23 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
         setEditFormData((prevFormData) => ({ ...prevFormData, [id]: value }));
     };
 
-    const handleSaveUserChanges = () => {
+    const handleSaveUserChanges = async () => {
         const editedUserIndex = users.findIndex((user) => user.id === selectedUserId);
         if (editedUserIndex !== -1) {
             const updatedUsers = [...users];
-            updatedUsers[editedUserIndex] = {
+            const editedUser = {
                 ...updatedUsers[editedUserIndex],
                 username: editFormData.username,
+                email: editFormData.email,
                 role: editFormData.role,
-            };
+            } 
+            updatedUsers[editedUserIndex] = editedUser;
+
             setUsers(updatedUsers);
+
+            // save changes to DB
+            await editUser(editedUser);
+
             handleCloseEditUserDialog();
             alert('User details updated successfully!');
         } else {
@@ -137,6 +149,7 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
                     <TableHead>
                         <TableRow>
                             <TableCell><b>User Name</b></TableCell>
+                            <TableCell><b>Email</b></TableCell>
                             <TableCell><b>Role</b></TableCell>
                             <TableCell><b>Actions</b></TableCell>
                         </TableRow>
@@ -145,6 +158,7 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
                         {users.map((user) => (
                             <TableRow key={user.id} >
                                 <TableCell>{user.username}</TableCell>
+                                <TableCell>{user.email}</TableCell>
                                 <TableCell>{getRoleDescription(user.role)}</TableCell>
                                 <TableCell>
                                     <IconButton onClick={() => handleEditUser(user.id)} aria-label="edit">
@@ -212,6 +226,11 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
                         label="Email"
                         defaultValue={selectedUserId ? users.find((user) => user.id === selectedUserId).email : ''}
                         onChange={handleEditChange}
+                    />
+                    <RoleSelect
+                        value={editFormData.role}
+                        onChange={(e) => setEditFormData((prevFormData) => ({ ...prevFormData, role: e.target.value }))}
+                        roles={currentRolesMap}
                     />
                 </DialogContent>
                 <DialogActions>

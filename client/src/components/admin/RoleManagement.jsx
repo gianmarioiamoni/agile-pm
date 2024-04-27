@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { Edit, Delete, Add, ArrowDownward } from '@mui/icons-material';
 
-import { editRoles } from '../../services/userServices';
+import { editRoles } from '../../services/roleServices';
 
 
 export default function RoleManagement({ currentRolesMap, setCurrentRolesMap }) {

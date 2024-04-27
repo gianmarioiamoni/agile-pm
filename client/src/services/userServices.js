@@ -4,79 +4,6 @@ import axios from 'axios';
 const serverUrl = "http://localhost:3000";
 
 
-// ROLES
-
-export async function getDefaultRoles() {
-    const roleName = "default";
-    try {
-        const defaultRolesArray = await axios.get(`/server/roles/${roleName}`);
-
-        return defaultRolesArray.data.roles;
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-export async function getDefaultPermissions() {
-    const permissionsName = "default";
-    try {
-        const defaultPermissionsArray = await axios.get(`/server/permissions/${permissionsName}`);
-
-        return defaultPermissionsArray.data.permissions;
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-export async function getCurrentRoles() {
-    const roleName = "current";
-    try {
-        const currentRolesArray = await axios.get(`/server/roles/${roleName}`);
-
-        return currentRolesArray.data.roles;
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-export async function getCurrentPermissions() {
-    const permissionName = "current";
-    try {
-        const currentPermissionsArray = await axios.get(`/server/permissions/${permissionName}`);
-
-        return currentPermissionsArray.data.permissions;
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-export async function createNewRoles(rolesObj) {
-    try {
-        await axios.post("/server/roles", rolesObj);
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-export async function editRoles(rolesArray) {
-    try {
-        const payload = {roles: [...rolesArray]}
-        await axios.put("/server/roles", rolesArray);
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-export async function createNewPermissions(permissionsObj) {
-    try {
-        await axios.post("/server/permissions", permissionsObj);
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-// USERS
-
 export async function getCurrentUsers() {
     try {
         const res = await axios.get(`/server/user`);
@@ -87,20 +14,30 @@ export async function getCurrentUsers() {
     } catch (error) {
         console.log(error);
     }
-}
+};
 
 export async function deleteUser(id) {
     try {
-        const res = axios.delete(`/server/user/delete/${id}`);
-        return res;
+        const res = await axios.delete(`/server/user/delete/${id}`);
+        return res.data;
     } catch (error) {
         console.log(error);
     }
-}
+};
 
 export async function addUser(user) {
     try {
-        const res = axios.post("/server/user", user)
+        const res = await axios.post("/server/user", user);
+        return res.data;
+    } catch (error) {
+        console.log(err);
+    }
+};
+
+export async function editUser(user) {
+    try {
+        console.log("Save user changes: ", user)
+        // const res = await axios.put("/server/user", user)
     } catch (error) {
         console.log(err);
     }

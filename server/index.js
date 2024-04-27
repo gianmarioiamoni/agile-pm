@@ -7,7 +7,6 @@ import userRoutes from "./routes/user.js";
 import authRoutes from "./routes/auth.js";
 import projectsRoutes from "./routes/project.js";
 import roleRoutes from "./routes/role.js";
-import permissionRoutes from "./routes/permission.js";
 import rolesMapRoutes from "./routes/rolesMap.js";
 
 import { initDB } from "./Authorizations.js";
@@ -64,7 +63,6 @@ app.use("/server/user", userRoutes);
 app.use("/server/auth", authRoutes);
 app.use("/server/projects", projectsRoutes);
 app.use("/server/roles", roleRoutes);
-app.use("/server/permissions", permissionRoutes);
 app.use("/server/roles-map", rolesMapRoutes);
 
 // middleware to manage errors

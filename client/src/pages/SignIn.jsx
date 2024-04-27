@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from 'react';
 
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate } from 'react-router-dom';
 
-import { useDispatch, useSelector } from "react-redux"; // to dispatch action reducer functions
+import { useDispatch, useSelector } from 'react-redux'; // to dispatch action reducer functions
 // redux action creators
 import { resetState, signInStart, signInSuccess, signInFailure } from "../redux/user/userSlice.js";
 

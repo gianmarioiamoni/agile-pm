@@ -9,7 +9,7 @@ import NewProjectForm from "../components/project/NewProjectForm";
 import EditProjectDialog from "../components/project/EditProjectDialog";
 
 import { getAllProjects, createProject, updateProject, removeProject } from "../services/projectServices";
-import { canCreateProject, canViewProject, canEditProject, canDeleteProject } from '../services/rolesMapServices';
+import { canCreateProject, canViewProject, canEditProject, canDeleteProject } from "../services/rolesMapServices";
 
 export default function Dashboard() {
     const { currentUser } = useSelector(state => state.user);
