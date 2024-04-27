@@ -13,10 +13,19 @@ export const addRoles = async (req, res) => {
 
 export const editRoles = async (req, res) => {
     const roles = (req.body);
-    console.log("editRoles() - roles: ", roles)
     try {
         await Role.findOneAndUpdate({ name: "current" }, {roles: roles} );
         res.status(201).json(roles);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+export const deleteRole = async (req, res) => {
+    const roleId = (req.params);
+    try {
+        await Role.findOneAndDelete({ id: roleId });
+        res.status(201).json({message: "role cancelled"});
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

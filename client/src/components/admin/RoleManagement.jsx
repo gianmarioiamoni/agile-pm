@@ -108,14 +108,14 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap }) 
         // update the current roles map
         setCurrentRolesMap(updatedRoles);
 
-        // update the DB
-        const res = await deleteRole(roleId);
-        if (res) {
-            alert(`role ${roleDescr} deleted`);
-        } else {
+        // update DB
+        try {
+            await editRoles(updatedRoles);
+            alert(`role ${roleDescrToDelete} deleted`);
+        } catch (err) {
             alert("Impossible to delete the role");
+            console.log(err)
         }
-
     };
 
     return (
