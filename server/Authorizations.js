@@ -116,11 +116,6 @@ const getCurrentRoles = async () => {
     try {
         const name = "current";
         const roles = await Role.findOne({ name });
-        // if (!roles) {
-        //     await initRoles();
-        //     roles = await Role.findOne({ name });
-        // }
-        console.log("getCurrentRoles() - roles.roles: ", roles.roles)
         return roles.roles;
     } catch (error) {
         console.log(error)
@@ -318,7 +313,6 @@ export const defaultRolePermissionsMap = [
 
 // Function to check if the current user has permission to perform a specific action
 const hasPermission = async (currentUser, action) => {
-    console.log("hasPermission() - currentUser: ", currentUser)
     // check if the user is Admin
     if (currentUser.role === 0) {
         // Admin has all authorizations
@@ -328,8 +322,6 @@ const hasPermission = async (currentUser, action) => {
     const rolesMap = await getCurrentRoles();
 
     const currentUserRoleObj = rolesMap ? rolesMap.find((r) => {
-        console.log("r.id: ", r.id)
-        console.log("currentUser.role: ", currentUser.role)
         return r.id === currentUser.role
     }) : null;
 
@@ -354,7 +346,6 @@ const hasPermission = async (currentUser, action) => {
     return false; // User does not have permission to perform the action
 };
 
-// + API Call
 // utility functions to check permissions in components
 export const canEditProject = (currentUser) => {
     return hasPermission(currentUser, projectPermissions.edit);

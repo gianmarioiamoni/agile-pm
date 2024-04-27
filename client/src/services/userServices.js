@@ -58,6 +58,16 @@ export async function createNewRoles(rolesObj) {
     }
 }
 
+export async function editRoles(rolesArray) {
+    try {
+        console.log("editRoles() - rolesArray: ", rolesArray)
+        const payload = {roles: [...rolesArray]}
+        await axios.put("/server/roles", rolesArray);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export async function createNewPermissions(permissionsObj) {
     try {
         await axios.post("/server/permissions", permissionsObj);

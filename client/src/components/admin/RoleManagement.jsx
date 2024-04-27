@@ -9,6 +9,9 @@ import {
 } from '@mui/material';
 import { Edit, Delete, Add, ArrowDownward } from '@mui/icons-material';
 
+import { editRoles } from '../../services/userServices';
+
+
 export default function RoleManagement({ currentRolesMap, setCurrentRolesMap }) {
 
     const [openRoleEditDialog, setOpenRoleEditDialog] = useState(false);
@@ -24,7 +27,6 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap }) 
         const updateScrollableContent = () => {
             setHasScrollableContent(tableRef.current && tableRef.current.scrollHeight > tableRef.current.clientHeight);
         };
-
         // Update initial state
         updateScrollableContent();
 
@@ -46,11 +48,11 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap }) 
         setOpenRoleEditDialog(false);
     };
 
-    const handleSaveRole = () => {
+    const handleSaveRole = async () => {
         // Verify if we are adding a new role or editing an existing one
         const existingRole = currentRolesMap.find(role => role.id === roleEditFormData.id);
         if (existingRole) {
-            // Editing of an existing role
+            // Editing an existing role
             const updatedRoles = currentRolesMap.map(role => {
                 if (role.id === roleEditFormData.id) {
                     return {
@@ -61,11 +63,27 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap }) 
                 return role;
             });
             setCurrentRolesMap(updatedRoles);
+         
+            // update DB
+            try {
+                await editRoles(updatedRoles);
+            } catch (err) {
+                console.log(err)
+            }
+
         } else {
             // Adding a new role
             const newRoleId = currentRolesMap[currentRolesMap.length - 1].id + 1;
             const newRole = { id: newRoleId, description: roleEditFormData.description };
+            console.log("RoleManagement() - handleSaveRole() - newRole: ", newRole)
             setCurrentRolesMap((prev) => ([...prev, newRole]));
+
+            // update DB
+            try {
+                await editRoles([...currentRolesMap, newRole]);
+            } catch (err) {
+                console.log(err)
+            }
         }
 
         // close the dialog

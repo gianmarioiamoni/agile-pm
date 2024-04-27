@@ -4,7 +4,6 @@ import axios from 'axios';
 export const getRolesMap = async (name) => {
     try {
         const response = await axios.get(`/server/roles-map/${name}`);
-        console.log("response: ", response)
         if (!response) {
             return null;
         }
@@ -30,6 +29,7 @@ export const createRolesMap = async (mapData) => {
 export const updateRolesMap = async (name, mapData) => {
     try {
         const response = await axios.put(`/server/roles-map/${name}`, mapData);
+        console.log("updateRolesMap() - response: ", response)
         return response.data;
     } catch (error) {
         console.error('Error during roles map update on the server:', error);
