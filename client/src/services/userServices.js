@@ -19,7 +19,8 @@ export async function getCurrentUsers() {
 export async function deleteUser(id) {
     try {
         const res = await axios.delete(`/server/user/delete/${id}`);
-        return res.data;
+        console.log("res: ", res)
+        return res;
     } catch (error) {
         console.log(error);
     }
