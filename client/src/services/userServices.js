@@ -37,10 +37,12 @@ export async function addUser(user) {
 
 export async function editUser(user) {
     try {
-        console.log("Save user changes: ", user)
-        // const res = await axios.put("/server/user", user)
+        
+        const res = await axios.post(`/server/user/update/${user.id}`, user);
+        alert(`Saved user changes: ${user}`)
+        return res.data;
     } catch (error) {
-        console.log(err);
+        console.log(error);
     }
 }
 

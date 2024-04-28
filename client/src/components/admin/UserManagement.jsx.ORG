@@ -6,7 +6,7 @@ import {
     TextField,
     IconButton,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-    Paper, Hidden
+    Paper, Hidden, MenuItem
 } from '@mui/material';
 import { Edit, Delete, Add, ArrowDownward } from '@mui/icons-material';
 
@@ -17,15 +17,16 @@ import { generateRandomPassword } from "../../utils/utilities";
 
 export default function UserManagement({ users, setUsers, currentRolesMap }) {
 
-    const [openDialog, setOpenDialog] = useState(false);
+    const [openNewUserDialog, setOpenNewUserDialog] = useState(false);
+    const [openEditUserDialog, setOpenEditUserDialog] = useState(false);
     const [editFormData, setEditFormData] = useState({
         username: "",
-        email: "",
         role: "",
     });
-    const [isEditMode, setIsEditMode] = useState(false);
-    const [selectedUserId, setSelectedUserId] = useState(null);
+
     const [editedUser, setEditedUser] = useState({});
+
+    const [selectedUserId, setSelectedUserId] = useState(null);
     const [hasScrollableContent, setHasScrollableContent] = useState(false);
     const tableRef = useRef(null);
 
@@ -47,42 +48,51 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
         };
     }, [users]);
 
-    const handleOpenDialog = (userId = null) => {
-        if (userId) {
-            setIsEditMode(true);
-            const user = users.find((u) => u.id === userId);
-            setEditedUser(user);
-            setEditFormData({
-                username: user.username,
-                email: user.email,
-                role: user.role,
-            });
-        } else {
-            setIsEditMode(false);
-            setEditFormData({
-                username: "",
-                email: "",
-                role: "",
-            });
-        }
+    const handleOpenNewUserDialog = () => {
+        setOpenNewUserDialog(true);
+    };
+
+    const handleCloseNewUserDialog = () => {
+        setOpenNewUserDialog(false);
+    };
+
+    const handleAddUser = async () => {
+        const newPassword = generateRandomPassword();
+        const newUser = { ...editFormData, password: newPassword };
+
+        // create new user to the DB
+        const savedUser = await addUser(newUser);
+
+        const updatedUserWithId = { ...newUser, id: savedUser?._id };
+        setUsers((prevUsers) => [...prevUsers, updatedUserWithId]);
+
+        console.log("users: ", users);
+
+
+        // Send email to the new user email address
+        sendNewUserEmail(newUser.email, newUser.username, newPassword);
+
+        // close dialog
+        setOpenNewUserDialog(false);
+    };
+
+    const handleEditUser = (userId) => {
         setSelectedUserId(userId);
-        setOpenDialog(true);
+        setEditedUser(users.find((u) => u.id === userId));
+        setOpenEditUserDialog(true);
     };
 
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
+    const handleCloseEditUserDialog = () => {
+        setOpenEditUserDialog(false);
         setSelectedUserId(null);
-        setIsEditMode(false);
     };
 
-    const handleFormChange = (e) => {
+    const handleEditChange = (e) => {
         const { id, value } = e.target;
-        console.log("id: ", id)
-        console.log("value: ", value)
         setEditFormData((prevFormData) => ({ ...prevFormData, [id]: value }));
-    }; 
+    };
 
-    const saveEditUserChanges = async () => {
+    const handleSaveUserChanges = async () => {
         const editedUserIndex = users.findIndex((user) => user.id === selectedUserId);
         if (editedUserIndex !== -1) {
             const updatedUsers = [...users];
@@ -91,7 +101,7 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
                 username: editFormData.username,
                 email: editFormData.email,
                 role: editedUser.role,
-            }
+            } 
             updatedUsers[editedUserIndex] = edUser;
 
             setUsers(updatedUsers);
@@ -99,7 +109,7 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
             // save changes to DB
             await editUser(edUser);
 
-            handleCloseDialog();
+            handleCloseEditUserDialog();
             alert('User details updated successfully!');
         } else {
             console.error('User not found for editing.');
@@ -107,29 +117,14 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
         }
     };
 
-    const saveAddUserChanges = async () => {
-        const newPassword = generateRandomPassword();
-        const newUser = { ...editFormData, password: newPassword };
-        const savedUser = await addUser(newUser);
-        const updatedUserWithId = { ...newUser, id: savedUser?._id };
-        setUsers((prevUsers) => [...prevUsers, updatedUserWithId]);
-        sendNewUserEmail(newUser.email, newUser.username, newPassword);
-        handleCloseDialog();
-    }
-
-    const handleSaveChanges = async () => {
-        if (isEditMode) {
-            saveEditUserChanges();
-        } else {
-            saveAddUserChanges();
-        }
-    };
-
-    const handleDelete = async (userId) => {
+    const handleDeleteUser = async (userId) => {
         const userDescr = users.find((u) => u.id === userId).username;
         const newUsers = users.filter((user) => user.id !== userId);
         setUsers(newUsers);
+
+        // delete role from the DB
         const res = await deleteUser(userId);
+
         if (res.status === 200) {
             alert(`User ${userDescr} successfully deleted`);
         } else {
@@ -172,10 +167,10 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
                                     <TableCell>{getRoleDescription(user.role)}</TableCell>
                                     {/* Actions for the User */}
                                     <TableCell>
-                                        <IconButton onClick={() => handleOpenDialog(user.id)} aria-label="edit">
+                                        <IconButton onClick={() => handleEditUser(user.id)} aria-label="edit">
                                             <Edit fontSize="small" />
                                         </IconButton>
-                                        <IconButton onClick={() => handleDelete(user.id)} aria-label="delete">
+                                        <IconButton onClick={() => handleDeleteUser(user.id)} aria-label="delete">
                                             <Delete fontSize="small" />
                                         </IconButton>
                                     </TableCell>
@@ -191,18 +186,18 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
                 <Button
                     variant="contained"
                     startIcon={<Add />}
-                    onClick={() => handleOpenDialog()}
+                    onClick={handleOpenNewUserDialog}
                     fullWidth
                 >
                     Add User
                 </Button>
             </Grid>
 
-            {/* Add/Edit User Dialog */}
+            {/* Add User Dialog */}
             <Hidden smDown>
                 <Grid item md={6}>
-                    <Dialog open={openDialog} onClose={handleCloseDialog}>
-                        <DialogTitle>{isEditMode ? 'Edit User' : 'Add User'}</DialogTitle>
+                    <Dialog open={openNewUserDialog} onClose={handleCloseNewUserDialog}>
+                        <DialogTitle>Add User</DialogTitle>
                         <DialogContent>
                             <TextField
                                 autoFocus
@@ -211,31 +206,60 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
                                 label="Username"
                                 type="text"
                                 fullWidth
-                                value={editFormData.username}
-                                onChange={handleFormChange}
+                                onChange={handleEditChange}
                             />
                             <TextField
                                 id="email"
                                 label="Email"
-                                type="email"
-                                fullWidth
-                                value={editFormData.email}
-                                onChange={handleFormChange}
+                                defaultValue={selectedUserId ? users.find((user) => user.id === selectedUserId).email : ''}
+                                onChange={handleEditChange}
+                                fullWidth // Aggiungiamo questa prop per impostare la larghezza uguale agli altri campi
                             />
                             <RoleSelect
-                                value={isEditMode ? editedUser.role : editFormData.role}
-                                onChange={isEditMode ?
-                                    (e) => setEditedUser((prev) => ({ ...prev, role: e.target.value }))
-                                    :
-                                    (e) => setEditFormData((prevFormData) => ({ ...prevFormData, role: e.target.value }))}
+                                value={editFormData.role}
+                                onChange={(e) => setEditFormData((prevFormData) => ({ ...prevFormData, role: e.target.value }))}
                                 roles={currentRolesMap}
                             />
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={handleCloseDialog}>Cancel</Button>
-                            <Button onClick={handleSaveChanges} variant="contained" color="primary">
-                                {isEditMode ? 'Save Changes' : 'Add'}
-                            </Button>
+                            <Button onClick={handleCloseNewUserDialog}>Cancel</Button>
+                            <Button onClick={handleAddUser} variant="contained" color="primary">Add</Button>
+                        </DialogActions>
+                    </Dialog>
+                </Grid>
+            </Hidden>
+
+            {/* Edit User Dialog  */}
+            <Hidden smDown>
+                <Grid item md={6}>
+                    <Dialog open={openEditUserDialog} onClose={handleCloseEditUserDialog}>
+                        <DialogTitle>Edit User</DialogTitle>
+                        <DialogContent>
+                            <TextField
+                                id="username"
+                                label="User Name"
+                                defaultValue={selectedUserId ? editedUser.username : ''}
+                                onChange={handleEditChange}
+                                fullWidth
+                                margin="normal"
+                            />
+                            <TextField
+                                id="email"
+                                label="Email"
+                                defaultValue={selectedUserId ? users.find((user) => user.id === selectedUserId).email : ''}
+                                onChange={handleEditChange}
+                                fullWidth
+                                margin="normal"
+                            />
+                            <RoleSelect
+                                value={editedUser.role}
+                                onChange={(e) => setEditedUser((prev) => ({ ...prev, role: e.target.value }))}
+                                roles={currentRolesMap}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleCloseEditUserDialog}>Cancel</Button>
+                            <Button onClick={handleSaveUserChanges}>Save Changes</Button>
                         </DialogActions>
                     </Dialog>
                 </Grid>

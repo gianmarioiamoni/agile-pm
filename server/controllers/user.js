@@ -31,12 +31,14 @@ export const getUsers = async (req, res, next) => {
 // next() allows to use the middleware to handle errors
 export const updateUser = async (req, res, next) => {
     // check if the user is trying to updated his own account
+    // or if is an Admin
     // req.user comes from validateUser middleware
-    if (req.user.id !== req.params.id) {
-        return next(errorHandler(401, "You can update your account only"));
+    const currentUser = await User.findById(req.user.id);
+    if (req.user.id !== req.params.id && currentUser.role !== 0) {
+        return next(errorHandler(401, "You can update your account only or you must be an Admin"));
     }
 
-    // the user is the owner of the profile
+    // the user is the owner of the profile or is an Admin
     try {
         // if there is a new password, we want encrypt it
         if (req.body.password) {

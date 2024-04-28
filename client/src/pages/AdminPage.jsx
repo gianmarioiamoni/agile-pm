@@ -44,7 +44,7 @@ export default function AdminPage() {
 
                 <Grid item container xs={12} sx={{ height: "40%", display: "flex" }}>
                     {/* Left side */}
-                    <Grid item xs={6} sx={{ display: "flex", flexDirection: "column" }}>
+                    <Grid item xs={8} sx={{ display: "flex", flexDirection: "column" }}>
                         <Box sx={{ flex: 1, overflow: "auto" }}>
                             <Typography variant="h5" gutterBottom fontWeight="bold">Users Management</Typography>
                             <Divider />
@@ -52,7 +52,7 @@ export default function AdminPage() {
                         </Box>
                     </Grid>
                     {/* Right side */}
-                    <Grid item xs={6} sx={{ display: "flex", flexDirection: "column" }}>
+                    <Grid item xs={4} sx={{ display: "flex", flexDirection: "column" }}>
                         <Box sx={{ flex: 1, overflow: "auto" }}>
                             <Typography variant="h5" gutterBottom fontWeight="bold">Roles Management</Typography>
                             <Divider />
