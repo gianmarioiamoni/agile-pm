@@ -3,18 +3,23 @@ import { Button, Tab, Tabs, Paper, Container } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 
 import PermissionsBox from "./elements/PermissionsBox";
-import { getPermissionsLabelValues, getRolesMap } from '../../services/rolesMapServices';
+import { getPermissionsLabelValues, getRolesMap, updateRolesMap } from '../../services/rolesMapServices';
 
-export default function PermissionManagement() {
-    const [rolePermissionsMap, setRolePermissionsMap] = useState([]);
+export default function PermissionManagement({rolePermissionsMap, setRolePermissionsMap}) {
+    // const [rolePermissionsMap, setRolePermissionsMap] = useState([]);
     const [selectedTab, setSelectedTab] = useState(0);
 
     const handleChangeTab = (event, newValue) => {
         setSelectedTab(newValue);
     };
 
-    const handleSaveChanges = () => {
+    const handleSaveChanges = async () => {
         console.log('Changes to permissions saved:', rolePermissionsMap);
+        try {
+            await updateRolesMap("current", [...rolePermissionsMap]);
+        } catch (error) {
+            console.log(error)
+        }
     };
 
     useEffect(() => {

@@ -28,6 +28,7 @@ export const createRolesMap = async (mapData) => {
 // function to update a roles map (default or current) on the server
 export const updateRolesMap = async (name, mapData) => {
     try {
+        console.log("updateRolesMap() - mapData: ", mapData)
         const response = await axios.put(`/server/roles-map/${name}`, mapData);
         console.log("updateRolesMap() - response: ", response)
         return response.data;

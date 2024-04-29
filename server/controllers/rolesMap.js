@@ -37,13 +37,8 @@ export const updateRolesMap = async (req, res) => {
     const { name } = req.params;
     const updatedMapData = req.body;
     try {
-        const existingMap = await RolesMap.findOne({ name });
-        if (!existingMap) {
-            return res.status(404).json({ message: `Roles map of type '${name}' not found.` });
-        }
-        existingMap.set(updatedMapData);
-        await existingMap.save();
-        res.json(existingMap);
+        const response = await RolesMap.findOneAndUpdate({ name: name }, { roles: updatedMapData })
+        res.status(200).json(response);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

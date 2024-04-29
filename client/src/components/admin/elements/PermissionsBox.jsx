@@ -36,6 +36,7 @@ export default function PermissionsBox({permissionsLabel, permissions, rolePermi
         console.log("rolePermissionsArray: ", rolePermissionsArray)
 
         if (isChecked) {
+            console.log("IS CHECKED!")
             // Permission is present: remove It
             const idx = getIndexPermissionIncluded(updatedPermissionsMap[roleIndex].permissions, permissionValue);
             const groupPermArray = Object.values(updatedPermissionsMap[roleIndex].permissions[idx]);
@@ -48,6 +49,7 @@ export default function PermissionsBox({permissionsLabel, permissions, rolePermi
 
             // updatedPermissionsMap[roleIndex].permissions = updatedPermissionsMap[roleIndex].permissions.filter(permission => permission !== permissionValue);
         } else {
+            console.log("IS NOT CHECKED") 
             // Permission is not present: add It
 
             // get group key from permission value. es. createProject => project
@@ -59,11 +61,19 @@ export default function PermissionsBox({permissionsLabel, permissions, rolePermi
             const groupPermKey = lowPermValue.slice(0, lowPermValue.length - permissionKey.length);
             console.log("groupPermKey: ", groupPermKey)
 
-            updatedPermissionsMap[roleIndex].permissions.map((p) => {
-                if (Object.keys(p)[0] === groupPermKey) {
-                    p[groupPermKey].push(permissionValue)
-                }
-            })
+            if (updatedPermissionsMap[roleIndex].permissions) {
+                // new custom role, no permissions checked
+                updatedPermissionsMap[roleIndex].permissions.push({ [groupPermKey]: [permissionValue] });
+            } else {
+                // existing role with existing permissions
+                updatedPermissionsMap[roleIndex].permissions.map((p) => {
+                    console.log("Object.keys(p)[0]: ", Object.keys(p)[0])
+                    if (Object.keys(p)[0] === groupPermKey) {
+                        console.log("PUSH NEW PERMISSION")
+                        p[groupPermKey].push(permissionValue)
+                    }
+                })
+            }
 
 
             // updatedPermissionsMap[roleIndex].permissions.push(permissionValue);

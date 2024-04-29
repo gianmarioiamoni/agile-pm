@@ -14,6 +14,7 @@ import { getCurrentRoles } from "../services/roleServices";
 
 export default function AdminPage() {
     const { currentUser } = useSelector(state => state.user);
+    const [rolePermissionsMap, setRolePermissionsMap] = useState([]);
 
     // states for users management
     const [users, setUsers] = useState([]);
@@ -59,7 +60,9 @@ export default function AdminPage() {
                         <Box sx={{ flex: 1, overflow: "auto" }}>
                             <Typography variant="h5" gutterBottom fontWeight="bold">Roles Management</Typography>
                             <Divider />
-                            <RoleManagement currentRolesMap={currentRolesMap} setCurrentRolesMap={setCurrentRolesMap} />
+                            <RoleManagement
+                                currentRolesMap={currentRolesMap} setCurrentRolesMap={setCurrentRolesMap}
+                                rolePermissionsMap={rolePermissionsMap} setRolePermissionsMap={setRolePermissionsMap} />
                         </Box>
                     </Grid>
                 </Grid>
@@ -68,7 +71,7 @@ export default function AdminPage() {
                 <Grid item xs={12}>
                     <Typography variant="h5" gutterBottom fontWeight="bold">Permissions Management</Typography>
                     <Divider />
-                    <PermissionManagement />
+                    <PermissionManagement rolePermissionsMap={rolePermissionsMap} setRolePermissionsMap={setRolePermissionsMap}/>
                 </Grid>
             </Grid>
         </>

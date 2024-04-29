@@ -10,10 +10,11 @@ import {
 } from '@mui/material';
 import { Edit, Delete, Add, ArrowDownward } from '@mui/icons-material';
 
-import { editRoles } from '../../services/roleServices';
+import { editRoles } from "../../services/roleServices";
+import { getPermissionsLabelValues, updateRolesMap } from '../../services/rolesMapServices';
 
 
-export default function RoleManagement({ currentRolesMap, setCurrentRolesMap }) {
+export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, rolePermissionsMap, setRolePermissionsMap }) {
 
     const [openRoleEditDialog, setOpenRoleEditDialog] = useState(false);
     const [roleEditFormData, setRoleEditFormData] = useState({
@@ -21,8 +22,19 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap }) 
         description: "",
     });
 
+    const [permissionsLabelValueArray, setPermissionsLabelValueArray] = useState([]);
+
     const [hasScrollableContent, setHasScrollableContent] = useState(false);
     const tableRef = useRef(null);
+
+    useEffect(() => {
+        const initState = async () => {
+            const plv = await getPermissionsLabelValues();
+            setPermissionsLabelValueArray(plv);
+        };
+        initState();
+        
+    }, [])
 
     useEffect(() => {
         const updateScrollableContent = () => {
@@ -79,9 +91,31 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap }) 
             console.log("RoleManagement() - handleSaveRole() - newRole: ", newRole)
             setCurrentRolesMap((prev) => ([...prev, newRole]));
 
-            // update DB
+            const newPermissionsArray = permissionsLabelValueArray.map((plv) => {
+                const lbl = plv.label;
+
+                return {[lbl]: []}
+            })
+
+            // update role-permissions map with the new role
+            const newRoleForPermissionsMap = {
+                role: newRole.description,
+                // permissions: [...newPermissionsArray]
+                permissions: []
+            };
+
+            setRolePermissionsMap((prev) => [...prev, newRoleForPermissionsMap])
+
+            // update DB with new role
             try {
                 await editRoles([...currentRolesMap, newRole]);
+            } catch (err) {
+                console.log(err)
+            }
+
+            // update DB with new role-permissions map
+            try {
+                await updateRolesMap("current", [...rolePermissionsMap, newRoleForPermissionsMap]);
             } catch (err) {
                 console.log(err)
             }
