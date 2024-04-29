@@ -6,13 +6,13 @@ import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     Paper
 } from '@mui/material';
-import { Edit, Delete, Add, ArrowDownward } from '@mui/icons-material';
+import { Edit, Delete, LockReset, Add, ArrowDownward } from '@mui/icons-material';
 
 import AddEditUserDialog from './elements/AddEditUserDialog';
 
 import { deleteUser } from "../../services/userServices";
 
-export default function UserManagement({ users, setUsers, currentRolesMap }) {
+export default function UserManagement({ users, setUsers, currentRolesMap, currentUser }) {
 
     const [openDialog, setOpenDialog] = useState(false);
     const [editFormData, setEditFormData] = useState({
@@ -82,6 +82,11 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
         }
     };
 
+    const handleResetPassword = async (userId) => {
+        const userDescr = users.find((u) => u.id === userId).username;
+        console.log("reset password for user: ", userDescr)
+    }
+
     const getRoleDescription = (roleId) => {
         const roleObj = currentRolesMap.find((role) => role.id === roleId);
         return roleObj ? roleObj.description : null;
@@ -121,8 +126,11 @@ export default function UserManagement({ users, setUsers, currentRolesMap }) {
                                         <IconButton onClick={() => handleOpenDialog(user.id)} aria-label="edit">
                                             <Edit fontSize="small" />
                                         </IconButton>
-                                        <IconButton onClick={() => handleDelete(user.id)} aria-label="delete">
+                                        <IconButton onClick={() => handleDelete(user.id)} aria-label="delete" disabled={user.id === currentUser._id}>
                                             <Delete fontSize="small" />
+                                        </IconButton>
+                                        <IconButton onClick={() => handleResetPassword(user.id)} aria-label="reset">
+                                            <LockReset fontSize="small" />
                                         </IconButton>
                                     </TableCell>
                                 </TableRow>

@@ -89,6 +89,7 @@ export default function AddEditUserDialog({
                             fullWidth
                             value={editFormData.username}
                             onChange={handleFormChange}
+                            sx={{marginBottom: "10px"}}
                         />
                         <TextField
                             id="email"
@@ -97,8 +98,10 @@ export default function AddEditUserDialog({
                             fullWidth
                             value={editFormData.email}
                             onChange={handleFormChange}
+                            sx={{ marginBottom: "10px" }}
                         />
                         <RoleSelect
+                            disabled={editedUser.role === 0}
                             value={isEditMode ? editedUser.role : editFormData.role}
                             onChange={isEditMode ?
                                 (e) => setEditedUser((prev) => ({ ...prev, role: e.target.value }))

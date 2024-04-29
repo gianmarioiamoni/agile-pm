@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Grid, Typography, Box, Divider } from '@mui/material';
 
+import { useSelector } from 'react-redux';
+
 import UserManagement from "../components/admin/UserManagement";
 import RoleManagement from "../components/admin/RoleManagement";
 import PermissionManagement from "../components/admin/PermissionManagement";
@@ -11,6 +13,7 @@ import { getCurrentRoles } from "../services/roleServices";
 
 
 export default function AdminPage() {
+    const { currentUser } = useSelector(state => state.user);
 
     // states for users management
     const [users, setUsers] = useState([]);
@@ -48,7 +51,7 @@ export default function AdminPage() {
                         <Box sx={{ flex: 1, overflow: "auto" }}>
                             <Typography variant="h5" gutterBottom fontWeight="bold">Users Management</Typography>
                             <Divider />
-                            <UserManagement users={users} setUsers={setUsers} currentRolesMap={currentRolesMap} />
+                            <UserManagement users={users} setUsers={setUsers} currentRolesMap={currentRolesMap} currentUser={currentUser} />
                         </Box>
                     </Grid>
                     {/* Right side */}
