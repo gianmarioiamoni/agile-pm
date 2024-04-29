@@ -4,7 +4,7 @@ import {
     Grid,
     IconButton,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-    Paper
+    Paper, Container
 } from '@mui/material';
 import { Edit, Delete, LockReset, Add, ArrowDownward } from '@mui/icons-material';
 
@@ -117,65 +117,65 @@ export default function UserManagement({ users, setUsers, currentRolesMap, curre
 
 
     return (
-        // <Grid container spacing={2}>
-        <Grid container>
-            {/* Users Table */}
-            <Grid item xs={12}>
-                {hasScrollableContent && (
-                    <div style={{ position: "absolute", right: "10px", bottom: "10px" }}>
-                        <IconButton>
-                            <ArrowDownward />
-                        </IconButton>
-                    </div>
-                )}
-                <TableContainer component={Paper} sx={{ position: "relative", overflowY: "auto" }}>
-                    <Table size="small" dense="true">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell><b>User Name</b></TableCell>
-                                <TableCell><b>Email</b></TableCell>
-                                <TableCell><b>Role</b></TableCell>
-                                <TableCell><b>Actions</b></TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {users.map((user) => (
-                                <TableRow key={user.id}>
-                                    {/* User details */}
-                                    <TableCell>{user.username}</TableCell>
-                                    <TableCell>{user.email}</TableCell>
-                                    <TableCell>{getRoleDescription(user.role)}</TableCell>
-                                    {/* Actions for the User */}
-                                    <TableCell>
-                                        <IconButton onClick={() => handleOpenDialog(user.id)} aria-label="edit">
-                                            <Edit fontSize="small" />
-                                        </IconButton>
-                                        <IconButton onClick={() => handleDelete(user.id)} aria-label="delete" disabled={user.id === currentUser._id}>
-                                            <Delete fontSize="small" />
-                                        </IconButton>
-                                        <IconButton onClick={() => handleResetPassword(user.id)} aria-label="reset">
-                                            <LockReset fontSize="small" />
-                                        </IconButton>
-                                    </TableCell>
+        <>
+            <Grid container component={Paper} sx={{ position: "relative", height: '30vh', overflowY: "auto" }}>
+                {/* Users Table */}
+                <Grid item xs={12}>
+                    {hasScrollableContent && (
+                        <div style={{ position: "absolute", right: "10px", bottom: "10px" }}>
+                            <IconButton>
+                                <ArrowDownward />
+                            </IconButton>
+                        </div>
+                    )}
+                    <TableContainer component={Paper} sx={{ position: "relative", overflowY: "auto" }}>
+                        <Table size="small" dense="true">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell><b>User Name</b></TableCell>
+                                    <TableCell><b>Email</b></TableCell>
+                                    <TableCell><b>Role</b></TableCell>
+                                    <TableCell><b>Actions</b></TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Grid>
+                            </TableHead>
+                            <TableBody>
+                                {users.map((user) => (
+                                    <TableRow key={user.id}>
+                                        {/* User details */}
+                                        <TableCell>{user.username}</TableCell>
+                                        <TableCell>{user.email}</TableCell>
+                                        <TableCell>{getRoleDescription(user.role)}</TableCell>
+                                        {/* Actions for the User */}
+                                        <TableCell>
+                                            <IconButton onClick={() => handleOpenDialog(user.id)} aria-label="edit">
+                                                <Edit fontSize="small" />
+                                            </IconButton>
+                                            <IconButton onClick={() => handleDelete(user.id)} aria-label="delete" disabled={user.id === currentUser._id}>
+                                                <Delete fontSize="small" />
+                                            </IconButton>
+                                            <IconButton onClick={() => handleResetPassword(user.id)} aria-label="reset">
+                                                <LockReset fontSize="small" />
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Grid>
 
+            </Grid>
             {/* Add User Button */}
-            <Grid item xs={12} md={6}>
-                <Button
-                    variant="contained"
-                    startIcon={<Add />}
-                    onClick={() => handleOpenDialog()}
-                    fullWidth
-                >
-                    Add User
+            <Grid item xs={4}>
+            <Button
+                variant="contained"
+                startIcon={<Add />}
+                onClick={() => handleOpenDialog()}
+                fullWidth
+            >
+                Add User
                 </Button>
             </Grid>
-
             {/* Add/Edit User Dialog */}
             <AddEditUserDialog
                 openDialog={openDialog}
@@ -189,6 +189,7 @@ export default function UserManagement({ users, setUsers, currentRolesMap, curre
                 users={users}
                 setUsers={setUsers}
             />
-            </Grid>
+
+        </>
     );
 }

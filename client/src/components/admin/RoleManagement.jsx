@@ -4,6 +4,7 @@ import {
     Dialog, DialogTitle, DialogContent, DialogActions,
     TextField,
     IconButton,
+    Grid,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     Paper,
 } from '@mui/material';
@@ -160,13 +161,16 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap }) 
             </TableContainer>
 
             {/* button to add a new role */}
-            <Button
-                variant="contained"
-                startIcon={<Add />}
-                onClick={handleOpenRoleEditDialog}
-            >
-                Add Role
-            </Button>
+            <Grid item xs={4}>
+                <Button
+                    variant="contained"
+                    startIcon={<Add />}
+                    onClick={handleOpenRoleEditDialog}
+                    fullWidth
+                >
+                    Add Role
+                </Button>
+            </Grid>
 
             {/* Dialog to add/edit a role */}
             <Dialog open={openRoleEditDialog} onClose={handleCloseRoleEditDialog}>
