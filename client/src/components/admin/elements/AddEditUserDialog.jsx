@@ -73,7 +73,6 @@ export default function AddEditUserDialog({
     };
 
 
-
     return (
         <Hidden smDown>
             <Grid item md={6}>
@@ -89,7 +88,7 @@ export default function AddEditUserDialog({
                             fullWidth
                             value={editFormData.username}
                             onChange={handleFormChange}
-                            sx={{marginBottom: "10px"}}
+                            // sx={{marginBottom: "10px"}}
                         />
                         <TextField
                             id="email"
@@ -98,7 +97,7 @@ export default function AddEditUserDialog({
                             fullWidth
                             value={editFormData.email}
                             onChange={handleFormChange}
-                            sx={{ marginBottom: "10px" }}
+                            // sx={{ marginBottom: "10px" }}
                         />
                         <RoleSelect
                             disabled={editedUser.role === 0}

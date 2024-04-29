@@ -19,7 +19,6 @@ export async function getCurrentUsers() {
 export async function deleteUser(id) {
     try {
         const res = await axios.delete(`/server/user/delete/${id}`);
-        console.log("res: ", res)
         return res;
     } catch (error) {
         console.log(error);
@@ -39,7 +38,7 @@ export async function editUser(user) {
     try {
         const res = await axios.post(`/server/user/update/${user.id}`, user);
 
-        return res.data;
+        return res;
     } catch (error) {
         console.log(error);
     }
@@ -62,11 +61,17 @@ function sendUserEmail(email, subject, body) {
 };
 
 export const sendNewUserEmail = (email, username, password) => {
-    // Costruisci il contenuto dell'email
     const subject = "AgileProjectManager: new user created";
     const body = `Hello ${username},\n\nA new user has been created for you on AgileProjectManager.\n\nUsername: ${username}\nTemporary Password: ${password}\n\nPlease login and change your password.\n\nBest regards,\nThe AgileProjectManager Team`;
 
     // Send email
     sendUserEmail(email, subject, body);
-    // Qui puoi utilizzare una libreria per inviare l'email, ad esempio Axios per fare una richiesta HTTP a un server che invia l'email, o puoi usare un servizio di invio email come SendGrid o Nodemailer
+};
+
+export const sendResetPwdEmail = (email, username, password) => {
+    const subject = "AgileProjectManager: password reset";
+    const body = `Hello ${username},\n\nYour password on AgileProjectManager has been reset.\n\nUsername: ${username}\nTemporary Password: ${password}\n\nPlease login and change your password.\n\nBest regards,\nThe AgileProjectManager Team`;
+
+    // Send email
+    sendUserEmail(email, subject, body);
 };

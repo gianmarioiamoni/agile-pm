@@ -8,9 +8,12 @@ import {
 } from '@mui/material';
 import { Edit, Delete, LockReset, Add, ArrowDownward } from '@mui/icons-material';
 
-import AddEditUserDialog from './elements/AddEditUserDialog';
+import AddEditUserDialog from "./elements/AddEditUserDialog";
 
-import { deleteUser } from "../../services/userServices";
+import { editUser, deleteUser, sendResetPwdEmail } from "../../services/userServices";
+
+import { generateRandomPassword } from "../../utils/utilities";
+
 
 export default function UserManagement({ users, setUsers, currentRolesMap, currentUser }) {
 
@@ -83,9 +86,29 @@ export default function UserManagement({ users, setUsers, currentRolesMap, curre
     };
 
     const handleResetPassword = async (userId) => {
-        const userDescr = users.find((u) => u.id === userId).username;
-        console.log("reset password for user: ", userDescr)
-    }
+        const user = users.find((u) => u.id === userId);
+
+        const newPassword = generateRandomPassword();
+        const userWithNewPwd = { ...user, password: newPassword };
+
+        try {
+
+            const res = await editUser(userWithNewPwd);
+
+            console.log("handleResetPassword(): res: ", res);
+
+            if (res.status === 200) {
+                alert(`Password for User ${user.username} successfully reset`);
+            } else {
+                alert(`Impossible to reset the password for the user ${user.username}`);
+            }
+            
+        } catch (err) {
+            console.log(err)
+        }
+
+        sendResetPwdEmail(user.email, user.username, user.password);
+    };
 
     const getRoleDescription = (roleId) => {
         const roleObj = currentRolesMap.find((role) => role.id === roleId);
@@ -94,7 +117,8 @@ export default function UserManagement({ users, setUsers, currentRolesMap, curre
 
 
     return (
-        <Grid container spacing={2}>
+        // <Grid container spacing={2}>
+        <Grid container>
             {/* Users Table */}
             <Grid item xs={12}>
                 {hasScrollableContent && (
