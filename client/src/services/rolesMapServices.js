@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // function to get the default or the current roles map from the server
-export const getRolesMap = async (name) => {
+export const getRolePermissionsMap = async (name) => {
     try {
         const response = await axios.get(`/server/roles-map/${name}`);
         if (!response) {
@@ -26,7 +26,7 @@ export const createRolesMap = async (mapData) => {
 };
 
 // function to update a roles map (default or current) on the server
-export const updateRolesMap = async (name, mapData) => {
+export const updateRolePermissionsMap = async (name, mapData) => {
     try {
         const response = await axios.put(`/server/roles-map/${name}`, mapData);
         return response.data;

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Tab, Tabs, Paper, Container } from '@mui/material';
+import { Button, Tab, Tabs, Paper, Container, Box, Grid } from '@mui/material';
+import { Restore } from '@mui/icons-material';
 import SaveIcon from '@mui/icons-material/Save';
 
 import PermissionsBox from "./elements/PermissionsBox";
-import { getPermissionsLabelValues, getRolesMap, updateRolesMap } from '../../services/rolesMapServices';
+import { getPermissionsLabelValues, getRolePermissionsMap, updateRolePermissionsMap } from '../../services/rolesMapServices';
 
 export default function PermissionManagement({rolePermissionsMap, setRolePermissionsMap, refreshCount}) {
-    // const [rolePermissionsMap, setRolePermissionsMap] = useState([]);
     const [selectedTab, setSelectedTab] = useState(0);
 
     const handleChangeTab = (event, newValue) => {
@@ -15,17 +15,26 @@ export default function PermissionManagement({rolePermissionsMap, setRolePermiss
 
     const handleSaveChanges = async () => {
         try {
-            await updateRolesMap("current", [...rolePermissionsMap]);
+            await updateRolePermissionsMap("current", [...rolePermissionsMap]);
         } catch (error) {
             console.log(error)
         }
     };
 
+    const handleRestoreDefault = async () => {
+        console.log("handleRestoreDefault")
+        const defaultRolePermissionsMap = await getRolePermissionsMap("default");
+        console.log("handleRestoreDefault() - defaultRolePermissionsMap: ", defaultRolePermissionsMap)
+        await updateRolePermissionsMap("current", defaultRolePermissionsMap);
+        setRolePermissionsMap(defaultRolePermissionsMap);
+    };
+
+
     useEffect(() => {
         const initStates = async () => {
 
             // init rolePermissionsMap
-            const rpm = await getRolesMap("current");
+            const rpm = await getRolePermissionsMap("current");
             setRolePermissionsMap([...rpm]);
         };
         initStates();
@@ -36,7 +45,7 @@ export default function PermissionManagement({rolePermissionsMap, setRolePermiss
         <>
             <Container component={Paper} >
                 <Tabs value={selectedTab} onChange={handleChangeTab} aria-label="Role Tabs">
-                    {rolePermissionsMap.map((role, roleIndex) => (
+                    {rolePermissionsMap && rolePermissionsMap.map((role, roleIndex) => (
                         <Tab label={role.role} key={roleIndex} />
                     ))}
                 </Tabs>
@@ -51,13 +60,29 @@ export default function PermissionManagement({rolePermissionsMap, setRolePermiss
                     </TabPanel>
                 ))}
             </Container>
-            <Button
-                variant="contained"
-                startIcon={<SaveIcon />} 
-                onClick={handleSaveChanges}
-            >
-                Save Permissions
-            </Button>
+            <Box display="flex" alignItems="flex-start"  >
+                <Grid item xs={3}>
+                    <Button
+                        variant="contained"
+                        startIcon={<SaveIcon />}
+                        onClick={handleSaveChanges}
+                        fullWidth
+                    >
+                        Save Permissions
+                    </Button>
+                </Grid>
+                {/* button to restore default role */}
+                <Grid item xs={3} sx={{ marginLeft: 2 }}>
+                    <Button
+                        variant="contained"
+                        startIcon={<Restore />}
+                        onClick={handleRestoreDefault}
+                        fullWidth
+                    >
+                        Default
+                    </Button>
+                </Grid>
+            </Box>
         </>
     );
 }

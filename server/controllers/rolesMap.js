@@ -9,7 +9,7 @@ import {
 } from "../Authorizations.js";
 
 
-export const getRolesMap = async (req, res) => {
+export const getRolePermissionsMap = async (req, res) => {
     const { name } = req.params;
     try {
         const map = await RolesMap.findOne({ name });
@@ -33,7 +33,7 @@ export const createRolesMap = async (req, res) => {
     }
 };
 
-export const updateRolesMap = async (req, res) => {
+export const updateRolePermissionsMap = async (req, res) => {
     const { name } = req.params;
     const updatedMapData = req.body;
     try {

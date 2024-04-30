@@ -12,7 +12,7 @@ import AdminPage from './pages/AdminPage';
 import NotFoundPage from "./pages/NotFoundPage";
 import PrivateRoute from "./components/PrivateRoute";
 
-import { getRolesMap, createRolesMap, updateRolesMap } from './services/rolesMapServices';
+import { getRolePermissionsMap, createRolesMap, updateRolePermissionsMap } from './services/rolesMapServices';
 
 
 export default function App() {

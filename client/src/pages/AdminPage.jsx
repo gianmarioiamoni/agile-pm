@@ -67,7 +67,7 @@ export default function AdminPage() {
                             <Divider />
                             <RoleManagement
                                 currentRolesMap={currentRolesMap} setCurrentRolesMap={setCurrentRolesMap}
-                                rolePermissionsMap={rolePermissionsMap} setRolePermissionsMap={setRolePermissionsMap} 
+                                rolePermissionsMap={rolePermissionsMap}  
                                 refreshPermissions={refreshPermissions}
                                 />
                         </Box>
