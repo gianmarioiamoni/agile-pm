@@ -95,8 +95,6 @@ export default function UserManagement({ users, setUsers, currentRolesMap, curre
 
             const res = await editUser(userWithNewPwd);
 
-            console.log("handleResetPassword(): res: ", res);
-
             if (res.status === 200) {
                 alert(`Password for User ${user.username} successfully reset`);
             } else {

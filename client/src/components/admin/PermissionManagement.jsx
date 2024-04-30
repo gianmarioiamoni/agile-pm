@@ -14,7 +14,6 @@ export default function PermissionManagement({rolePermissionsMap, setRolePermiss
     };
 
     const handleSaveChanges = async () => {
-        console.log('Changes to permissions saved:', rolePermissionsMap);
         try {
             await updateRolesMap("current", [...rolePermissionsMap]);
         } catch (error) {

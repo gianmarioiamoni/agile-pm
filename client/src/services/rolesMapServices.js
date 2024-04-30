@@ -28,9 +28,7 @@ export const createRolesMap = async (mapData) => {
 // function to update a roles map (default or current) on the server
 export const updateRolesMap = async (name, mapData) => {
     try {
-        console.log("updateRolesMap() - mapData: ", mapData)
         const response = await axios.put(`/server/roles-map/${name}`, mapData);
-        console.log("updateRolesMap() - response: ", response)
         return response.data;
     } catch (error) {
         console.error('Error during roles map update on the server:', error);
@@ -45,9 +43,7 @@ export const getPermissionsLabelValues = async () => {
 };
 
 export const canCreateProject = async (user) => {
-    console.log("canCreateProject() - user: ", user);
     const res = await axios.put(`/server/roles-map/can-create-project/`, user);
-    console.log("canCreateProject() - res: ", res)
 
     return res.data;
 };

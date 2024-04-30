@@ -72,7 +72,6 @@ export const deleteUser = async (req, res, next) => {
     // req.user comes from validateUser middleware
     const userArray = await User.find({ _id: req.user.id }).exec();
     const role = userArray[0].role;
-    console.log("deleteUser() - role: ", role)
 
     if (role !== 0 && req.user.id !== req.params.id) {
         return next(errorHandler(401, "You can delete your account only"));
@@ -91,10 +90,8 @@ export const deleteUser = async (req, res, next) => {
 export const addUser = async (req, res, next) => {
     // check if the user is trying to add his own account or if it is an Admin
     // req.user comes from validateUser middleware
-    console.log("+++ addUser() - req.user.id: ", req.user.id)
     const userArray = await User.find({ _id: req.user.id }).exec();
     const role = userArray[0].role;
-    console.log("+++ addUser() - role: ", role)
 
     if (role !== 0 && req.user.id !== req.params.id) {
         return next(errorHandler(401, "You must be an Admin to do that"));
@@ -107,8 +104,6 @@ export const addUser = async (req, res, next) => {
             req.body.password = bcryptjs.hashSync(req.body.password, 10);
         }
 
-        console.log("+++ addUser() - req.body: ", req.body)
-
         // add the user the user
         const newUser = new User(
             {
@@ -118,7 +113,6 @@ export const addUser = async (req, res, next) => {
                 role: req.body.role
             }
         );
-        console.log("+++ addUser() - newUser: ", newUser)
 
         await newUser.save();
 
@@ -134,8 +128,6 @@ export const addUser = async (req, res, next) => {
 
 export const sendEmail = async (req, res) => {
     // setup SendGrid API KEY
-    console.log("sendEmail() - process.env.SENDGRID_API_KEY: ", process.env.SENDGRID_API_KEY)
-    console.log("sendEmail() - process.env.SENDGRID_EMAIL: ", process.env.SENDGRID_EMAIL)
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
     const { to, subject, body } = req.body;
