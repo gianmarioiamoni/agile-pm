@@ -14,7 +14,7 @@ import { editRoles } from "../../services/roleServices";
 import { getPermissionsLabelValues, updateRolesMap } from '../../services/rolesMapServices';
 
 
-export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, rolePermissionsMap, setRolePermissionsMap }) {
+export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, rolePermissionsMap, setRolePermissionsMap, refreshPermissions }) {
 
     const [openRoleEditDialog, setOpenRoleEditDialog] = useState(false);
     const [roleEditFormData, setRoleEditFormData] = useState({
@@ -88,19 +88,11 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
             // Adding a new role
             const newRoleId = currentRolesMap[currentRolesMap.length - 1].id + 1;
             const newRole = { id: newRoleId, description: roleEditFormData.description };
-            console.log("RoleManagement() - handleSaveRole() - newRole: ", newRole)
             setCurrentRolesMap((prev) => ([...prev, newRole]));
-
-            const newPermissionsArray = permissionsLabelValueArray.map((plv) => {
-                const lbl = plv.label;
-
-                return {[lbl]: []}
-            })
 
             // update role-permissions map with the new role
             const newRoleForPermissionsMap = {
                 role: newRole.description,
-                // permissions: [...newPermissionsArray]
                 permissions: []
             };
 
@@ -123,7 +115,7 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
 
         // close the dialog
         handleCloseRoleEditDialog();
-    };
+    }; // handleSaveRole()
 
     const handleEditRole = (roleId) => {
         // find the selected role
@@ -143,13 +135,23 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
         // update the current roles map
         setCurrentRolesMap(updatedRoles);
 
-        // update DB
+        // update DB with deleted role
         try {
             await editRoles(updatedRoles);
             alert(`role ${roleDescrToDelete} deleted`);
         } catch (err) {
             alert("Impossible to delete the role");
             console.log(err)
+        }
+
+        // update role-permissions map with deleted role
+        const updatedRolePermissionsMap = rolePermissionsMap.filter((rp) => rp.role !== roleDescrToDelete); 
+        setRolePermissionsMap(updatedRolePermissionsMap);
+        try {
+            await updateRolesMap("current", [...updatedRolePermissionsMap]);
+            refreshPermissions();
+        } catch (error) {
+            console.log(error);
         }
     };
 

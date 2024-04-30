@@ -15,6 +15,7 @@ import { getCurrentRoles } from "../services/roleServices";
 export default function AdminPage() {
     const { currentUser } = useSelector(state => state.user);
     const [rolePermissionsMap, setRolePermissionsMap] = useState([]);
+    const [refreshCount, setRefreshCount] = useState(0);
 
     // states for users management
     const [users, setUsers] = useState([]);
@@ -40,6 +41,10 @@ export default function AdminPage() {
 
     }, []);
 
+    const refreshPermissions = () => {
+        setRefreshCount((prev) => prev + 1)
+    }
+
     return (
         <>
             <Header isShowAbout={true} isShowProfile={true} isShowHome={true} />
@@ -62,7 +67,9 @@ export default function AdminPage() {
                             <Divider />
                             <RoleManagement
                                 currentRolesMap={currentRolesMap} setCurrentRolesMap={setCurrentRolesMap}
-                                rolePermissionsMap={rolePermissionsMap} setRolePermissionsMap={setRolePermissionsMap} />
+                                rolePermissionsMap={rolePermissionsMap} setRolePermissionsMap={setRolePermissionsMap} 
+                                refreshPermissions={refreshPermissions}
+                                />
                         </Box>
                     </Grid>
                 </Grid>
@@ -71,7 +78,9 @@ export default function AdminPage() {
                 <Grid item xs={12}>
                     <Typography variant="h5" gutterBottom fontWeight="bold">Permissions Management</Typography>
                     <Divider />
-                    <PermissionManagement rolePermissionsMap={rolePermissionsMap} setRolePermissionsMap={setRolePermissionsMap}/>
+                    <PermissionManagement rolePermissionsMap={rolePermissionsMap} setRolePermissionsMap={setRolePermissionsMap} 
+                        refreshCount={refreshCount}
+                    />
                 </Grid>
             </Grid>
         </>

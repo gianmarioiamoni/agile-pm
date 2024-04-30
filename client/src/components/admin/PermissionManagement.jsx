@@ -5,7 +5,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import PermissionsBox from "./elements/PermissionsBox";
 import { getPermissionsLabelValues, getRolesMap, updateRolesMap } from '../../services/rolesMapServices';
 
-export default function PermissionManagement({rolePermissionsMap, setRolePermissionsMap}) {
+export default function PermissionManagement({rolePermissionsMap, setRolePermissionsMap, refreshCount}) {
     // const [rolePermissionsMap, setRolePermissionsMap] = useState([]);
     const [selectedTab, setSelectedTab] = useState(0);
 
@@ -31,7 +31,7 @@ export default function PermissionManagement({rolePermissionsMap, setRolePermiss
         };
         initStates();
         
-    }, [])
+    }, [refreshCount])
 
     return (
         <>
