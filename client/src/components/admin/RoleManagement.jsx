@@ -33,7 +33,7 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
             setPermissionsLabelValueArray(plv);
         };
         initState();
-        
+
     }, [])
 
     useEffect(() => {
@@ -76,12 +76,27 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
                 return role;
             });
             setCurrentRolesMap(updatedRoles);
-         
-            // update DB
+
+            // update DB with edited role
             try {
                 await editRoles(updatedRoles);
             } catch (err) {
                 console.log(err)
+            }
+
+            // updated role-permissions map in DB
+            const updatedRolePermissionsMap = rolePermissionsMap.map((role) => {
+                if (role.role === existingRole.description) {
+                    return { ...role, role: roleEditFormData.description }
+                };
+                return role;
+            });
+
+            try {
+                await updateRolesMap("current", updatedRolePermissionsMap);
+                refreshPermissions();
+            } catch (error) {
+                console.log(error)
             }
 
         } else {
@@ -145,7 +160,7 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
         }
 
         // update role-permissions map with deleted role
-        const updatedRolePermissionsMap = rolePermissionsMap.filter((rp) => rp.role !== roleDescrToDelete); 
+        const updatedRolePermissionsMap = rolePermissionsMap.filter((rp) => rp.role !== roleDescrToDelete);
         setRolePermissionsMap(updatedRolePermissionsMap);
         try {
             await updateRolesMap("current", [...updatedRolePermissionsMap]);
