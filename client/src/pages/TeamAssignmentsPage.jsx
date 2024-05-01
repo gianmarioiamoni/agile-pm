@@ -38,7 +38,6 @@ const UserListItem = ({ user, index }) => {
     });
 
 
-
     return (
         <div ref={drag} style={{ opacity: isDragging ? 0.5 : 1, padding: '8px', borderRadius: '4px' }}>
             <ListItem>
@@ -48,10 +47,10 @@ const UserListItem = ({ user, index }) => {
     );
 };
 
-const MemberListItem = ({ member, index, handleRemoveMember, handleUpdateMember }) => {
+const MemberListItem = ({ member, handleAddMember, handleRemoveMember, handleUpdateMember }) => {
     const [{ isOver }, drop] = useDrop({
         accept: UserType,
-        drop: (item) => console.log("Dropped user: ", item.user),
+        drop: (item) => handleAddMember(item.user),
         collect: (monitor) => ({
             isOver: !!monitor.isOver(),
         }),
@@ -60,12 +59,12 @@ const MemberListItem = ({ member, index, handleRemoveMember, handleUpdateMember 
     return (
         <div ref={drop} style={{ backgroundColor: isOver ? 'lightblue' : 'transparent', padding: '8px', borderRadius: '4px' }}>
             <ListItem>
-                <ListItemText primary={member.memberName} secondary={member.role} />
+                <ListItemText primary={member.username} secondary={member.role} />
                 <ListItemSecondaryAction>
-                    <IconButton edge="end" onClick={() => handleUpdateMember(member.memberId, member.role)}>
+                    <IconButton edge="end" onClick={() => handleUpdateMember(member.id, member.role)}>
                         <EditIcon />
                     </IconButton>
-                    <IconButton edge="end" onClick={() => handleRemoveMember(member.memberId)}>
+                    <IconButton edge="end" onClick={() => handleRemoveMember(member)}>
                         <DeleteIcon />
                     </IconButton>
                 </ListItemSecondaryAction>
@@ -76,7 +75,7 @@ const MemberListItem = ({ member, index, handleRemoveMember, handleUpdateMember 
 
 export default function TeamAssignmentsPage({ projects }) {
     const { currentUser } = useSelector(state => state.user);
-    
+
     const { projectId } = useParams();
     const [teamAssignments, setTeamAssignments] = useState([]);
     const [projectDescription, setProjectDescription] = useState('');
@@ -88,16 +87,16 @@ export default function TeamAssignmentsPage({ projects }) {
     useEffect(() => {
         // Simulazione di dati di assegnazione del team per il progetto specifico
         const dummyTeamAssignments = [
-            { memberId: '1', memberName: 'John Doe', role: 'Developer' },
-            { memberId: '2', memberName: 'Jane Smith', role: 'Designer' },
-            { memberId: '3', memberName: 'Alice Johnson', role: 'Manager' }
+            { id: '1', username: 'John Doe', role: 'Developer' },
+            { id: '2', username: 'Jane Smith', role: 'Designer' },
+            { id: '3', username: 'Alice Johnson', role: 'Manager' }
         ];
         setTeamAssignments(dummyTeamAssignments);
 
         const dummyUsers = [
-            { id: '1', username: 'Pippo', role: 'Scrum Master' },
-            { id: '2', username: 'Pluto', role: 'Product Owner' },
-            { id: '3', username: 'Papero', role: 'Scrum Team Member' },
+            { id: '100', username: 'Pippo', role: 'Scrum Master' },
+            { id: '200', username: 'Pluto', role: 'Product Owner' },
+            { id: '300', username: 'Papero', role: 'Scrum Team Member' },
         ];
         setUsers(dummyUsers);
         console.log("dummyUsers: ", dummyUsers)
@@ -108,10 +107,16 @@ export default function TeamAssignmentsPage({ projects }) {
 
     }, [projectId, projects]);
 
-    const handleAddMember = () => {
-        // Implementa la logica per aggiungere un nuovo membro al team per il progetto specifico
+    // add a new team member for the project
+    const handleAddMember = (user) => {
         // addTeamMember(projectId, memberId, memberName, role);
-        console.log("handleAddMember()");
+        // add new member to teamAssignments
+        setTeamAssignments((prev) => [...prev, user]);
+
+        // remove assigned member from available users list
+        const filteredUsers = users.filter((u) => u.id !== user.id);
+        setUsers(filteredUsers);
+
     };
 
     const handleUpdateMember = (memberId, updatedRole) => {
@@ -120,10 +125,20 @@ export default function TeamAssignmentsPage({ projects }) {
         console.log(`handleUpdateMember() - memberId: ${memberId}, updatedRole: ${updatedRole}`);
     };
 
-    const handleRemoveMember = (memberId) => {
+    const handleRemoveMember = (member) => {
         // Implementa la logica per rimuovere un membro dal team per il progetto specifico
         // removeTeamMember(projectId, memberId);
-        console.log(`handleRemoveMember() - memberId: ${memberId}`);
+        console.log(`handleRemoveMember() - memberId: ${member.id}`);
+
+        // remove member from teamAssignments
+        const filteredTeamAssignments = teamAssignments.filter((m) => m.id !== member.id);
+        setTeamAssignments(filteredTeamAssignments);
+
+        // add removed member to available users list
+        const removedUser = { ...member, id: member.id * 100 };
+        setUsers((prev) => [...prev, removedUser])
+
+
     };
 
     const handleOpenDialog = (member) => {
@@ -143,7 +158,7 @@ export default function TeamAssignmentsPage({ projects }) {
     return (
         <DndProvider backend={HTML5Backend}>
             <Header isShowProfile={true} isShowHome={true} isShowAdmin={currentUser.role === 0} isShowDashboard={true} />
-            <div style={{ padding: '20px' }}>
+            <div  style={{ padding: '20px' }}>
                 <Typography variant="h4" gutterBottom>Team Assignments for project: {projectDescription}</Typography>
                 <Divider />
 
@@ -151,16 +166,16 @@ export default function TeamAssignmentsPage({ projects }) {
                     
                     {/* Team members list */}
                     {/* Container to limit list width */}
-                    <div style={{ minWidth: '30%' }}>
+                    <div style={{ minWidth: '30%'}}>
                         <Typography variant="h6" gutterBottom>Team Members List</Typography>
                         <Typography variant="h8" gutterBottom>drag&drop an user from the Available Users List </Typography>
                         <div>
                         <List dense style={{maxHeight: "70vh", overflow: "auto"}}>
                             {teamAssignments.map((member, index) => (
                                 <MemberListItem
-                                    key={member.memberId}
+                                    key={member.id}
                                     member={member}
-                                    index={index}
+                                    handleAddMember={handleAddMember}
                                     handleRemoveMember={handleRemoveMember}
                                     handleUpdateMember={handleUpdateMember}
                                 />
@@ -172,7 +187,7 @@ export default function TeamAssignmentsPage({ projects }) {
                     {/* List of users to add */}
                     <div>
                         <Typography variant="h6" gutterBottom>Available Users</Typography>
-                        <Typography variant="h8" gutterBottom>Drag&drop to the Team Members area to add an user</Typography>
+                        <Typography variant="h8" gutterBottom>drag&drop to the Team Members area to add an user</Typography>
                         <List dense style={{ maxHeight: "70vh", overflow: "auto" }}>
                             {users !== null && users.length > 0 && users.map((user, index) => (
                                 <UserListItem key={user.id} user={user} index={index} />
