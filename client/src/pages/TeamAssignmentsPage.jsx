@@ -98,6 +98,7 @@ export default function TeamAssignmentsPage({ projects }) {
             { id: '200', username: 'Pluto', role: 'Product Owner' },
             { id: '300', username: 'Papero', role: 'Scrum Team Member' },
         ];
+        dummyUsers.sort((a, b) => a.username.localeCompare(b.username))
         setUsers(dummyUsers);
         console.log("dummyUsers: ", dummyUsers)
 
@@ -106,6 +107,17 @@ export default function TeamAssignmentsPage({ projects }) {
         setProjectDescription(description);
 
     }, [projectId, projects]);
+
+    useEffect(() => {
+        const sortedArray = [...users];
+        console.log("useEffect() - sortedArray: ", sortedArray)
+        sortValue === "username" ?
+            sortedArray.sort((a, b) => a.username.localeCompare(b.username))
+            :
+            sortedArray.sort((a, b) => a.role.localeCompare(b.role))
+        console.log("useEffect() - sortedArray: ", sortedArray)
+        setUsers(sortedArray);
+    } , [sortValue])
 
     // add a new team member for the project
     const handleAddMember = (user) => {
@@ -135,7 +147,7 @@ export default function TeamAssignmentsPage({ projects }) {
         setTeamAssignments(filteredTeamAssignments);
 
         // add removed member to available users list
-        const removedUser = { ...member, id: member.id * 100 };
+        const removedUser = { ...member, id: member.id * 2000 };
         setUsers((prev) => [...prev, removedUser])
 
 
