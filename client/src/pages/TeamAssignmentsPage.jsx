@@ -82,6 +82,7 @@ export default function TeamAssignmentsPage({ projects }) {
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedMember, setSelectedMember] = useState(null);
     const [users, setUsers] = useState([]);
+    const [originalUsers, setOriginalUsers] = useState([]);
     const [sortValue, setSortValue] = useState("username");
 
     useEffect(() => {
@@ -100,7 +101,7 @@ export default function TeamAssignmentsPage({ projects }) {
         ];
         dummyUsers.sort((a, b) => a.username.localeCompare(b.username))
         setUsers(dummyUsers);
-        console.log("dummyUsers: ", dummyUsers)
+        setOriginalUsers(dummyUsers);
 
         // project description setup
         const description = projects.find((p) => p.id === projectId)?.description || '';
@@ -110,14 +111,14 @@ export default function TeamAssignmentsPage({ projects }) {
 
     useEffect(() => {
         const sortedArray = [...users];
-        console.log("useEffect() - sortedArray: ", sortedArray)
         sortValue === "username" ?
             sortedArray.sort((a, b) => a.username.localeCompare(b.username))
             :
             sortedArray.sort((a, b) => a.role.localeCompare(b.role))
-        console.log("useEffect() - sortedArray: ", sortedArray)
         setUsers(sortedArray);
-    } , [sortValue])
+        setOriginalUsers(sortedArray);
+    }, [sortValue])
+    
 
     // add a new team member for the project
     const handleAddMember = (user) => {
@@ -128,6 +129,7 @@ export default function TeamAssignmentsPage({ projects }) {
         // remove assigned member from available users list
         const filteredUsers = users.filter((u) => u.id !== user.id);
         setUsers(filteredUsers);
+        setOriginalUsers(filteredUsers);
 
     };
 
@@ -148,8 +150,8 @@ export default function TeamAssignmentsPage({ projects }) {
 
         // add removed member to available users list
         const removedUser = { ...member, id: member.id * 2000 };
-        setUsers((prev) => [...prev, removedUser])
-
+        setUsers((prev) => [...prev, removedUser]);
+        setOriginalUsers((prev) => [...prev, removedUser]);
 
     };
 
@@ -165,6 +167,15 @@ export default function TeamAssignmentsPage({ projects }) {
     const handleSortChange = (event) => {
         setSortValue(event.target.value);
         console.log("Sort selection: ", event.target.value)
+    };
+
+    const handleSearchChange = (event) => {
+        const searchValue = event.target.value;
+
+        const filteredUsers = originalUsers.filter((u) =>
+            u.username.toLowerCase().includes(searchValue.toLowerCase()) ||
+            u.role.toLowerCase().includes(searchValue.toLowerCase()));
+        setUsers(filteredUsers);
     };
 
     return (
@@ -228,10 +239,11 @@ export default function TeamAssignmentsPage({ projects }) {
                                     <FormLabel id="search-text-field">Search</FormLabel>
                                     <TextField
                                         name="search-text-field"
-                                    size="small"
-                                    type="text"
-                                    placeholder="Search..."
-                                    style={{ marginBottom: '10px', width: '100%' }}
+                                        size="small"
+                                        type="text"
+                                        placeholder="Search..."
+                                        style={{ marginBottom: '10px', width: '100%' }}
+                                        onChange={handleSearchChange}
                                     />
                                 </FormControl>
                             </div>
