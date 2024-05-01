@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 
-const RoleSelect = ({ disabled, value, onChange, roles }) => {
+const RoleSelect = ({ disabled=false, value, onChange, roles }) => {
     return (
         <FormControl fullWidth variant="outlined">
             <InputLabel id="role-label">Select Role</InputLabel>
