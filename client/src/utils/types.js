@@ -1,0 +1,1 @@
+export const UserType = 'USER'; // drag&drop user type

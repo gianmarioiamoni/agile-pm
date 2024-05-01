@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useSelector } from 'react-redux';
@@ -8,70 +8,24 @@ import {
     Divider,
     TextField,
     FormControl, FormLabel,
-    Button, IconButton,
+    Button,
     RadioGroup, FormControlLabel, Radio,
-    List, ListItem, ListItemText, ListItemSecondaryAction,
+    List,
     Dialog, DialogTitle, DialogContent, DialogActions
 } from '@mui/material';
-import { Delete as DeleteIcon, Edit as EditIcon, Add as AddIcon } from '@mui/icons-material';
 
-import { useDrag, useDrop, DndProvider } from 'react-dnd';
+import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import Header from '../components/Header';
+import Header from "../components/Header";
+import UserListItem from "../components/assignment/UserListItem";
+import MemberListItem from "../components/assignment/MemberListItem";
 
 
 
 // Importa i tuoi servizi per gestire le assegnazioni dei membri del team per il progetto specifico
 // import { getTeamAssignments, addTeamMember, updateTeamMember, removeTeamMember } from "../services/teamAssignmentsServices";
 
-const UserType = 'USER';
-
-const UserListItem = ({ user, index }) => {
-
-    const [{ isDragging }, drag] = useDrag({
-        type: UserType,
-        item: () => ({ user, index }),
-        collect: monitor => ({
-            isDragging: monitor.isDragging(),
-        }),
-    });
-
-
-    return (
-        <div ref={drag} style={{ opacity: isDragging ? 0.5 : 1, padding: '8px', borderRadius: '4px' }}>
-            <ListItem>
-                <ListItemText primary={user.username} secondary={user.role} />
-            </ListItem>
-        </div>
-    );
-};
-
-const MemberListItem = ({ member, handleAddMember, handleRemoveMember, handleUpdateMember }) => {
-    const [{ isOver }, drop] = useDrop({
-        accept: UserType,
-        drop: (item) => handleAddMember(item.user),
-        collect: (monitor) => ({
-            isOver: !!monitor.isOver(),
-        }),
-    });
-
-    return (
-        <div ref={drop} style={{ backgroundColor: isOver ? 'lightblue' : 'transparent', padding: '8px', borderRadius: '4px' }}>
-            <ListItem>
-                <ListItemText primary={member.username} secondary={member.role} />
-                <ListItemSecondaryAction>
-                    <IconButton edge="end" onClick={() => handleUpdateMember(member.id, member.role)}>
-                        <EditIcon />
-                    </IconButton>
-                    <IconButton edge="end" onClick={() => handleRemoveMember(member)}>
-                        <DeleteIcon />
-                    </IconButton>
-                </ListItemSecondaryAction>
-            </ListItem>
-        </div>
-    );
-};
 
 export default function TeamAssignmentsPage({ projects }) {
     const { currentUser } = useSelector(state => state.user);
@@ -122,7 +76,6 @@ export default function TeamAssignmentsPage({ projects }) {
 
     // add a new team member for the project
     const handleAddMember = (user) => {
-        // addTeamMember(projectId, memberId, memberName, role);
         // add new member to teamAssignments
         setTeamAssignments((prev) => [...prev, user]);
 
@@ -140,9 +93,6 @@ export default function TeamAssignmentsPage({ projects }) {
     };
 
     const handleRemoveMember = (member) => {
-        // Implementa la logica per rimuovere un membro dal team per il progetto specifico
-        // removeTeamMember(projectId, memberId);
-        console.log(`handleRemoveMember() - memberId: ${member.id}`);
 
         // remove member from teamAssignments
         const filteredTeamAssignments = teamAssignments.filter((m) => m.id !== member.id);
@@ -166,7 +116,6 @@ export default function TeamAssignmentsPage({ projects }) {
 
     const handleSortChange = (event) => {
         setSortValue(event.target.value);
-        console.log("Sort selection: ", event.target.value)
     };
 
     const handleSearchChange = (event) => {
@@ -192,8 +141,8 @@ export default function TeamAssignmentsPage({ projects }) {
                     <div style={{ minWidth: '30%'}}>
                         <Typography variant="h6" gutterBottom>Team Members List</Typography>
                         <Typography variant="h8" gutterBottom>drag&drop an user from the Available Users List </Typography>
-                        <div>
-                        <List dense style={{maxHeight: "70vh", overflow: "auto"}}>
+                        <div style={{ maxHeight: "70vh", overflow: "auto", marginTop: '20px', padding: '8px', borderWidth: '1px', borderStyle: 'solid', borderColor: 'blue', borderRadius: '10px'}}>
+                        <List dense >
                             {teamAssignments.map((member, index) => (
                                 <MemberListItem
                                     key={member.id}
@@ -207,17 +156,19 @@ export default function TeamAssignmentsPage({ projects }) {
                         </div>
                     </div>
 
-                    {/* List of users to add */}
+                    {/* List of available users to add */}
                     <div>
                         <Typography variant="h6" gutterBottom>Available Users</Typography>
                         <Typography variant="h8" gutterBottom>drag&drop to the Team Members area to add an user</Typography>
-                        <List dense style={{ maxHeight: "70vh", overflow: "auto" }}>
-                            {users !== null && users.length > 0 && users.map((user, index) => (
-                                <UserListItem key={user.id} user={user} index={index} />
-                            ))}
-                        </List>
+                        <div style={{ maxHeight: "70vh", overflow: "auto", marginTop: '20px', padding: '8px', borderWidth: '1px', borderStyle: 'solid', borderColor: 'blue', borderRadius: '10px' }}>
+                            <List dense style={{ maxHeight: "70vh", overflow: "auto" }}>
+                                {users !== null && users.length > 0 && users.map((user, index) => (
+                                    <UserListItem key={user.id} user={user} index={index} />
+                                ))}
+                            </List>
+                        </div>
 
-                        {/* Sorting and searching area */}
+                        {/* Sorting and searching options */}
                         <div style={{ display: 'flex', justifyContent: 'center', marginTop:"20px" }}>
                             <FormControl style={{ marginBottom: '10px', minWidth: "40%" }}>
                                 <FormLabel id="sort-radio-buttons-group">Sort by;</FormLabel>
