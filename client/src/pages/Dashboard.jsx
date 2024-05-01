@@ -26,14 +26,6 @@ export default function Dashboard({projects, setProjects}) {
 
     // useEffects
     useEffect(() => {
-        // const getProjects = async () => {
-        //     const projectsListFromDB = await getAllProjects();
-        //     const projectsList = projectsListFromDB.map((p) => ({ ...p, id: p._id }));
-
-        //     setProjects(projectsList);
-        // }
-        // getProjects();
-
 
         const checkPermissions = async () => {
             // get Projects permissions

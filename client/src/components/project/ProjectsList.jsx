@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Typography, IconButton } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import GroupsIcon from '@mui/icons-material/Groups';
 
 import { Link } from 'react-router-dom';
 
@@ -36,7 +36,7 @@ export default function ProjectsList({ projects, onEdit, onDelete, isEditable = 
                     <Grid item xs={3} container justifyContent="flex-end">
                         <Link to={`/team-assignments/${project.id}`}>
                             <IconButton>
-                                <VisibilityIcon />
+                                <GroupsIcon />
                             </IconButton>
                         </Link>
                         <IconButton onClick={() => onEdit(project)} disabled={!isEditable}>
