@@ -11,9 +11,9 @@ import EditProjectDialog from "../components/project/EditProjectDialog";
 import { getAllProjects, createProject, updateProject, removeProject } from "../services/projectServices";
 import { canCreateProject, canViewProject, canEditProject, canDeleteProject } from "../services/rolesMapServices";
 
-export default function Dashboard() {
+export default function Dashboard({projects, setProjects}) {
     const { currentUser } = useSelector(state => state.user);
-    const [projects, setProjects] = useState([]);
+    // const [projects, setProjects] = useState([]);
     const [editProject, setEditProject] = useState(null);
     const [deleteProject, setDeleteProject] = useState(null);
 
@@ -26,13 +26,13 @@ export default function Dashboard() {
 
     // useEffects
     useEffect(() => {
-        const getProjects = async () => {
-            const projectsListFromDB = await getAllProjects();
-            const projectsList = projectsListFromDB.map((p) => ({ ...p, id: p._id }));
+        // const getProjects = async () => {
+        //     const projectsListFromDB = await getAllProjects();
+        //     const projectsList = projectsListFromDB.map((p) => ({ ...p, id: p._id }));
 
-            setProjects(projectsList);
-        }
-        getProjects();
+        //     setProjects(projectsList);
+        // }
+        // getProjects();
 
 
         const checkPermissions = async () => {
@@ -42,7 +42,8 @@ export default function Dashboard() {
             const deleteProject = await canDeleteProject(currentUser);
             const viewProject = await canViewProject(currentUser);
 
-            setCanProjects((prev) => ({...prev,
+            setCanProjects((prev) => ({
+                ...prev,
                 create: createProject,
                 edit: editProject,
                 delete: deleteProject,
@@ -78,7 +79,7 @@ export default function Dashboard() {
         removeProject(deleteProject.id);
         setDeleteProject(null);
     };
-    
+
 
     return (
         <>
@@ -87,7 +88,7 @@ export default function Dashboard() {
                 <Typography variant="h3" gutterBottom>Dashboard</Typography>
 
                 <Grid container spacing={3} alignItems="flex-start">
-                    
+
                     {/* New Projects form */}
                     <Grid item xs={12} md={6}>
                         <Typography variant="h5" sx={!canProjects.create ? { color: "gray" } : {}}>Add New Project</Typography>
@@ -102,8 +103,6 @@ export default function Dashboard() {
                         <Typography variant="h5">Projects List</Typography>
                         <Divider />
                         <div style={{ maxHeight: '70vh', overflowY: 'auto', border: '1px solid #ccc', borderRadius: '4px', padding: '8px' }}>
-                            {/* <Typography variant="h5">Projects List</Typography> */}
-                            {/* <Divider /> */}
                             <ProjectsList
                                 projects={projects}
                                 onEdit={(project) => canProjects.edit && setEditProject(project)}
@@ -112,7 +111,8 @@ export default function Dashboard() {
                                 isDeletable={canProjects.delete}
                             />
                         </div>
-                    </Grid>
+                    </Grid> 
+        
 
                     {/* Other additional components */}
                     {/* (Ometti i componenti non accessibili per utenti non autorizzati) */}

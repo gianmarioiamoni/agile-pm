@@ -12,6 +12,7 @@ export async function getAllProjects() {
     } catch (err) { console.log(err) }
 }
 
+
 export async function createProject(newProject) {
     try {
         const payload = { ...newProject };
