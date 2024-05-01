@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
+
+
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Profile from "./pages/Profile";
@@ -34,7 +36,6 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      
       {/* Routes */}
       <Routes>
         <Route path="/" element={<Home />} > </Route>
