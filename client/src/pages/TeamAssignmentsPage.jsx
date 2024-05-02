@@ -40,6 +40,7 @@ export default function TeamAssignmentsPage({ projects }) {
     const [users, setUsers] = useState([]);
     const [originalUsers, setOriginalUsers] = useState([]);
     const [sortValue, setSortValue] = useState("username");
+    const [isSaveChanges, setIsSaveChanges] = useState(false);
 
     useEffect(() => {
         // Simulazione di dati di assegnazione del team per il progetto specifico
@@ -85,6 +86,7 @@ export default function TeamAssignmentsPage({ projects }) {
         const filteredUsers = users.filter((u) => u.id !== user.id);
         setUsers(filteredUsers);
         setOriginalUsers(filteredUsers);
+        setIsSaveChanges(true);
 
     };
 
@@ -105,10 +107,12 @@ export default function TeamAssignmentsPage({ projects }) {
         setUsers((prev) => [...prev, removedUser]);
         setOriginalUsers((prev) => [...prev, removedUser]);
 
+        setIsSaveChanges(true);
     };
 
     const handleSaveChanges = () => {
-        console.log("save changes: ", teamAssignments)
+        console.log("save changes: ", teamAssignments);
+        setIsSaveChanges(false);
     };
 
     // const handleOpenDialog = (member) => {
@@ -169,6 +173,7 @@ export default function TeamAssignmentsPage({ projects }) {
                                 onClick={handleSaveChanges}
                                 fullWidth
                                 style={{ borderRadius: '10px' }}
+                                disabled={!isSaveChanges}
                             >
                                 Save Assignments
                             </Button>
