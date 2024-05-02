@@ -11,8 +11,10 @@ import {
     Button,
     RadioGroup, FormControlLabel, Radio,
     List,
-    Dialog, DialogTitle, DialogContent, DialogActions
+    Grid
+    // Dialog, DialogTitle, DialogContent, DialogActions
 } from '@mui/material';
+import { Save as SaveIcon } from '@mui/icons-material';
 
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -33,7 +35,7 @@ export default function TeamAssignmentsPage({ projects }) {
     const { projectId } = useParams();
     const [teamAssignments, setTeamAssignments] = useState([]);
     const [projectDescription, setProjectDescription] = useState('');
-    const [openDialog, setOpenDialog] = useState(false);
+    // const [openDialog, setOpenDialog] = useState(false);
     const [selectedMember, setSelectedMember] = useState(null);
     const [users, setUsers] = useState([]);
     const [originalUsers, setOriginalUsers] = useState([]);
@@ -86,11 +88,11 @@ export default function TeamAssignmentsPage({ projects }) {
 
     };
 
-    const handleUpdateMember = (memberId, updatedRole) => {
-        // Implementa la logica per aggiornare il ruolo di un membro del team per il progetto specifico
-        // updateTeamMember(projectId, memberId, updatedRole);
-        console.log(`handleUpdateMember() - memberId: ${memberId}, updatedRole: ${updatedRole}`);
-    };
+    // const handleUpdateMember = (memberId, updatedRole) => {
+    //     // Implementa la logica per aggiornare il ruolo di un membro del team per il progetto specifico
+    //     // updateTeamMember(projectId, memberId, updatedRole);
+    //     console.log(`handleUpdateMember() - memberId: ${memberId}, updatedRole: ${updatedRole}`);
+    // };
 
     const handleRemoveMember = (member) => {
 
@@ -105,14 +107,18 @@ export default function TeamAssignmentsPage({ projects }) {
 
     };
 
-    const handleOpenDialog = (member) => {
-        setSelectedMember(member);
-        setOpenDialog(true);
+    const handleSaveChanges = () => {
+        console.log("save changes: ", teamAssignments)
     };
 
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
-    };
+    // const handleOpenDialog = (member) => {
+    //     setSelectedMember(member);
+    //     setOpenDialog(true);
+    // };
+
+    // const handleCloseDialog = () => {
+    //     setOpenDialog(false);
+    // };
 
     const handleSortChange = (event) => {
         setSortValue(event.target.value);
@@ -138,21 +144,34 @@ export default function TeamAssignmentsPage({ projects }) {
                     
                     {/* Team members list */}
                     {/* Container to limit list width */}
-                    <div style={{ minWidth: '30%'}}>
+                    <div style={{ minWidth: '30%' }}>
                         <Typography variant="h6" gutterBottom>Team Members List</Typography>
                         <Typography variant="h8" gutterBottom>drag&drop an user from the Available Users List </Typography>
-                        <div style={{ maxHeight: "70vh", overflow: "auto", marginTop: '20px', padding: '8px', borderWidth: '1px', borderStyle: 'solid', borderColor: 'blue', borderRadius: '10px'}}>
-                        <List dense >
-                            {teamAssignments.map((member, index) => (
-                                <MemberListItem
-                                    key={member.id}
-                                    member={member}
-                                    handleAddMember={handleAddMember}
-                                    handleRemoveMember={handleRemoveMember}
-                                    handleUpdateMember={handleUpdateMember}
-                                />
-                            ))}
+                        <div style={{ maxHeight: "70vh", overflow: "auto", marginTop: '20px', padding: '8px', borderWidth: '1px', borderStyle: 'solid', borderColor: 'blue', borderRadius: '10px' }}>
+                            <List dense >
+                                {teamAssignments.map((member, index) => (
+                                    <MemberListItem
+                                        key={member.id}
+                                        member={member}
+                                        handleAddMember={handleAddMember}
+                                        handleRemoveMember={handleRemoveMember}
+                                        // handleUpdateMember={handleUpdateMember}
+                                        handleSaveChanges={handleSaveChanges}
+                                    />
+                                ))}
                             </List>
+                        </div>
+                        {/* button to save assignments */}
+                        <div style={{ marginTop: '20px' }}>
+                            <Button
+                                variant="contained"
+                                startIcon={<SaveIcon />}
+                                onClick={handleSaveChanges}
+                                fullWidth
+                                style={{ borderRadius: '10px' }}
+                            >
+                                Save Assignments
+                            </Button>
                         </div>
                     </div>
 
@@ -205,19 +224,18 @@ export default function TeamAssignmentsPage({ projects }) {
             </div>
 
             {/* Role update dialog */}
-            <Dialog open={openDialog} onClose={handleCloseDialog}>
+            {/* <Dialog open={openDialog} onClose={handleCloseDialog}>
                 <DialogTitle>Edit Role</DialogTitle>
                 <DialogContent>
-                    {/* dialog content */}
                     <Typography variant="body1">
-                        {/* Contenuto qui */}
                     </Typography>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDialog}>Cancel</Button>
                     <Button onClick={handleCloseDialog} color="primary">Save</Button>
                 </DialogActions>
-            </Dialog>
+            </Dialog> */}
+
         </DndProvider>
     );
 };

@@ -1,12 +1,12 @@
 import { useDrop } from "react-dnd";
 
 import { ListItem, ListItemText, ListItemSecondaryAction, IconButton } from '@mui/material';
-import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material'; 
+import { Delete as DeleteIcon } from '@mui/icons-material'; 
 
 import { UserType } from "../../utils/types";
 
 
-export default function MemberListItem ({ member, handleAddMember, handleRemoveMember, handleUpdateMember }) {
+export default function MemberListItem ({ member, handleAddMember, handleRemoveMember }) {
     const [{ isOver }, drop] = useDrop({
         accept: UserType,
         drop: (item) => handleAddMember(item.user),
@@ -20,14 +20,15 @@ export default function MemberListItem ({ member, handleAddMember, handleRemoveM
             <ListItem>
                 <ListItemText primary={member.username} secondary={member.role} />
                 <ListItemSecondaryAction>
-                    <IconButton edge="end" onClick={() => handleUpdateMember(member.id, member.role)}>
+                    {/* <IconButton edge="end" onClick={() => handleUpdateMember(member.id, member.role)}>
                         <EditIcon />
-                    </IconButton>
+                    </IconButton> */}
                     <IconButton edge="end" onClick={() => handleRemoveMember(member)}>
                         <DeleteIcon />
                     </IconButton>
                 </ListItemSecondaryAction>
             </ListItem>
+            
         </div>
     );
 };

@@ -61,6 +61,7 @@ export default function PermissionManagement({rolePermissionsMap, setRolePermiss
                 ))}
             </Container>
             <Box display="flex" alignItems="flex-start"  >
+                {/* button to save roles */}
                 <Grid item xs={3}>
                     <Button
                         variant="contained"
