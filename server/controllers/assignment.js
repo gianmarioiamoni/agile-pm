@@ -2,8 +2,8 @@ import Assignment from "../models/assignment.js";
 
 export const createAssignment = async (req, res) => {
     try {
-        const { userId, projectId, roleId } = req.body;
-        const assignment = new Assignment({ userId, projectId, roleId });
+        const { userId, projectId, roleDescription, role } = req.body;
+        const assignment = new Assignment({ userId, projectId, roleDescription, role });
         await assignment.save();
 
         res.status(201).json(assignment);
@@ -14,7 +14,7 @@ export const createAssignment = async (req, res) => {
 
 export const getProjectAssignments = async (req, res) => {
     try {
-        const assignments = await Assignment.find({ projectId: req.params.projectId }).populate('userId').populate('roleId');
+        const assignments = await Assignment.find({ projectId: req.params.projectId }).populate('userId').populate('role');
         res.json(assignments);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -30,8 +30,8 @@ export const updateAssignment = async (req, res) => {
         if (req.body.projectId != null) {
             assignment.projectId = req.body.projectId;
         }
-        if (req.body.roleId != null) {
-            assignment.roleId = req.body.roleId;
+        if (req.body.role != null) {
+            assignment.role = req.body.role;
         }
         await assignment.save();
         res.json(assignment);

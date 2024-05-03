@@ -18,7 +18,7 @@ export default function MemberListItem ({ member, handleAddMember, handleRemoveM
     return (
         <div ref={drop} style={{ backgroundColor: isOver ? 'lightblue' : 'transparent', padding: '8px', borderRadius: '4px' }}>
             <ListItem>
-                <ListItemText primary={member.username} secondary={member.role} />
+                <ListItemText primary={member.username} secondary={member.roleDescription} />
                 <ListItemSecondaryAction>
                     {/* <IconButton edge="end" onClick={() => handleUpdateMember(member.id, member.role)}>
                         <EditIcon />

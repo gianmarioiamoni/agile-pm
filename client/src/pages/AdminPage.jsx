@@ -12,24 +12,24 @@ import { getCurrentUsers } from "../services/userServices";
 import { getCurrentRoles } from "../services/roleServices";
 
 
-export default function AdminPage() {
+export default function AdminPage({users, setUsers, currentRolesMap, setCurrentRolesMap}) {
     const { currentUser } = useSelector(state => state.user);
     const [rolePermissionsMap, setRolePermissionsMap] = useState([]);
     const [refreshCount, setRefreshCount] = useState(0);
 
-    // states for users management
-    const [users, setUsers] = useState([]);
+    // // states for users management
+    // const [users, setUsers] = useState([]);
 
     // state for Roles Management
-    const [currentRolesMap, setCurrentRolesMap] = useState([]);
+    // const [currentRolesMap, setCurrentRolesMap] = useState([]);
 
     useEffect(() => {
-        // get current users from the DB
-        const setCurrentUsers = async () => {
-            const u = await getCurrentUsers();
-            setUsers(u);
-        };
-        setCurrentUsers();
+        // // get current users from the DB
+        // const setCurrentUsers = async () => {
+        //     const u = await getCurrentUsers();
+        //     setUsers(u);
+        // };
+        // setCurrentUsers();
 
         // get current rolesMap from the DB
         const setCurrentRoles = async () => {

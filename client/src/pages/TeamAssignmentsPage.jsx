@@ -29,7 +29,7 @@ import MemberListItem from "../components/assignment/MemberListItem";
 // import { getTeamAssignments, addTeamMember, updateTeamMember, removeTeamMember } from "../services/teamAssignmentsServices";
 
 
-export default function TeamAssignmentsPage({ projects }) {
+export default function TeamAssignmentsPage({ projects, users, currentRolesMap }) {
     const { currentUser } = useSelector(state => state.user);
 
     const { projectId } = useParams();
@@ -37,28 +37,49 @@ export default function TeamAssignmentsPage({ projects }) {
     const [projectDescription, setProjectDescription] = useState('');
     // const [openDialog, setOpenDialog] = useState(false);
     const [selectedMember, setSelectedMember] = useState(null);
-    const [users, setUsers] = useState([]);
-    const [originalUsers, setOriginalUsers] = useState([]);
+    // const [availableUsers, setAvailableUsers] = useState([...users].sort((a, b) => a.username.localeCompare(b.username)));
+    const [availableUsers, setAvailableUsers] = useState([...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.id === u.role)).description })).sort((a, b) => a.username.localeCompare(b.username)));
+    const [originalUsers, setOriginalUsers] = useState([...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.id === u.role)).description })).sort((a, b) => a.username.localeCompare(b.username)));
+    // const [originalUsers, setOriginalUsers] = useState([[...users].sort((a, b) => a.username.localeCompare(b.username))]);
+    // const [availableUsers, setAvailableUsers] = useState([]);
+    // const [originalUsers, setOriginalUsers] = useState([]);
+
     const [sortValue, setSortValue] = useState("username");
     const [isSaveChanges, setIsSaveChanges] = useState(false);
+
+
+    const getLocalUsers = () => {
+        const localUsers = [...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.id === u.role)).description }))
+        console.log("localUser: ", localUsers)
+        localUsers.sort((a, b) => a.username.localeCompare(b.username))
+
+        return localUsers;
+    }
+
 
     useEffect(() => {
         // Simulazione di dati di assegnazione del team per il progetto specifico
         const dummyTeamAssignments = [
-            { id: '1', username: 'John Doe', role: 'Developer' },
-            { id: '2', username: 'Jane Smith', role: 'Designer' },
-            { id: '3', username: 'Alice Johnson', role: 'Manager' }
+            { id: '1', username: 'John Doe', roleDescription: 'Developer', role: '11' },
+            { id: '2', username: 'Jane Smith', roleDescription: 'Designer', role: '22' },
+            { id: '3', username: 'Alice Johnson', roleDescription: 'Manager', role: '33' }
         ];
         setTeamAssignments(dummyTeamAssignments);
 
-        const dummyUsers = [
-            { id: '100', username: 'Pippo', role: 'Scrum Master' },
-            { id: '200', username: 'Pluto', role: 'Product Owner' },
-            { id: '300', username: 'Papero', role: 'Scrum Team Member' },
-        ];
-        dummyUsers.sort((a, b) => a.username.localeCompare(b.username))
-        setUsers(dummyUsers);
-        setOriginalUsers(dummyUsers);
+        // const dummyUsers = [
+        //     { id: '100', username: 'Pippo', role: 'Scrum Master' },
+        //     { id: '200', username: 'Pluto', role: 'Product Owner' },
+        //     { id: '300', username: 'Papero', role: 'Scrum Team Member' },
+        // ];
+
+        // for page reload
+        // const localUsers = [...users]
+        // localUsers.sort((a, b) => a.username.localeCompare(b.username))
+        // setAvailableUsers([...localUsers]);
+        // setOriginalUsers([...localUsers]);
+        setAvailableUsers(getLocalUsers);
+        setOriginalUsers(getLocalUsers);
+
 
         // project description setup
         const description = projects.find((p) => p.id === projectId)?.description || '';
@@ -67,12 +88,12 @@ export default function TeamAssignmentsPage({ projects }) {
     }, [projectId, projects]);
 
     useEffect(() => {
-        const sortedArray = [...users];
+        const sortedArray = [...availableUsers];
         sortValue === "username" ?
             sortedArray.sort((a, b) => a.username.localeCompare(b.username))
             :
-            sortedArray.sort((a, b) => a.role.localeCompare(b.role))
-        setUsers(sortedArray);
+            sortedArray.sort((a, b) => a.roleDescription.localeCompare(b.roleDescription))
+        setAvailableUsers(sortedArray);
         setOriginalUsers(sortedArray);
     }, [sortValue])
     
@@ -83,18 +104,12 @@ export default function TeamAssignmentsPage({ projects }) {
         setTeamAssignments((prev) => [...prev, user]);
 
         // remove assigned member from available users list
-        const filteredUsers = users.filter((u) => u.id !== user.id);
-        setUsers(filteredUsers);
+        const filteredUsers = availableUsers.filter((u) => u.id !== user.id);
+        setAvailableUsers(filteredUsers);
         setOriginalUsers(filteredUsers);
         setIsSaveChanges(true);
 
     };
-
-    // const handleUpdateMember = (memberId, updatedRole) => {
-    //     // Implementa la logica per aggiornare il ruolo di un membro del team per il progetto specifico
-    //     // updateTeamMember(projectId, memberId, updatedRole);
-    //     console.log(`handleUpdateMember() - memberId: ${memberId}, updatedRole: ${updatedRole}`);
-    // };
 
     const handleRemoveMember = (member) => {
 
@@ -104,7 +119,7 @@ export default function TeamAssignmentsPage({ projects }) {
 
         // add removed member to available users list
         const removedUser = { ...member, id: member.id * 2000 };
-        setUsers((prev) => [...prev, removedUser]);
+        setAvailableUsers((prev) => [...prev, removedUser]);
         setOriginalUsers((prev) => [...prev, removedUser]);
 
         setIsSaveChanges(true);
@@ -115,15 +130,6 @@ export default function TeamAssignmentsPage({ projects }) {
         setIsSaveChanges(false);
     };
 
-    // const handleOpenDialog = (member) => {
-    //     setSelectedMember(member);
-    //     setOpenDialog(true);
-    // };
-
-    // const handleCloseDialog = () => {
-    //     setOpenDialog(false);
-    // };
-
     const handleSortChange = (event) => {
         setSortValue(event.target.value);
     };
@@ -133,8 +139,8 @@ export default function TeamAssignmentsPage({ projects }) {
 
         const filteredUsers = originalUsers.filter((u) =>
             u.username.toLowerCase().includes(searchValue.toLowerCase()) ||
-            u.role.toLowerCase().includes(searchValue.toLowerCase()));
-        setUsers(filteredUsers);
+            u.roleDescription.toLowerCase().includes(searchValue.toLowerCase()));
+        setAvailableUsers(filteredUsers);
     };
 
     return (
@@ -186,7 +192,7 @@ export default function TeamAssignmentsPage({ projects }) {
                         <Typography variant="h8" gutterBottom>drag&drop to the Team Members area to add an user</Typography>
                         <div style={{ maxHeight: "70vh", overflow: "auto", marginTop: '20px', padding: '8px', borderWidth: '1px', borderStyle: 'solid', borderColor: 'blue', borderRadius: '10px' }}>
                             <List dense style={{ maxHeight: "70vh", overflow: "auto" }}>
-                                {users !== null && users.length > 0 && users.map((user, index) => (
+                                {availableUsers !== null && availableUsers.length > 0 && availableUsers.map((user, index) => (
                                     <UserListItem key={user.id} user={user} index={index} />
                                 ))}
                             </List>

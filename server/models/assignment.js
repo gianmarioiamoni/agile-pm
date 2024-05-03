@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+
 const assignmentSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -11,11 +12,16 @@ const assignmentSchema = new mongoose.Schema({
         ref: 'Project',
         required: true
     },
-    roleId: {
+    role: {
         type: Number,
+        required: true
+    },
+    roleDescription: {
+        type: String,
         required: true
     }
 }, { timestamps: true });
+
 
 const Assignment = mongoose.model('Assignment', assignmentSchema);
 

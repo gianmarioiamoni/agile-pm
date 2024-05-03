@@ -24,7 +24,7 @@ export default function SignUp() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // const roles = useContext(RolesContext);
+  
   const [roles, setRoles] = useState([]);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export default function SignUp() {
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,7 +60,7 @@ export default function SignUp() {
     } catch (err) {
       dispatch(signInFailure(err));
     }
-  }
+  };
 
 
   return (

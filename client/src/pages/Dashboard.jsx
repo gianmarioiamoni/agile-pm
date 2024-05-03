@@ -11,7 +11,7 @@ import EditProjectDialog from "../components/project/EditProjectDialog";
 import { getAllProjects, createProject, updateProject, removeProject } from "../services/projectServices";
 import { canCreateProject, canViewProject, canEditProject, canDeleteProject } from "../services/rolesMapServices";
 
-export default function Dashboard({projects, setProjects}) {
+export default function Dashboard({projects, setProjects, users, setUsers}) {
     const { currentUser } = useSelector(state => state.user);
     // const [projects, setProjects] = useState([]);
     const [editProject, setEditProject] = useState(null);
@@ -101,6 +101,7 @@ export default function Dashboard({projects, setProjects}) {
                                 onDelete={(project) => canProjects.delete && setDeleteProject(project)}
                                 isEditable={canProjects.edit}
                                 isDeletable={canProjects.delete}
+                                users={users}
                             />
                         </div>
                     </Grid> 
