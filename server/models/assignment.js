@@ -15,10 +15,6 @@ const assignmentSchema = new mongoose.Schema({
     role: {
         type: Number,
         required: true
-    },
-    roleDescription: {
-        type: String,
-        required: true
     }
 }, { timestamps: true });
 

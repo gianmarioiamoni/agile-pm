@@ -2,8 +2,8 @@ import Assignment from "../models/assignment.js";
 
 export const createAssignment = async (req, res) => {
     try {
-        const { userId, projectId, roleDescription, role } = req.body;
-        const assignment = new Assignment({ userId, projectId, roleDescription, role });
+        const { userId, projectId, role } = req.body;
+        const assignment = new Assignment({ userId, projectId, role });
         await assignment.save();
 
         res.status(201).json(assignment);

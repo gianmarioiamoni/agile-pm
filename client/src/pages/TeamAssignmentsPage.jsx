@@ -23,6 +23,8 @@ import Header from "../components/Header";
 import UserListItem from "../components/assignment/UserListItem";
 import MemberListItem from "../components/assignment/MemberListItem";
 
+import { getAssignments, createAssignments } from "../services/assignmentServices";
+
 
 
 // Importa i tuoi servizi per gestire le assegnazioni dei membri del team per il progetto specifico
@@ -47,15 +49,14 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
     const [sortValue, setSortValue] = useState("username");
     const [isSaveChanges, setIsSaveChanges] = useState(false);
 
-
+    // add roleDescription to users
     const getLocalUsers = () => {
         const localUsers = [...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.id === u.role)).description }))
         console.log("localUser: ", localUsers)
         localUsers.sort((a, b) => a.username.localeCompare(b.username))
 
         return localUsers;
-    }
-
+    };
 
     useEffect(() => {
         // Simulazione di dati di assegnazione del team per il progetto specifico
@@ -128,6 +129,8 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
     const handleSaveChanges = () => {
         console.log("save changes: ", teamAssignments);
         setIsSaveChanges(false);
+
+        
     };
 
     const handleSortChange = (event) => {
