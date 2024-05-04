@@ -11,7 +11,7 @@ export async function getDefaultRoles() {
     try {
         const defaultRolesArray = await axios.get(`/server/roles/${roleName}`);
 
-        return defaultRolesArray.data.roles;
+        return defaultRolesArray.data;
     } catch (error) {
         console.log(error);
     }
@@ -21,28 +21,34 @@ export async function getCurrentRoles() {
     const roleName = "current";
     try {
         const currentRolesArray = await axios.get(`/server/roles/${roleName}`);
-
-        return currentRolesArray.data.roles;
+        return currentRolesArray.data;
     } catch (error) {
         console.log(error);
     }
 }
 
-export async function createNewRoles(rolesObj) {
+export async function addRole(id, description) {
     try {
-        await axios.post("/server/roles", rolesObj);
+        const res = await axios.post("/server/roles", { id, description });
+        return res.data;
     } catch (error) {
         console.log(error);
     }
 }
 
-export async function editRoles(rolesArray) {
+export async function editRole(id, description) {
     try {
-        console.log("editroles() - rolesArray: ", rolesArray)
-        const payload = { roles: [...rolesArray] }
-        await axios.put("/server/roles", rolesArray);
+        await axios.put(`/server/roles/${id}}`, { id, description });
     } catch (error) {
         console.log(error);
     }
+}
+
+export async function restoreRoles(rolesArray) {
+    try {
+        await axios.put(`/server/roles`, rolesArray);
+    } catch (error) {
+        console.log(error);
+    } 
 }
 

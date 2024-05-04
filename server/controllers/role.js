@@ -1,25 +1,37 @@
 import Role from "../models/role.js";
 
-export const addRoles = async (req, res) => {
-    const roles = new Role(req.body);
+export const addRole = async (req, res) => {
+    const role = new Role(req.body);
     try {
-        await Role.findOneAndDelete({ name: "current" });
-        const newRole = await roles.save();
+        const newRole = await role.save();
         res.status(201).json(newRole);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
 
-export const editRoles = async (req, res) => {
-    const roles = (req.body);
+export const editRole = async (req, res) => {
+    const roleObj = req.body;
+    const id = req.params;
     try {
-        await Role.findOneAndUpdate({ name: "current" }, {roles: roles} );
-        res.status(201).json(roles);
+        const role = await Role.findOneAndUpdate({ id: roleObj.id }, { description })
+        // await Role.findOneAndUpdate({ id }, {description} );
+        res.status(201).json(role);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 };
+
+export const restoreRoles = async (req, res) => {
+    const rolesArray = req.body;
+
+    try {
+        await Role.deleteMany({});
+        await Role.insertMany(rolesArray);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+}
 
 export const deleteRole = async (req, res) => {
     const roleId = (req.params);

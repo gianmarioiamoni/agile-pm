@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { Edit, Delete, Add, ArrowDownward, Restore } from '@mui/icons-material';
 
-import { editRoles, getDefaultRoles } from "../../services/roleServices";
+import { addRole, editRole, deleteRole, getDefaultRoles, restoreRoles } from "../../services/roleServices";
 import { getPermissionsLabelValues, getRolePermissionsMap, updateRolePermissionsMap } from '../../services/rolesMapServices';
 
 
@@ -79,7 +79,8 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
 
             // update DB with edited role
             try {
-                await editRoles(updatedRoles);
+                // await editRoles(updatedRoles);
+                await editRole(roleEditFormData.id, roleEditFormData.description);
             } catch (err) {
                 console.log(err)
             }
@@ -125,7 +126,8 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
 
             // update DB with new role
             try {
-                await editRoles([...currentRolesMap, newRole]);
+                // await editRoles([...currentRolesMap, newRole]);
+                await addRole(newRole.id, newRole.description);
             } catch (err) {
                 console.log(err)
             }
@@ -169,7 +171,8 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
 
         // update DB with deleted role
         try {
-            await editRoles(updatedRoles);
+            // await editRoles(updatedRoles);
+            await deleteRole(roleId)
             alert(`role ${roleDescrToDelete} deleted`);
         } catch (err) {
             alert("Impossible to delete the role");
@@ -197,7 +200,8 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
         try {
             // copy default RolesMap into current
             const defaultRolesArray = await getDefaultRoles();
-            await editRoles(defaultRolesArray);
+            // await editRoles(defaultRolesArray);
+            await restoreRoles(defaultRolesArray);
             setCurrentRolesMap(defaultRolesArray);
             
             console.log("defaultRolesArray: ", defaultRolesArray)

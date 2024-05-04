@@ -115,8 +115,8 @@ export const initDB = async () => {
 const getCurrentRoles = async () => {
     try {
         const name = "current";
-        const roles = await Role.findOne({ name });
-        return roles.roles;
+        const roles = await Role.find({ name });
+        return roles;
     } catch (error) {
         console.log(error)
     }
