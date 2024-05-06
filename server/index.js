@@ -14,6 +14,9 @@ import { initDB } from "./Authorizations.js";
 
 import cors from 'cors';
 
+import bodyParser from 'body-parser';
+
+
 
 dotenv.config();
 
@@ -24,6 +27,8 @@ app.use(express.json());
 
 // user to parse the cookie from req.cookies
 app.use(cookieParser());
+
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // cors
 const corsOptions = {

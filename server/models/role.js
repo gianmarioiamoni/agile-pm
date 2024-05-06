@@ -1,18 +1,18 @@
 import mongoose from 'mongoose';
 
 const roleSchema = new mongoose.Schema({
-    id: {
+    roleId: {
         type: Number,
         required: true,
         min: 0,
         default: 1
     },
-    description: {
+    roleDescription: {
         type: String,
-        required: true,
+        // required: true,
     }
 });  
 
-const Role = mongoose.model('Role', roleSchema);
+const Role = mongoose.model('CurrentRole', roleSchema);
 
 export default Role;

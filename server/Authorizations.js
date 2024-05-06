@@ -2,6 +2,7 @@
 import bcryptjs from 'bcryptjs';
 
 import Role from "./models/role.js";
+import RoleDefault from "./models/roleDefault.js";
 import RolesMap from "./models/rolesMap.js";
 import User from "./models/user.js";
 
@@ -30,33 +31,24 @@ const initUser = async () => {
 // Init Roles
 const initRoles = async () => {
     try {
-        const defaultRolesData = {
-            name: 'default',
-            roles: defaultRolesMap,
-        };
+        const defRoles = await RoleDefault.find({}).exec();
+        const currRoles = await Role.find({}).exec();
 
-        const currentRolesData = {
-            name: 'current',
-            roles: defaultRolesMap,
-        };
-
-        const defRoles = await Role.findOne({ name: "default" });
-        const currRoles = await Role.find({ name: "current" });
-
-        if (defRoles == null || defRoles == undefined) {
-            await Role.create(defaultRolesData);
+        if (defRoles == null || defRoles == undefined || defRoles.length === 0) {
+            await RoleDefault.insertMany(defaultRolesMap);
             console.log("default Roles Map created");
             if (currRoles) {
-                await Role.deleteOne({ name: "current" });
+                await Role.deleteMany({});
             }
-            await Role.create(currentRolesData);
+            await Role.insertMany(defaultRolesMap)
+            // await Role.create(currentRolesData);
             console.log("default Roles Map copied in current Roles Map")
             return;
         }
 
         if (!currRoles) {
-            await Role.create(currentRolesData);
-            console.log("current Roles Map restore as default")
+            await Role.insertMany(defaultRolesMap);
+            console.log("current Roles Map restored as default")
         }
 
     } catch (error) {
@@ -114,8 +106,7 @@ export const initDB = async () => {
 
 const getCurrentRoles = async () => {
     try {
-        const name = "current";
-        const roles = await Role.find({ name });
+        const roles = await Role.find({});
         return roles;
     } catch (error) {
         console.log(error)
@@ -138,10 +129,10 @@ const getCurrentRolesMap = async () => {
 
 // DEFAULT CONFIGURATIONS
 const defaultRolesMap = [
-    { id: 0, description: 'Admin' },
-    { id: 1, description: 'Product Owner' },
-    { id: 2, description: 'Scrum Master' },
-    { id: 3, description: 'Scrum Team Member' }
+    { roleId: 0, roleDescription: 'Admin' },
+    { roleId: 1, roleDescription: 'Product Owner' },
+    { roleId: 2, roleDescription: 'Scrum Master' },
+    { roleId: 3, roleDescription: 'Scrum Team Member' }
 ];
 
 const permissions = {

@@ -18,7 +18,7 @@ import Header from "../components/Header";
 import { getCurrentRoles } from "../services/roleServices";
 
 
-export default function Profile() {
+export default function Profile({currentRolesMap}) {
   
   const fileRef = useRef(null);
 
@@ -34,7 +34,7 @@ export default function Profile() {
   const dispatch = useDispatch();
 
   // const roles = useContext(RolesContext);
-  const [roles, setRoles] = useState([]);
+  const [roles, setRoles] = useState([...currentRolesMap]);
 
   const handleFileUpload = async (image) => {
     const storage = getStorage(app);
@@ -61,11 +61,12 @@ export default function Profile() {
   }; // handleFileUpload
 
   useEffect(() => {
-    const getRoles = async () => {
-      const r = await getCurrentRoles();
-      setRoles(r);
-    };
-    getRoles();
+    // const getRoles = async () => {
+    //   const r = await getCurrentRoles();
+    //   setRoles(r);
+    // };
+    // getRoles();
+    setRoles(currentRolesMap)
 
   } , []);
 
@@ -183,7 +184,7 @@ export default function Profile() {
           {/* Role selection */}
           <select id="role" value={editedUser.role} onChange={handleChange} className='bg-slate-100 border-border border-2 p-3 rounded-lg'>
             {roles.map((role, index) => (
-              <option key={index} value={role.id}>{role.description}</option>
+              <option key={index} value={role.roleId}>{role.roleDescription}</option>
             ))}
           </select>
           <button

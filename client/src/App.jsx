@@ -46,6 +46,7 @@ export default function App() {
     // get current rolesMap from the DB
     const setCurrentRoles = async () => {
       const r = await getCurrentRoles();
+      console.log("r: ", r)
       setCurrentRolesMap(r);
     };
     setCurrentRoles();
@@ -60,7 +61,7 @@ export default function App() {
         <Route path="/" element={<Home />} > </Route>
         <Route path="/about" element={<About />} > </Route>
         <Route element={<PrivateRoute />}>
-          <Route path="/profile" element={<Profile />} > </Route>
+          <Route path="/profile" element={<Profile currentRolesMap={currentRolesMap} />} > </Route>
         </Route>
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard projects={projects} setProjects={setProjects} />} > </Route>

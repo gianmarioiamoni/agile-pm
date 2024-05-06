@@ -29,7 +29,7 @@ export async function getCurrentRoles() {
 
 export async function addRole(id, description) {
     try {
-        const res = await axios.post("/server/roles", { id, description });
+        const res = await axios.post("/server/roles", { roleId: id, roleDescription: description });
         return res.data;
     } catch (error) {
         console.log(error);
@@ -38,7 +38,15 @@ export async function addRole(id, description) {
 
 export async function editRole(id, description) {
     try {
-        await axios.put(`/server/roles/${id}}`, { id, description });
+        await axios.put(`/server/roles/${id}`, { id, description });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export async function deleteRole(id) {
+    try {
+        await axios.delete(`/server/roles/${id}`);
     } catch (error) {
         console.log(error);
     }
@@ -47,6 +55,7 @@ export async function editRole(id, description) {
 export async function restoreRoles(rolesArray) {
     try {
         await axios.put(`/server/roles`, rolesArray);
+        return;
     } catch (error) {
         console.log(error);
     } 

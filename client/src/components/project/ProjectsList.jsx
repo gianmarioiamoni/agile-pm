@@ -6,7 +6,7 @@ import GroupsIcon from '@mui/icons-material/Groups';
 
 import { Link } from 'react-router-dom';
 
-import { getProjectAssignments } from "../../services/assignmentServices";
+import { getAssignments } from "../../services/assignmentServices";
 
 export default function ProjectsList({ projects, onEdit, onDelete, isEditable = true, isDeletable = true }) {
     const [projectAssignments, setProjectAssignments] = useState({});
@@ -15,7 +15,7 @@ export default function ProjectsList({ projects, onEdit, onDelete, isEditable = 
         const fetchProjectAssignments = async () => {
             const assignments = {};
             for (const project of projects) {
-                assignments[project.id] = await getProjectAssignments(project.id);
+                assignments[project.id] = await getAssignments(project.id);
             }
             setProjectAssignments(assignments);
             console.log("assignments: ", assignments)

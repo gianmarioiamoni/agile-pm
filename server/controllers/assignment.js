@@ -12,7 +12,7 @@ export const createAssignment = async (req, res) => {
     }
 };
 
-export const getProjectAssignments = async (req, res) => {
+export const getAssignments = async (req, res) => {
     try {
         const assignments = await Assignment.find({ projectId: req.params.projectId }).populate('userId').populate('role');
         res.json(assignments);

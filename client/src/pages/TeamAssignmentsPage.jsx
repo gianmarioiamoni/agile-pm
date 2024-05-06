@@ -23,7 +23,7 @@ import Header from "../components/Header";
 import UserListItem from "../components/assignment/UserListItem";
 import MemberListItem from "../components/assignment/MemberListItem";
 
-import { getAssignments, createAssignments } from "../services/assignmentServices";
+import { getAssignments, saveAssignments } from "../services/assignmentServices";
 
 
 
@@ -40,8 +40,9 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
     // const [openDialog, setOpenDialog] = useState(false);
     const [selectedMember, setSelectedMember] = useState(null);
     // const [availableUsers, setAvailableUsers] = useState([...users].sort((a, b) => a.username.localeCompare(b.username)));
-    const [availableUsers, setAvailableUsers] = useState([...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.id === u.role)).description })).sort((a, b) => a.username.localeCompare(b.username)));
-    const [originalUsers, setOriginalUsers] = useState([...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.id === u.role)).description })).sort((a, b) => a.username.localeCompare(b.username)));
+    // const [availableUsers, setAvailableUsers] = useState([...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.id === u.role)).description })).sort((a, b) => a.username.localeCompare(b.username)));
+    const [availableUsers, setAvailableUsers] = useState([...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.roleId === u.role)).roleDescription })).sort((a, b) => a.username.localeCompare(b.username)));
+    const [originalUsers, setOriginalUsers] = useState([...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.roleId === u.role)).roleDescription })).sort((a, b) => a.username.localeCompare(b.username)));
     // const [originalUsers, setOriginalUsers] = useState([[...users].sort((a, b) => a.username.localeCompare(b.username))]);
     // const [availableUsers, setAvailableUsers] = useState([]);
     // const [originalUsers, setOriginalUsers] = useState([]);
@@ -51,7 +52,8 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
 
     // add roleDescription to users
     const getLocalUsers = () => {
-        const localUsers = [...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.id === u.role)).description }))
+        // const localUsers = [...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.id === u.role)).description }))
+        const localUsers = [...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.id === u.role)).roleDescription }))
         console.log("localUser: ", localUsers)
         localUsers.sort((a, b) => a.username.localeCompare(b.username))
 
@@ -130,7 +132,7 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
         console.log("save changes: ", teamAssignments);
         setIsSaveChanges(false);
 
-        
+
     };
 
     const handleSortChange = (event) => {
