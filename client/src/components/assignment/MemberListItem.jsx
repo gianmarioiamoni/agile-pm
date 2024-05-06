@@ -1,3 +1,5 @@
+import { useId } from 'react';
+
 import { useDrop } from "react-dnd";
 
 import { ListItem, ListItemText, ListItemSecondaryAction, IconButton } from '@mui/material';
@@ -17,12 +19,9 @@ export default function MemberListItem ({ member, handleAddMember, handleRemoveM
 
     return (
         <div ref={drop} style={{ backgroundColor: isOver ? 'lightblue' : 'transparent', padding: '8px', borderRadius: '4px' }}>
-            <ListItem>
+            <ListItem key={useId()}>
                 <ListItemText primary={member.username} secondary={member.roleDescription} />
                 <ListItemSecondaryAction>
-                    {/* <IconButton edge="end" onClick={() => handleUpdateMember(member.id, member.role)}>
-                        <EditIcon />
-                    </IconButton> */}
                     <IconButton edge="end" onClick={() => handleRemoveMember(member)}>
                         <DeleteIcon />
                     </IconButton>

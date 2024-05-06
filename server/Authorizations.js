@@ -2,7 +2,6 @@
 import bcryptjs from 'bcryptjs';
 
 import Role from "./models/role.js";
-import RoleDefault from "./models/roleDefault.js";
 import RolesMap from "./models/rolesMap.js";
 import User from "./models/user.js";
 
@@ -31,24 +30,11 @@ const initUser = async () => {
 // Init Roles
 const initRoles = async () => {
     try {
-        const defRoles = await RoleDefault.find({}).exec();
         const currRoles = await Role.find({}).exec();
 
-        if (defRoles == null || defRoles == undefined || defRoles.length === 0) {
-            await RoleDefault.insertMany(defaultRolesMap);
-            console.log("default Roles Map created");
-            if (currRoles) {
-                await Role.deleteMany({});
-            }
-            await Role.insertMany(defaultRolesMap)
-            // await Role.create(currentRolesData);
-            console.log("default Roles Map copied in current Roles Map")
-            return;
-        }
-
-        if (!currRoles) {
+        if (!currRoles || currRoles.length === 0) {
             await Role.insertMany(defaultRolesMap);
-            console.log("current Roles Map restored as default")
+            console.log("current Roles Map initialized")
         }
 
     } catch (error) {
@@ -102,9 +88,9 @@ export const initDB = async () => {
 };
 
 
-// GETTERS - internal usage
+// GETTERS
 
-const getCurrentRoles = async () => {
+export const getCurrentRoles = async () => {
     try {
         const roles = await Role.find({});
         return roles;
@@ -112,6 +98,10 @@ const getCurrentRoles = async () => {
         console.log(error)
     }
 };
+
+export const getDefaultRoles = () => {
+    return defaultRolesMap;
+}
 
 const getCurrentRolesMap = async () => {
     try {

@@ -1,11 +1,11 @@
 import Role from "../models/role.js";
-import RoleDefault from "../models/roleDefault.js";
+
+import { getDefaultRoles } from "../Authorizations.js";
 
 export const addRole = async (req, res) => {
     const roleObj = req.body;
 
     const role = new Role(roleObj);
-    console.log("addRole() - req.body: ", req.body)
     try {
         const newRole = await role.save();
         res.status(201).json(newRole);
@@ -16,9 +16,7 @@ export const addRole = async (req, res) => {
 
 export const editRole = async (req, res) => {
     const roleObj = req.body;
-    console.log("editRole() - roleObj:", roleObj);
     const { id } = req.params;
-    console.log("editRole() - id:", id);
     try {
         const role = await Role.findOneAndUpdate({ roleId: id }, { roleDescription: roleObj.description })
         // await Role.findOneAndUpdate({ id }, {description} );
@@ -34,7 +32,7 @@ export const restoreRoles = async (req, res) => {
     try {
         await Role.deleteMany({});
         await Role.insertMany(rolesArray);
-        res.status(201).json({message: "default roles resored"});
+        res.status(201).json({message: "default roles restored"});
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -42,7 +40,6 @@ export const restoreRoles = async (req, res) => {
 
 export const deleteRole = async (req, res) => {
     const { id } = req.params;
-    console.log("deleteRole() - roleId: ", id)
     try {
         await Role.findOneAndDelete({ roleId: id });
         res.status(201).json({message: "role cancelled"});
@@ -56,13 +53,11 @@ export const getRoles = async (req, res) => {
     try {
         if (name === "current") {
             const roles = await Role.find({});
-            console.log("get current roles - roles: ", roles)
             res.status(201).json(roles);
             return;
         }
         if (name === "default") {
-            const roles = await RoleDefault.find({});
-            console.log("get default roles - roles: ", roles)
+            const roles = getDefaultRoles();
             res.status(201).json(roles);
             return;
         }

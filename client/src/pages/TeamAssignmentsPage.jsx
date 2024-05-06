@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useId} from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useSelector } from 'react-redux';
@@ -166,7 +166,7 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
                             <List dense >
                                 {teamAssignments.map((member, index) => (
                                     <MemberListItem
-                                        key={member.id}
+                                        key={useId()}
                                         member={member}
                                         handleAddMember={handleAddMember}
                                         handleRemoveMember={handleRemoveMember}
@@ -198,7 +198,7 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
                         <div style={{ maxHeight: "70vh", overflow: "auto", marginTop: '20px', padding: '8px', borderWidth: '1px', borderStyle: 'solid', borderColor: 'blue', borderRadius: '10px' }}>
                             <List dense style={{ maxHeight: "70vh", overflow: "auto" }}>
                                 {availableUsers !== null && availableUsers.length > 0 && availableUsers.map((user, index) => (
-                                    <UserListItem key={user.id} user={user} index={index} />
+                                    <UserListItem key={useId()} user={user} index={index} />
                                 ))}
                             </List>
                         </div>
