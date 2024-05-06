@@ -18,8 +18,8 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
 
     const [openRoleEditDialog, setOpenRoleEditDialog] = useState(false);
     const [roleEditFormData, setRoleEditFormData] = useState({
-        id: "",
-        description: "",
+        roleId: "",
+        roleDescription: "",
     });
 
     const [permissionsLabelValueArray, setPermissionsLabelValueArray] = useState([]);
@@ -63,14 +63,14 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
 
     const handleSaveRole = async () => {
         // Verify if we are adding a new role or editing an existing one
-        const existingRole = currentRolesMap.find(role => role.roleId === roleEditFormData.id);
+        const existingRole = currentRolesMap.find(role => role.roleId === roleEditFormData.roleId);
         if (existingRole) {
             // Editing an existing role
             const updatedRoles = currentRolesMap.map(role => {
-                if (role.roleId === roleEditFormData.id) {
+                if (role.roleId === roleEditFormData.roleId) {
                     return {
                         ...role,
-                        roleDescription: roleEditFormData.description
+                        roleDescription: roleEditFormData.roleDescription
                     };
                 }
                 return role;
@@ -80,7 +80,7 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
             // update DB with edited role
             try {
                 // await editRoles(updatedRoles);
-                await editRole(roleEditFormData.id, roleEditFormData.description);
+                await editRole(roleEditFormData.roleId, roleEditFormData.roleDescription);
             } catch (err) {
                 console.log(err)
             }
@@ -88,7 +88,7 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
             // updated current and default role-permissions map in DB
             const updatedRolePermissionsMap = rolePermissionsMap.map((role) => {
                 if (role.role === existingRole.roleDescription) {
-                    return { ...role, role: roleEditFormData.description }
+                    return { ...role, role: roleEditFormData.roleDescription }
                 };
                 return role;
             });
@@ -100,7 +100,7 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
                 const updatedDefaultRolePermissionsMap = await defaultRolesPermissionsMap.map((role) => {
                     
                     if (role.role === existingRole.roleDescription) {
-                        return { ...role, role: roleEditFormData.description };
+                        return { ...role, role: roleEditFormData.roleDescription };
                     }
                     return role;
                 });
@@ -114,7 +114,7 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
             // Adding a new role
             const newRoleId = currentRolesMap[currentRolesMap.length - 1].roleId + 1;
             console.log("adding a new role - currentRolesMap: ", currentRolesMap)
-            const newRole = { roleId: newRoleId, roleDescription: roleEditFormData.description };
+            const newRole = { roleId: newRoleId, roleDescription: roleEditFormData.roleDescription };
             setCurrentRolesMap((prev) => ([...prev, newRole]));
 
             // update role-permissions map with the new role
@@ -122,8 +122,6 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
                 role: newRole.roleDescription,
                 permissions: []
             };
-
-            // setRolePermissionsMap((prev) => [...prev, newRoleForPermissionsMap])
 
             // update DB with new role
             try {
@@ -157,7 +155,7 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
         const selectedRole = currentRolesMap.find(role => role.roleId === roleId);
         if (selectedRole) {
             // setup role data into the edit form
-            setRoleEditFormData({ id: selectedRole.roleId, description: selectedRole.roleDescription });
+            setRoleEditFormData({ roleId: selectedRole.roleId, description: selectedRole.roleDescription });
             // open the role edit dialog
             setOpenRoleEditDialog(true);
         }
@@ -166,7 +164,9 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
     const handleDeleteRole = async (roleId) => {
         // filter the roles excluding the one to be deleted
         const roleDescrToDelete = currentRolesMap.find((r) => r.roleId === roleId).roleDescription;
+        console.log("RoleManagement() - handleDeleteRole() - roleDescrToDelete: ", roleDescrToDelete)
         const updatedRoles = currentRolesMap.filter(role => role.roleId !== roleId);
+        console.log("RoleManagement() - handleDeleteRole() - updatedRoles: ", updatedRoles)
         // update the current roles map
         setCurrentRolesMap(updatedRoles);
 
@@ -182,12 +182,13 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
 
         // update current and default role-permissions map with deleted role
         const updatedRolePermissionsMap = rolePermissionsMap.filter((rp) => rp.role !== roleDescrToDelete);
-        // setRolePermissionsMap(updatedRolePermissionsMap);
+        console.log("RoleManagement() - handleDeleteRole() - updatedRolePermissionsMap: ", updatedRolePermissionsMap)
         try {
             await updateRolePermissionsMap("current", [...updatedRolePermissionsMap]);
             
             const defaultRolesPermissionsMap = await getRolePermissionsMap("default");
             const updatedDefaultRolePermissionsMap = defaultRolesPermissionsMap.filter((rp) => rp.role !== roleDescrToDelete)
+            console.log("RoleManagement() - handleDeleteRole() - updatedDefaultRolePermissionsMap: ", updatedDefaultRolePermissionsMap)
             await updateRolePermissionsMap("default", updatedDefaultRolePermissionsMap)
             
             refreshPermissions();
@@ -201,22 +202,16 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
         try {
             // copy default RolesMap into current
             const defaultRolesArray = await getDefaultRoles();
-            console.log("defaultRolesArray: ", defaultRolesArray)
-            // await editRoles(defaultRolesArray);
             await restoreRoles(defaultRolesArray);
-            console.log("setCurrentRolesMap")
             setCurrentRolesMap(defaultRolesArray);
             
             
-            // set current and defualt rolePermissionsMap with default roles
+            // set current and default rolePermissionsMap with default roles
             const updatedRolePermissionsMap = rolePermissionsMap.slice(0, defaultRolesArray.length - 1);
-            console.log("updatedRolePermissionsMap: ", updatedRolePermissionsMap)
-            // setRolePermissionsMap(updatedRolePermissionsMap);
             await updateRolePermissionsMap("current", updatedRolePermissionsMap)
             
             const defaultRolesPermissionsMap = await getRolePermissionsMap("default");
             const updatedDefaultRolePermissionsMap = defaultRolesPermissionsMap.slice(0, defaultRolesArray.length)
-            // setRolePermissionsMap(updatedDefaultRolePermissionsMap)
             await updateRolePermissionsMap("default", updatedDefaultRolePermissionsMap)
 
             refreshPermissions();
@@ -297,7 +292,7 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
 
             {/* Dialog to add/edit a role */}
             <Dialog open={openRoleEditDialog} onClose={handleCloseRoleEditDialog}>
-                <DialogTitle>{roleEditFormData.id ? 'Edit Role' : 'Add Role'}</DialogTitle>
+                <DialogTitle>{roleEditFormData.roleId ? 'Edit Role' : 'Add Role'}</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus
@@ -306,8 +301,8 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
                         label="Role Description"
                         type="text"
                         fullWidth
-                        value={roleEditFormData.description}
-                        onChange={(e) => setRoleEditFormData((prev) => ({ ...prev, description: e.target.value }))}
+                        value={roleEditFormData.roleDescription}
+                        onChange={(e) => setRoleEditFormData((prev) => ({ ...prev, roleDescription: e.target.value }))}
                     />
                 </DialogContent>
                 <DialogActions>

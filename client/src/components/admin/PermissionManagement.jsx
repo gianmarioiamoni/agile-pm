@@ -3,6 +3,8 @@ import { Button, Tab, Tabs, Paper, Container, Box, Grid } from '@mui/material';
 import { Restore } from '@mui/icons-material';
 import SaveIcon from '@mui/icons-material/Save';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import PermissionsBox from "./elements/PermissionsBox";
 import { getPermissionsLabelValues, getRolePermissionsMap, updateRolePermissionsMap } from '../../services/rolesMapServices';
 
@@ -22,9 +24,7 @@ export default function PermissionManagement({rolePermissionsMap, setRolePermiss
     };
 
     const handleRestoreDefault = async () => {
-        console.log("handleRestoreDefault")
         const defaultRolePermissionsMap = await getRolePermissionsMap("default");
-        console.log("handleRestoreDefault() - defaultRolePermissionsMap: ", defaultRolePermissionsMap)
         await updateRolePermissionsMap("current", defaultRolePermissionsMap);
         setRolePermissionsMap(defaultRolePermissionsMap);
     };
@@ -50,7 +50,7 @@ export default function PermissionManagement({rolePermissionsMap, setRolePermiss
                     ))}
                 </Tabs>
                 {rolePermissionsMap.map((role, roleIndex) => (
-                    <TabPanel value={selectedTab} index={roleIndex} key={roleIndex}>
+                    <TabPanel value={selectedTab} index={roleIndex} key={uuidv4()}>
                         <PermissionsBoxContainer
                             role={role}
                             roleIndex={roleIndex}
@@ -131,7 +131,7 @@ function PermissionsBoxContainer({ role, roleIndex, rolePermissionsMap, setRoleP
                 {/* Permissions Boxes */}
                 {permissionsLabelValueArray.map((p, idx) => (
                     <PermissionsBox
-                        key={idx}
+                        key={uuidv4()}
                         permissionsLabel={p.label}
                         permissions={p.permissions}
                         rolePermissionsMap={rolePermissionsMap}

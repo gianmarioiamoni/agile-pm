@@ -1,7 +1,5 @@
+import { useId } from 'react';
 import { Box, Typography, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
-
-import { v4 as uuidv4 } from 'uuid';
-
 
 export default function PermissionsBox({permissionsLabel, permissions, rolePermissionsMap, setRolePermissionsMap, role, roleIndex}) {
     
@@ -38,7 +36,6 @@ export default function PermissionsBox({permissionsLabel, permissions, rolePermi
 
             updatedPermissionsMap[roleIndex].permissions[idx][groupPermKey] = groupPermArray[0];
 
-            // updatedPermissionsMap[roleIndex].permissions = updatedPermissionsMap[roleIndex].permissions.filter(permission => permission !== permissionValue);
         } else {
             // Permission is not present: add It
 
@@ -57,9 +54,6 @@ export default function PermissionsBox({permissionsLabel, permissions, rolePermi
                     }
                 })
             }
-
-
-            // updatedPermissionsMap[roleIndex].permissions.push(permissionValue);
         }
 
         setRolePermissionsMap(updatedPermissionsMap);
@@ -68,10 +62,10 @@ export default function PermissionsBox({permissionsLabel, permissions, rolePermi
 
     return (
         <Box display="flex" flexDirection="column" alignItems="flexStart" marginBottom={2}>
-            <Typography key={uuidv4()} variant="h8" gutterBottom fontWeight="bold" marginRight={3} marginBottom={-1}>
+            <Typography key={useId()} variant="h8" gutterBottom fontWeight="bold" marginRight={3} marginBottom={-1}>
                 {permissionsLabel}
             </Typography>
-            <FormGroup key={uuidv4()} row>
+            <FormGroup key={useId()} row>
                 {Object.keys(permissions).map((permissionKey) => (
                     <FormControlLabel
                         key={permissionKey}

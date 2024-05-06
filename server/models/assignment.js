@@ -13,7 +13,9 @@ const assignmentSchema = new mongoose.Schema({
         required: true
     },
     role: {
-        type: Number,
+        // type: Number,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Role',
         required: true
     }
 }, { timestamps: true });

@@ -24,18 +24,10 @@ export default function AdminPage({users, setUsers, currentRolesMap, setCurrentR
     // const [currentRolesMap, setCurrentRolesMap] = useState([]);
 
     useEffect(() => {
-        // // get current users from the DB
-        // const setCurrentUsers = async () => {
-        //     const u = await getCurrentUsers();
-        //     setUsers(u);
-        // };
-        // setCurrentUsers();
-
         // get current rolesMap from the DB
         const setCurrentRoles = async () => {
             const r = await getCurrentRoles();
             setCurrentRolesMap(r);
-            // setRoles(r);
         };
         setCurrentRoles();
 
@@ -52,7 +44,7 @@ export default function AdminPage({users, setUsers, currentRolesMap, setCurrentR
                 {/* Top Section */}
 
                 <Grid item container xs={12} sx={{ height: "40%", display: "flex" }}>
-                    {/* Left side */}
+                    {/* Left side - Users Management */}
                     <Grid item xs={8} sx={{ display: "flex", flexDirection: "column" }}>
                         <Box sx={{ flex: 1, overflow: "auto" }}>
                             <Typography variant="h5" gutterBottom fontWeight="bold">Users Management</Typography>
@@ -60,7 +52,7 @@ export default function AdminPage({users, setUsers, currentRolesMap, setCurrentR
                             <UserManagement users={users} setUsers={setUsers} currentRolesMap={currentRolesMap} currentUser={currentUser} />
                         </Box>
                     </Grid>
-                    {/* Right side */}
+                    {/* Right side - Roles Management*/}
                     <Grid item xs={4} sx={{ display: "flex", flexDirection: "column" }}>
                         <Box sx={{ flex: 1, overflow: "auto" }}>
                             <Typography variant="h5" gutterBottom fontWeight="bold">Roles Management</Typography>
@@ -74,7 +66,7 @@ export default function AdminPage({users, setUsers, currentRolesMap, setCurrentR
                     </Grid>
                 </Grid>
 
-                {/* Bottom Section */}
+                {/* Bottom Section - Permissions Management*/}
                 <Grid item xs={12}>
                     <Typography variant="h5" gutterBottom fontWeight="bold">Permissions Management</Typography>
                     <Divider />
