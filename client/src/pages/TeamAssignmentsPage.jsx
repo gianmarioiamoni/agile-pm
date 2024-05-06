@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useId} from 'react';
+import React, { useState, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useSelector } from 'react-redux';
+
+import { v4 as uuidv4 } from 'uuid';
 
 import {
     Typography,
@@ -10,8 +12,7 @@ import {
     FormControl, FormLabel,
     Button,
     RadioGroup, FormControlLabel, Radio,
-    List,
-    Grid
+    List
     // Dialog, DialogTitle, DialogContent, DialogActions
 } from '@mui/material';
 import { Save as SaveIcon } from '@mui/icons-material';
@@ -41,7 +42,7 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
     const [selectedMember, setSelectedMember] = useState(null);
     // const [availableUsers, setAvailableUsers] = useState([...users].sort((a, b) => a.username.localeCompare(b.username)));
     // const [availableUsers, setAvailableUsers] = useState([...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.id === u.role)).description })).sort((a, b) => a.username.localeCompare(b.username)));
-    const [availableUsers, setAvailableUsers] = useState([...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.roleId === u.role)).roleDescription })).sort((a, b) => a.username.localeCompare(b.username)));
+    const [availableUsers, setAvailableUsers] = useState([...users].map((u) => ({ ...u, role: currentRolesMap.find((r) => (r.roleId === u.role)).roleDescription })).sort((a, b) => a.username.localeCompare(b.username)));
     const [originalUsers, setOriginalUsers] = useState([...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.roleId === u.role)).roleDescription })).sort((a, b) => a.username.localeCompare(b.username)));
     // const [originalUsers, setOriginalUsers] = useState([[...users].sort((a, b) => a.username.localeCompare(b.username))]);
     // const [availableUsers, setAvailableUsers] = useState([]);
@@ -53,7 +54,7 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
     // add roleDescription to users
     const getLocalUsers = () => {
         // const localUsers = [...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.id === u.role)).description }))
-        const localUsers = [...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.id === u.role)).roleDescription }))
+        const localUsers = [...users].map((u) => ({ ...u, role: currentRolesMap.find((r) => (r.roleId === u.role)).roleDescription }))
         console.log("localUser: ", localUsers)
         localUsers.sort((a, b) => a.username.localeCompare(b.username))
 
@@ -76,10 +77,6 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
         // ];
 
         // for page reload
-        // const localUsers = [...users]
-        // localUsers.sort((a, b) => a.username.localeCompare(b.username))
-        // setAvailableUsers([...localUsers]);
-        // setOriginalUsers([...localUsers]);
         setAvailableUsers(getLocalUsers);
         setOriginalUsers(getLocalUsers);
 
@@ -103,8 +100,12 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
 
     // add a new team member for the project
     const handleAddMember = (user) => {
+        console.log("handleAddMember() - user: ", user)
+        const newMember = {id: uuidv4(), username: user.username, roleDescription: user.role}
+        
         // add new member to teamAssignments
-        setTeamAssignments((prev) => [...prev, user]);
+        // const newUser = { ...user, _id: users.find((u) => u.role === user.role)._id }
+        setTeamAssignments((prev) => [...prev, newMember]);
 
         // remove assigned member from available users list
         const filteredUsers = availableUsers.filter((u) => u.id !== user.id);
@@ -121,7 +122,7 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
         setTeamAssignments(filteredTeamAssignments);
 
         // add removed member to available users list
-        const removedUser = { ...member, id: member.id * 2000 };
+        const removedUser = { ...member, id: uuidv4(), role: member.roleDescription };
         setAvailableUsers((prev) => [...prev, removedUser]);
         setOriginalUsers((prev) => [...prev, removedUser]);
 
@@ -166,7 +167,7 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
                             <List dense >
                                 {teamAssignments.map((member, index) => (
                                     <MemberListItem
-                                        key={useId()}
+                                        key={uuidv4()}
                                         member={member}
                                         handleAddMember={handleAddMember}
                                         handleRemoveMember={handleRemoveMember}
@@ -198,7 +199,7 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
                         <div style={{ maxHeight: "70vh", overflow: "auto", marginTop: '20px', padding: '8px', borderWidth: '1px', borderStyle: 'solid', borderColor: 'blue', borderRadius: '10px' }}>
                             <List dense style={{ maxHeight: "70vh", overflow: "auto" }}>
                                 {availableUsers !== null && availableUsers.length > 0 && availableUsers.map((user, index) => (
-                                    <UserListItem key={useId()} user={user} index={index} />
+                                    <UserListItem key={uuidv4()} user={user} index={index} />
                                 ))}
                             </List>
                         </div>

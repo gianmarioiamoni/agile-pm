@@ -18,7 +18,7 @@ export default function UserListItem({ user, index }) {
     return (
         <div ref={drag} style={{ opacity: isDragging ? 0.5 : 1, padding: '8px', borderRadius: '4px' }}>
             <ListItem>
-                <ListItemText primary={user.username} secondary={user.roleDescription} />
+                <ListItemText primary={user.username} secondary={user.role} />
             </ListItem>
         </div>
     );
