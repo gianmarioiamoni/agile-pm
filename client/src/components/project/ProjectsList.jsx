@@ -31,7 +31,7 @@ export default function ProjectsList({ projects, onEdit, onDelete, isEditable = 
                         <Typography variant="subtitle1">{project.name}</Typography>
                         <Typography variant="body2">{project.description}</Typography>
                         {/* Team member names preview */}
-                        <Typography variant="body2">Team Members: {projectAssignments && projectAssignments[project.id]?.map(assignment => assignment.userId.username).join(', ')}</Typography>
+                        <Typography variant="body2">Team Members: {projectAssignments && projectAssignments[project.id]?.map(assignment => assignment.username).join(', ')}</Typography>
                     </Grid>
                     <Grid item xs={3} container justifyContent="flex-end">
                         <Link to={`/team-assignments/${project.id}`}>
