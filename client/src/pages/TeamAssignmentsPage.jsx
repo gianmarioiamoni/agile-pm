@@ -70,38 +70,13 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
     const [sortValue, setSortValue] = useState("username");
     const [isSaveChanges, setIsSaveChanges] = useState(false);
 
-    // add roleDescription to users
-    const getLocalUsers = () => {
-        const localUsers = [...users].map((u) => (
-            {
-                userId: u._id,
-                username: u.username,
-                role: currentRolesMap.find((r) => (r.roleKey === u.role))._id,
-                roleDescription: currentRolesMap.find((r) => (r.roleKey === u.role)).roleDescription 
-            }));
-        console.log("localUser: ", localUsers)
-        localUsers.sort((a, b) => a.username.localeCompare(b.username))
-
-        return localUsers;
-    };
-
-    // read teamAssignments from DB
-    const getTeamAssignments = async () => {
-        console.log("getTeamAssignments() - projectId: ", projectId)
-        const teamAssignmentsFromDB = await getAssignments(projectId); 
-
-        console.log("getTeamAssignments() - teamAssignmentsFromDB: ", teamAssignmentsFromDB);
-
-        setTeamAssignments(teamAssignmentsFromDB);
-    }
-
     const initUsersAndAssignments = async () => {
         // get assignments from DB and set state
-        const assignments = await getAssignments(projectId); 
+        const assignments = await getAssignments(projectId);
         setTeamAssignments(assignments);
 
         // filter users to include available users only and set state
-        const  filteredUsers = users.filter(u => !assignments.some(a => a.userId === u._id));
+        const filteredUsers = users.filter(u => !assignments.some(a => a.userId === u._id));
         const localUsers = filteredUsers.map((u) => (
             {
                 userId: u._id,
@@ -109,22 +84,15 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
                 role: currentRolesMap.find((r) => (r.roleKey === u.role))._id,
                 roleDescription: currentRolesMap.find((r) => (r.roleKey === u.role)).roleDescription
             }));
-        console.log("localUser: ", localUsers)
         localUsers.sort((a, b) => a.username.localeCompare(b.username));
         setAvailableUsers(localUsers);
         setOriginalUsers(localUsers);
-
-
-    }
+    };
 
     useEffect(() => {
 
         // for page reload
-        // getTeamAssignments();
-        // setAvailableUsers(getLocalUsers);
-        // setOriginalUsers(getLocalUsers);
         initUsersAndAssignments();
-
 
         // project description setup
         const description = projects.find((p) => p.id === projectId)?.description || '';
@@ -155,8 +123,6 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
         }
         
         // add new member to teamAssignments
-        // const newUser = { ...user, _id: users.find((u) => u.role === user.role)._id }
-        console.log("handleAddMember() - teamAssignments: ", teamAssignments)
         setTeamAssignments((prev) => [...prev, newMember]);
 
         // remove assigned member from available users list
@@ -164,13 +130,9 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
         setAvailableUsers(filteredUsers);
         setOriginalUsers(filteredUsers);
         setIsSaveChanges(true);
-
     };
 
     const handleRemoveMember = (member) => {
-        console.log("handleRemoveMember() - teamAssignments: ", teamAssignments)
-        console.log("handleRemoveMember() - member: ", member)
-
         // remove member from teamAssignments
         const filteredTeamAssignments = teamAssignments.filter((m) => m._id !== member._id);
         setTeamAssignments(filteredTeamAssignments);
@@ -184,8 +146,6 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
     };
 
     const handleSaveChanges = async () => {
-        console.log("save changes: ", teamAssignments);
-        
         try {
             await saveAssignments(projectId, teamAssignments);
         } catch (error) {
@@ -216,7 +176,6 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
     });
 
     return (
-        // <DndProvider backend={HTML5Backend}>
         <>
             <Header isShowProfile={true} isShowHome={true} isShowAdmin={currentUser.role === 0} isShowDashboard={true} />
             <div  style={{ padding: '20px' }}>
@@ -226,7 +185,6 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
                 <div style={{ display: 'flex', justifyContent: 'flex-start', gap: '100px', marginTop: '40px' }}>
                     
                     {/* Team members list */}
-                    {/* Container to limit list width */}
                     <div style={{ minWidth: '30%' }}>
                         <Typography variant="h6" gutterBottom>Team Members List</Typography>
                         <Typography variant="h8" gutterBottom>drag&drop an user from the Available Users List </Typography>
@@ -305,7 +263,6 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
                 </div>
 
             </div>
-        </>
-        // </DndProvider> 
+        </> 
     );
 };

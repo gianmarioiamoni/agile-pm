@@ -13,7 +13,6 @@ const assignmentSchema = new mongoose.Schema({
         required: true
     },
     roleId: {
-        // type: Number,
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Role',
         required: true
