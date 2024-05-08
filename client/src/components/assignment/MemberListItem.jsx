@@ -9,16 +9,17 @@ import { UserType } from "../../utils/types";
 
 
 export default function MemberListItem ({ member, handleAddMember, handleRemoveMember }) {
-    const [{ isOver }, drop] = useDrop({
-        accept: UserType,
-        drop: (item) => handleAddMember(item.user),
-        collect: (monitor) => ({
-            isOver: !!monitor.isOver(),
-        }),
-    });
+    // const [{ isOver }, drop] = useDrop({
+    //     accept: UserType,
+    //     drop: (item) => handleAddMember(item.user),
+    //     collect: (monitor) => ({
+    //         isOver: !!monitor.isOver(),
+    //     }),
+    // });
 
     return (
-        <div ref={drop} style={{ backgroundColor: isOver ? 'lightblue' : 'transparent', padding: '8px', borderRadius: '4px' }}>
+        // <div ref={drop} style={{ backgroundColor: isOver ? 'lightblue' : 'transparent', padding: '8px', borderRadius: '4px' }}>
+        <div>
             <ListItem key={useId()}>
                 <ListItemText primary={member.username} secondary={member.roleDescription} />
                 <ListItemSecondaryAction>

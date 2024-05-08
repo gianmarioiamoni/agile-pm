@@ -18,7 +18,7 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
 
     const [openRoleEditDialog, setOpenRoleEditDialog] = useState(false);
     const [roleEditFormData, setRoleEditFormData] = useState({
-        roleId: "",
+        roleKey: "",
         roleDescription: "",
     });
 
@@ -63,11 +63,11 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
 
     const handleSaveRole = async () => {
         // Verify if we are adding a new role or editing an existing one
-        const existingRole = currentRolesMap.find(role => role.roleId === roleEditFormData.roleId);
+        const existingRole = currentRolesMap.find(role => role.roleKey === roleEditFormData.roleKey);
         if (existingRole) {
             // Editing an existing role
             const updatedRoles = currentRolesMap.map(role => {
-                if (role.roleId === roleEditFormData.roleId) {
+                if (role.roleKey === roleEditFormData.roleKey) {
                     return {
                         ...role,
                         roleDescription: roleEditFormData.roleDescription
@@ -80,7 +80,7 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
             // update DB with edited role
             try {
                 // await editRoles(updatedRoles);
-                await editRole(roleEditFormData.roleId, roleEditFormData.roleDescription);
+                await editRole(roleEditFormData.roleKey, roleEditFormData.roleDescription);
             } catch (err) {
                 console.log(err)
             }
@@ -112,9 +112,9 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
 
         } else {
             // Adding a new role
-            const newRoleId = currentRolesMap[currentRolesMap.length - 1].roleId + 1;
+            const newRoleKey = currentRolesMap[currentRolesMap.length - 1].roleKey + 1;
             console.log("adding a new role - currentRolesMap: ", currentRolesMap)
-            const newRole = { roleId: newRoleId, roleDescription: roleEditFormData.roleDescription };
+            const newRole = { roleKey: newRoleKey, roleDescription: roleEditFormData.roleDescription };
             setCurrentRolesMap((prev) => ([...prev, newRole]));
 
             // update role-permissions map with the new role
@@ -126,7 +126,7 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
             // update DB with new role
             try {
                 // await editRoles([...currentRolesMap, newRole]);
-                await addRole(newRole.roleId, newRole.roleDescription);
+                await addRole(newRole.roleKey, newRole.roleDescription);
             } catch (err) {
                 console.log(err)
             }
@@ -150,22 +150,22 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
         handleCloseRoleEditDialog();
     }; // handleSaveRole()
 
-    const handleEditRole = (roleId) => {
+    const handleEditRole = (roleKey) => {
         // find the selected role
-        const selectedRole = currentRolesMap.find(role => role.roleId === roleId);
+        const selectedRole = currentRolesMap.find(role => role.roleKey === roleKey);
         if (selectedRole) {
             // setup role data into the edit form
-            setRoleEditFormData({ roleId: selectedRole.roleId, description: selectedRole.roleDescription });
+            setRoleEditFormData({ roleKey: selectedRole.roleKey, description: selectedRole.roleDescription });
             // open the role edit dialog
             setOpenRoleEditDialog(true);
         }
     };
 
-    const handleDeleteRole = async (roleId) => {
+    const handleDeleteRole = async (roleKey) => {
         // filter the roles excluding the one to be deleted
-        const roleDescrToDelete = currentRolesMap.find((r) => r.roleId === roleId).roleDescription;
+        const roleDescrToDelete = currentRolesMap.find((r) => r.roleKey === roleKey).roleDescription;
         console.log("RoleManagement() - handleDeleteRole() - roleDescrToDelete: ", roleDescrToDelete)
-        const updatedRoles = currentRolesMap.filter(role => role.roleId !== roleId);
+        const updatedRoles = currentRolesMap.filter(role => role.roleKey !== roleKey);
         console.log("RoleManagement() - handleDeleteRole() - updatedRoles: ", updatedRoles)
         // update the current roles map
         setCurrentRolesMap(updatedRoles);
@@ -173,7 +173,7 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
         // update DB with deleted role
         try {
             // await editRoles(updatedRoles);
-            await deleteRole(roleId)
+            await deleteRole(roleKey)
             alert(`role ${roleDescrToDelete} deleted`);
         } catch (err) {
             alert("Impossible to delete the role");
@@ -243,15 +243,16 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
                     </TableHead>
                     <TableBody>
                         {currentRolesMap.map((role) => (
-                            <TableRow key={role.roleId}>
+                            <TableRow key={role.roleKey}>
                                 <TableCell>{role.roleDescription}</TableCell>
                                 {/* Buttons to edit and delete roles. Visible only for custom roles */}
-                                {role.roleId > 3 ? (
+                                {/* {role.roleKey > 3 ? ( */}
+                                {role.roleKey > defaultRolesMap.lenght ? (
                                     <TableCell>
-                                        <IconButton onClick={() => handleEditRole(role.roleId)} aria-label="edit">
+                                        <IconButton onClick={() => handleEditRole(role.roleKey)} aria-label="edit">
                                             <Edit fontSize="small" />
                                         </IconButton>
-                                        <IconButton onClick={() => handleDeleteRole(role.roleId)} aria-label="delete">
+                                        <IconButton onClick={() => handleDeleteRole(role.roleKey)} aria-label="delete">
                                             <Delete fontSize="small" />
                                         </IconButton>
                                     </TableCell>
@@ -292,7 +293,7 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
 
             {/* Dialog to add/edit a role */}
             <Dialog open={openRoleEditDialog} onClose={handleCloseRoleEditDialog}>
-                <DialogTitle>{roleEditFormData.roleId ? 'Edit Role' : 'Add Role'}</DialogTitle>
+                <DialogTitle>{roleEditFormData.roleKey ? 'Edit Role' : 'Add Role'}</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus

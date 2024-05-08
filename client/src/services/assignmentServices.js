@@ -6,7 +6,18 @@ const serverUrl = "http://localhost:3000";
 export async function getAssignments(projectId) {
     try {
         const response = await axios.get(`/server/assignments/project/${projectId}`);
-        return response.data;
+        const assignmentsFromDB = response.data;
+        console.log("getAssignments() - assignmentsFromDB: ", assignmentsFromDB)
+        const teamAssignments = assignmentsFromDB.map((a) => ({
+            _id: a._id,
+            userId: a.userId._id,
+            username: a.userId.username,
+            roleId: a.roleId._id,
+            roleDescription: a.roleId.roleDescription
+        }));
+        console.log("getAssignments() - teamAssignments: ", teamAssignments)
+
+        return teamAssignments;
     } catch (error) {
         console.log(error);
     }
@@ -14,23 +25,13 @@ export async function getAssignments(projectId) {
 }
 
 export async function saveAssignments(projectId, assignments) {
-    const payload = {
-        userId: assignments.userId,
-        roleDescription: assignments.roleDescription,
-        role: assignments.role
-    };
+    const payload = assignments.map((a) => ({ ...a, projectId }));
 
     try {
-        const isAssignmentsExist = await axios.get(`/server/assignments/project/${projectId}`);
-        if (!isAssignmentsExist) {
-            // create a new assignments for the project
-            const response = await axios.post(`/server/assignments/project/${projectId}`, payload);
-            return response.data;
-        }
-        // update an existing assignments for the project
-        const response = await axios.put(`/server/assignments/project/${projectId}`, payload);
-            return response.data;
+        // create a new assignments for the project
+        const response = await axios.put(`/server/assignments/project/${projectId}`, { payload });
+        return response.data;
     } catch (error) {
-        console.log(error); 
+        console.log(error);
     }
 }

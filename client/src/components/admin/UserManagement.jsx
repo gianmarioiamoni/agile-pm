@@ -108,8 +108,8 @@ export default function UserManagement({ users, setUsers, currentRolesMap, curre
         sendResetPwdEmail(user.email, user.username, user.password);
     };
 
-    const getRoleDescription = (roleId) => {
-        const roleObj = currentRolesMap.find((role) => role.id === roleId);
+    const getRoleDescription = (roleKey) => {
+        const roleObj = currentRolesMap.find((role) => role.roleKey === roleKey);
         return roleObj ? roleObj.description : null;
     };
 

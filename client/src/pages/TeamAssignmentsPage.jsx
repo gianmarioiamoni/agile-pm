@@ -1,4 +1,6 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDrop } from 'react-dnd';
+import { UserType } from '../utils/types';
 import { useParams } from 'react-router-dom';
 
 import { useSelector } from 'react-redux';
@@ -13,12 +15,8 @@ import {
     Button,
     RadioGroup, FormControlLabel, Radio,
     List
-    // Dialog, DialogTitle, DialogContent, DialogActions
 } from '@mui/material';
 import { Save as SaveIcon } from '@mui/icons-material';
-
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import Header from "../components/Header";
 import UserListItem from "../components/assignment/UserListItem";
@@ -36,49 +34,96 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
     const { currentUser } = useSelector(state => state.user);
 
     const { projectId } = useParams();
+
+    // teamAssignments: [
+    // { _id: "fhweioghwpghowpgrh",
+    //   userId: "wt4uwowgwhrgwrhg",
+    //   username: "Joe Doe",
+    //   roleId: "14faefhiweghoweg223",
+    //   roleDescription: "Scrum Master"
+    // }, ...]
     const [teamAssignments, setTeamAssignments] = useState([]);
     const [projectDescription, setProjectDescription] = useState('');
-    // const [openDialog, setOpenDialog] = useState(false);
+
     const [selectedMember, setSelectedMember] = useState(null);
-    // const [availableUsers, setAvailableUsers] = useState([...users].sort((a, b) => a.username.localeCompare(b.username)));
-    // const [availableUsers, setAvailableUsers] = useState([...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.id === u.role)).description })).sort((a, b) => a.username.localeCompare(b.username)));
-    const [availableUsers, setAvailableUsers] = useState([...users].map((u) => ({ ...u, role: currentRolesMap.find((r) => (r.roleId === u.role)).roleDescription })).sort((a, b) => a.username.localeCompare(b.username)));
-    const [originalUsers, setOriginalUsers] = useState([...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.roleId === u.role)).roleDescription })).sort((a, b) => a.username.localeCompare(b.username)));
-    // const [originalUsers, setOriginalUsers] = useState([[...users].sort((a, b) => a.username.localeCompare(b.username))]);
-    // const [availableUsers, setAvailableUsers] = useState([]);
-    // const [originalUsers, setOriginalUsers] = useState([]);
+    console.log("users: ", users)
+    console.log("currentrolesMap: ", currentRolesMap)
+    // availableUsers: [ 
+    // { userId: "1w2542425645fwertwr6", username: "Joe Doe",
+    //   role: "14faefhiweghoweg223", roleDescription: "Scrum Master"
+    // }, ...]
+    const [availableUsers, setAvailableUsers] = useState([...users].map((u) => (
+        {
+            userId: u._id,
+            username: u.username,
+            roleId: currentRolesMap.find((r) => (r.roleKey === u.role))._id,
+            roleDescription: currentRolesMap.find((r) => (r.roleKey === u.role)).roleDescription 
+        })).sort((a, b) => a.username.localeCompare(b.username)));
+    const [originalUsers, setOriginalUsers] = useState([...users].map((u) => (
+        {
+            userId: u._id,
+            username: u.username,
+            roleId: currentRolesMap.find((r) => (r.roleKey === u.role))._id,
+            roleDescription: currentRolesMap.find((r) => (r.roleKey === u.role)).roleDescription 
+        })).sort((a, b) => a.username.localeCompare(b.username)));
 
     const [sortValue, setSortValue] = useState("username");
     const [isSaveChanges, setIsSaveChanges] = useState(false);
 
     // add roleDescription to users
     const getLocalUsers = () => {
-        // const localUsers = [...users].map((u) => ({ ...u, roleDescription: currentRolesMap.find((r) => (r.id === u.role)).description }))
-        const localUsers = [...users].map((u) => ({ ...u, role: currentRolesMap.find((r) => (r.roleId === u.role)).roleDescription }))
+        const localUsers = [...users].map((u) => (
+            {
+                userId: u._id,
+                username: u.username,
+                role: currentRolesMap.find((r) => (r.roleKey === u.role))._id,
+                roleDescription: currentRolesMap.find((r) => (r.roleKey === u.role)).roleDescription 
+            }));
         console.log("localUser: ", localUsers)
         localUsers.sort((a, b) => a.username.localeCompare(b.username))
 
         return localUsers;
     };
 
-    useEffect(() => {
-        // Simulazione di dati di assegnazione del team per il progetto specifico
-        const dummyTeamAssignments = [
-            { id: '1', username: 'John Doe', roleDescription: 'Developer', role: '11' },
-            { id: '2', username: 'Jane Smith', roleDescription: 'Designer', role: '22' },
-            { id: '3', username: 'Alice Johnson', roleDescription: 'Manager', role: '33' }
-        ];
-        setTeamAssignments(dummyTeamAssignments);
+    // read teamAssignments from DB
+    const getTeamAssignments = async () => {
+        console.log("getTeamAssignments() - projectId: ", projectId)
+        const teamAssignmentsFromDB = await getAssignments(projectId); 
 
-        // const dummyUsers = [
-        //     { id: '100', username: 'Pippo', role: 'Scrum Master' },
-        //     { id: '200', username: 'Pluto', role: 'Product Owner' },
-        //     { id: '300', username: 'Papero', role: 'Scrum Team Member' },
-        // ];
+        console.log("getTeamAssignments() - teamAssignmentsFromDB: ", teamAssignmentsFromDB);
+
+        setTeamAssignments(teamAssignmentsFromDB);
+    }
+
+    const initUsersAndAssignments = async () => {
+        // get assignments from DB and set state
+        const assignments = await getAssignments(projectId); 
+        setTeamAssignments(assignments);
+
+        // filter users to include available users only and set state
+        const  filteredUsers = users.filter(u => !assignments.some(a => a.userId === u._id));
+        const localUsers = filteredUsers.map((u) => (
+            {
+                userId: u._id,
+                username: u.username,
+                role: currentRolesMap.find((r) => (r.roleKey === u.role))._id,
+                roleDescription: currentRolesMap.find((r) => (r.roleKey === u.role)).roleDescription
+            }));
+        console.log("localUser: ", localUsers)
+        localUsers.sort((a, b) => a.username.localeCompare(b.username));
+        setAvailableUsers(localUsers);
+        setOriginalUsers(localUsers);
+
+
+    }
+
+    useEffect(() => {
 
         // for page reload
-        setAvailableUsers(getLocalUsers);
-        setOriginalUsers(getLocalUsers);
+        // getTeamAssignments();
+        // setAvailableUsers(getLocalUsers);
+        // setOriginalUsers(getLocalUsers);
+        initUsersAndAssignments();
 
 
         // project description setup
@@ -100,15 +145,22 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
 
     // add a new team member for the project
     const handleAddMember = (user) => {
-        console.log("handleAddMember() - user: ", user)
-        const newMember = {id: uuidv4(), username: user.username, roleDescription: user.role}
+        const newMemberRoleId = currentRolesMap.find((r) => r.roleDescription === user.roleDescription)._id;
+        const newMember = {
+            _id: uuidv4(),
+            userId: user.userId,
+            username: user.username,
+            roleId: newMemberRoleId,
+            roleDescription: user.roleDescription
+        }
         
         // add new member to teamAssignments
         // const newUser = { ...user, _id: users.find((u) => u.role === user.role)._id }
+        console.log("handleAddMember() - teamAssignments: ", teamAssignments)
         setTeamAssignments((prev) => [...prev, newMember]);
 
         // remove assigned member from available users list
-        const filteredUsers = availableUsers.filter((u) => u.id !== user.id);
+        const filteredUsers = availableUsers.filter((u) => u.userId !== newMember.userId);
         setAvailableUsers(filteredUsers);
         setOriginalUsers(filteredUsers);
         setIsSaveChanges(true);
@@ -116,24 +168,30 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
     };
 
     const handleRemoveMember = (member) => {
+        console.log("handleRemoveMember() - teamAssignments: ", teamAssignments)
+        console.log("handleRemoveMember() - member: ", member)
 
         // remove member from teamAssignments
-        const filteredTeamAssignments = teamAssignments.filter((m) => m.id !== member.id);
+        const filteredTeamAssignments = teamAssignments.filter((m) => m._id !== member._id);
         setTeamAssignments(filteredTeamAssignments);
 
         // add removed member to available users list
-        const removedUser = { ...member, id: uuidv4(), role: member.roleDescription };
+        const removedUser = { ...member, _id: member.userId, role: member.role };
         setAvailableUsers((prev) => [...prev, removedUser]);
         setOriginalUsers((prev) => [...prev, removedUser]);
 
         setIsSaveChanges(true);
     };
 
-    const handleSaveChanges = () => {
+    const handleSaveChanges = async () => {
         console.log("save changes: ", teamAssignments);
+        
+        try {
+            await saveAssignments(projectId, teamAssignments);
+        } catch (error) {
+            console.log(error);
+        }
         setIsSaveChanges(false);
-
-
     };
 
     const handleSortChange = (event) => {
@@ -149,8 +207,17 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
         setAvailableUsers(filteredUsers);
     };
 
+    const [{ isOver }, drop] = useDrop({
+        accept: UserType,
+        drop: (item) => handleAddMember(item.user),
+        collect: (monitor) => ({
+            isOver: !!monitor.isOver(),
+        }),
+    });
+
     return (
-        <DndProvider backend={HTML5Backend}>
+        // <DndProvider backend={HTML5Backend}>
+        <>
             <Header isShowProfile={true} isShowHome={true} isShowAdmin={currentUser.role === 0} isShowDashboard={true} />
             <div  style={{ padding: '20px' }}>
                 <Typography variant="h4" gutterBottom>Team Assignments for project: {projectDescription}</Typography>
@@ -163,15 +230,14 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
                     <div style={{ minWidth: '30%' }}>
                         <Typography variant="h6" gutterBottom>Team Members List</Typography>
                         <Typography variant="h8" gutterBottom>drag&drop an user from the Available Users List </Typography>
-                        <div style={{ maxHeight: "70vh", overflow: "auto", marginTop: '20px', padding: '8px', borderWidth: '1px', borderStyle: 'solid', borderColor: 'blue', borderRadius: '10px' }}>
+                        <div ref={drop} style={{ backgroundColor: isOver ? 'lightblue' : 'transparent', maxHeight: "70vh", overflow: "auto", marginTop: '20px', padding: '8px', borderWidth: '1px', borderStyle: 'solid', borderColor: 'blue', borderRadius: '10px' }}>
                             <List dense >
-                                {teamAssignments.map((member, index) => (
+                                {teamAssignments?.map((member, index) => (
                                     <MemberListItem
                                         key={uuidv4()}
                                         member={member}
                                         handleAddMember={handleAddMember}
                                         handleRemoveMember={handleRemoveMember}
-                                        // handleUpdateMember={handleUpdateMember}
                                         handleSaveChanges={handleSaveChanges}
                                     />
                                 ))}
@@ -239,20 +305,7 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
                 </div>
 
             </div>
-
-            {/* Role update dialog */}
-            {/* <Dialog open={openDialog} onClose={handleCloseDialog}>
-                <DialogTitle>Edit Role</DialogTitle>
-                <DialogContent>
-                    <Typography variant="body1">
-                    </Typography>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseDialog}>Cancel</Button>
-                    <Button onClick={handleCloseDialog} color="primary">Save</Button>
-                </DialogActions>
-            </Dialog> */}
-
-        </DndProvider>
+        </>
+        // </DndProvider> 
     );
 };

@@ -18,7 +18,7 @@ export const editRole = async (req, res) => {
     const roleObj = req.body;
     const { id } = req.params;
     try {
-        const role = await Role.findOneAndUpdate({ roleId: id }, { roleDescription: roleObj.description })
+        const role = await Role.findOneAndUpdate({ roleKey: id }, { roleDescription: roleObj.description })
         // await Role.findOneAndUpdate({ id }, {description} );
         res.status(201).json(role);
     } catch (error) {
@@ -41,7 +41,7 @@ export const restoreRoles = async (req, res) => {
 export const deleteRole = async (req, res) => {
     const { id } = req.params;
     try {
-        await Role.findOneAndDelete({ roleId: id });
+        await Role.findOneAndDelete({ roleKey: id });
         res.status(201).json({message: "role cancelled"});
     } catch (error) {
         res.status(400).json({ message: error.message });

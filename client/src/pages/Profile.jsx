@@ -184,7 +184,7 @@ export default function Profile({currentRolesMap}) {
           {/* Role selection */}
           <select id="role" value={editedUser.role} onChange={handleChange} className='bg-slate-100 border-border border-2 p-3 rounded-lg'>
             {roles.map((role, index) => (
-              <option key={index} value={role.roleId}>{role.roleDescription}</option>
+              <option key={index} value={role.roleKey}>{role.roleDescription}</option>
             ))}
           </select>
           <button

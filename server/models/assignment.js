@@ -12,7 +12,7 @@ const assignmentSchema = new mongoose.Schema({
         ref: 'Project',
         required: true
     },
-    role: {
+    roleId: {
         // type: Number,
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Role',

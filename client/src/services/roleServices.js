@@ -27,9 +27,9 @@ export async function getCurrentRoles() {
     }
 }
 
-export async function addRole(id, description) {
+export async function addRole(key, description) {
     try {
-        const res = await axios.post("/server/roles", { roleId: id, roleDescription: description });
+        const res = await axios.post("/server/roles", { roleKey: key, roleDescription: description });
         return res.data;
     } catch (error) {
         console.log(error);

@@ -7,6 +7,8 @@ import './index.css'
 import { Provider } from 'react-redux';
 import { store, persistor } from "./redux/store.js";
 import { PersistGate } from 'redux-persist/integration/react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 // import { RolesProvider } from './utils/RolesProvider.jsx';
 
@@ -15,7 +17,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <PersistGate persistor={persistor} loading={null}>
       {/* <RolesProvider> */}
+      <DndProvider backend={HTML5Backend}>
         <App />
+        </DndProvider>
       {/* </RolesProvider> */}
     </PersistGate>
   </Provider>

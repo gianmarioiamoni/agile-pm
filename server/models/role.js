@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const roleSchema = new mongoose.Schema({
-    roleId: {
+    roleKey: {
         type: Number,
         required: true,
         min: 0,

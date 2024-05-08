@@ -118,11 +118,13 @@ const getCurrentRolesMap = async () => {
 };
 
 // DEFAULT CONFIGURATIONS
+
+
 const defaultRolesMap = [
-    { roleId: 0, roleDescription: 'Admin' },
-    { roleId: 1, roleDescription: 'Product Owner' },
-    { roleId: 2, roleDescription: 'Scrum Master' },
-    { roleId: 3, roleDescription: 'Scrum Team Member' }
+    { roleKey: 0, roleDescription: 'Admin' },
+    { roleKey: 1, roleDescription: 'Product Owner' },
+    { roleKey: 2, roleDescription: 'Scrum Master' },
+    { roleKey: 3, roleDescription: 'Scrum Team Member' }
 ];
 
 const permissions = {
