@@ -10,6 +10,8 @@ import {
 } from '@mui/material';
 import { Edit, Delete, Add, ArrowDownward, Restore } from '@mui/icons-material';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import { addRole, editRole, deleteRole, getDefaultRoles, restoreRoles } from "../../services/roleServices";
 import { getPermissionsLabelValues, getRolePermissionsMap, updateRolePermissionsMap } from "../../services/rolesMapServices";
 
@@ -21,16 +23,20 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
         roleKey: "",
         roleDescription: "",
     });
-
-    const [permissionsLabelValueArray, setPermissionsLabelValueArray] = useState([]);
+    const [defaultRolesMap, setDefaultRolesMap] = useState([]);
+    // const [permissionsLabelValueArray, setPermissionsLabelValueArray] = useState([]);
 
     const [hasScrollableContent, setHasScrollableContent] = useState(false);
     const tableRef = useRef(null);
 
     useEffect(() => {
         const initState = async () => {
-            const plv = await getPermissionsLabelValues();
-            setPermissionsLabelValueArray(plv);
+            // const plv = await getPermissionsLabelValues();
+            // setPermissionsLabelValueArray(plv);
+            const defRoles = await getDefaultRoles();
+            console.log("defRoles: ", defRoles)
+
+            setDefaultRolesMap(defRoles)
         };
         initState();
 
@@ -125,7 +131,6 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
 
             // update DB with new role
             try {
-                // await editRoles([...currentRolesMap, newRole]);
                 await addRole(newRole.roleKey, newRole.roleDescription);
             } catch (err) {
                 console.log(err)
@@ -164,9 +169,7 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
     const handleDeleteRole = async (roleKey) => {
         // filter the roles excluding the one to be deleted
         const roleDescrToDelete = currentRolesMap.find((r) => r.roleKey === roleKey).roleDescription;
-        console.log("RoleManagement() - handleDeleteRole() - roleDescrToDelete: ", roleDescrToDelete)
         const updatedRoles = currentRolesMap.filter(role => role.roleKey !== roleKey);
-        console.log("RoleManagement() - handleDeleteRole() - updatedRoles: ", updatedRoles)
         // update the current roles map
         setCurrentRolesMap(updatedRoles);
 
@@ -182,13 +185,11 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
 
         // update current and default role-permissions map with deleted role
         const updatedRolePermissionsMap = rolePermissionsMap.filter((rp) => rp.role !== roleDescrToDelete);
-        console.log("RoleManagement() - handleDeleteRole() - updatedRolePermissionsMap: ", updatedRolePermissionsMap)
         try {
             await updateRolePermissionsMap("current", [...updatedRolePermissionsMap]);
             
             const defaultRolesPermissionsMap = await getRolePermissionsMap("default");
             const updatedDefaultRolePermissionsMap = defaultRolesPermissionsMap.filter((rp) => rp.role !== roleDescrToDelete)
-            console.log("RoleManagement() - handleDeleteRole() - updatedDefaultRolePermissionsMap: ", updatedDefaultRolePermissionsMap)
             await updateRolePermissionsMap("default", updatedDefaultRolePermissionsMap)
             
             refreshPermissions();
@@ -198,7 +199,6 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
     };
 
     const handleRestoreDefault = async () => {
-        console.log("handleRestoreDefault()")
         try {
             // copy default RolesMap into current
             const defaultRolesArray = await getDefaultRoles();
@@ -219,9 +219,6 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
         } catch (error) {
             console.log(error)
         } 
-       
-       
-
     }
 
     return (
@@ -243,11 +240,11 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
                     </TableHead>
                     <TableBody>
                         {currentRolesMap.map((role) => (
-                            <TableRow key={role.roleKey}>
+                            <TableRow key={uuidv4()}>
                                 <TableCell>{role.roleDescription}</TableCell>
                                 {/* Buttons to edit and delete roles. Visible only for custom roles */}
                                 {/* {role.roleKey > 3 ? ( */}
-                                {role.roleKey > defaultRolesMap.lenght ? (
+                                {role.roleKey > defaultRolesMap.length-1 ? (
                                     <TableCell>
                                         <IconButton onClick={() => handleEditRole(role.roleKey)} aria-label="edit">
                                             <Edit fontSize="small" />
