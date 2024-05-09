@@ -18,6 +18,8 @@ import { getAllProjects } from "./services/projectServices";
 import { getCurrentUsers } from "./services/userServices";
 import { getCurrentRoles } from "./services/roleServices";
 
+import { canAllocateProject } from './services/rolesMapServices';
+
 
 export default function App() {
   const { currentUser } = useSelector((state) => state.user);
@@ -25,6 +27,8 @@ export default function App() {
   const [projects, setProjects] = useState([]);
   const [users, setUsers] = useState([]);
   const [currentRolesMap, setCurrentRolesMap] = useState([]);
+
+  const [canAllocateProjectsTeam, setCanAllocateProjectsTeam] = useState(true);
 
   useEffect(() => {
     const getProjects = async () => {
@@ -51,6 +55,11 @@ export default function App() {
     };
     setCurrentRoles();
 
+    const checkPermissions = async () => {
+      setCanAllocateProjectsTeam(await canAllocateProject(currentUser))
+    };
+    checkPermissions();
+
   }, []);
   
 
@@ -69,6 +78,7 @@ export default function App() {
         <Route path="/sign-in" element={currentUser ? <Home /> : <SignIn />} > </Route>
         <Route path="/sign-up" element={currentUser ? <Home /> : <SignUp />} > </Route>
         <Route path="/admin" element={currentUser && currentUser.role === 0 ? <AdminPage users={users} setUsers={setUsers} currentRolesMap={currentRolesMap} setCurrentRolesMap={setCurrentRolesMap} /> : <SignIn />} > </Route>
+        {/* <Route path="/team-assignments/:projectId" element={canAllocateProjectsTeam && <TeamAssignmentsPage projects={projects} users={users} currentRolesMap={currentRolesMap} />} /> */}
         <Route path="/team-assignments/:projectId" element={<TeamAssignmentsPage projects={projects} users={users} currentRolesMap={currentRolesMap} />} />
 
         <Route path="*" element={<NotFoundPage />} />

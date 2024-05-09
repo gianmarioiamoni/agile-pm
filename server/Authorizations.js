@@ -11,19 +11,21 @@ import User from "./models/user.js";
 // Init user
 const initUser = async () => {
     const hashedPassword = bcryptjs.hashSync(process.env.DEFAULT_ADMIN_PWD, 10);
-    const adminUserData = {
-        username: "admin",
-        email: "agileprojectmanagerinfo@gmail.com",
-        password: hashedPassword,
-        role: 0
-    }
+    
     
     // role = 0 is Admin
-    const adminUser = await User.findOne({ role: 0 });
+    const adminRoleId = await getRoleId(0);
+    const adminUser = await User.findOne({ role: adminRoleId });
 
     if (adminUser == null || adminUser == undefined) {
-        console.log("default Admin user created")
+        const adminUserData = {
+            username: "admin",
+            email: "agileprojectmanagerinfo@gmail.com",
+            password: hashedPassword,
+            role: adminRoleId
+        }
         await User.create(adminUserData);
+        console.log("default Admin user created")
     }
 };
 
@@ -42,6 +44,14 @@ const initRoles = async () => {
     }
 
 };
+
+// utility function to get roleId from roleKey
+export const getRoleId = async (roleKey) => {
+    const rolesMap = await getCurrentRoles();
+    const roleId = rolesMap.find((r) => r.roleKey === roleKey)._id;
+
+    return roleId;
+}
 
 // Init RolePermissionsMap
 const initRolePermissions = async () => {
@@ -124,7 +134,8 @@ const defaultRolesMap = [
     { roleKey: 0, roleDescription: 'Admin' },
     { roleKey: 1, roleDescription: 'Product Owner' },
     { roleKey: 2, roleDescription: 'Scrum Master' },
-    { roleKey: 3, roleDescription: 'Scrum Team Member' }
+    { roleKey: 3, roleDescription: 'Scrum Team Member' },
+    { roleKey: 4, roleDescription: 'Project Manager' }
 ];
 
 const permissions = {
@@ -134,7 +145,8 @@ const permissions = {
             create: 'projectCreate',
             edit: 'projectEdit',
             delete: 'projectDelete',
-            view: 'projectView'
+            view: 'projectView',
+            allocate: 'projectAllocate'
         }
     },
     sprint: {
@@ -291,7 +303,28 @@ export const defaultRolePermissionsMap = [
                 ]
             }
         ]
-    }
+    },
+    {
+        role: "Project Manager",
+        permissions: [
+            {
+                project: [
+                    projectPermissions.edit,
+                    projectPermissions.allocate
+                ]
+            },
+            {
+                sprint: [
+                    sprintPermissions.create,
+                ]
+            },
+            {
+                backlog: [
+                    backlogPermissions.manage
+                ]
+            }
+        ]
+    },
 ];
 
 // Function to check if the current user has permission to perform a specific action
@@ -344,6 +377,10 @@ export const canDeleteProject = (currentUser) => {
 
 export const canViewProject = (currentUser) => {
     return hasPermission(currentUser, projectPermissions.view);
+};
+
+export const canAllocateProject = (currentUser) => {
+    return hasPermission(currentUser, projectPermissions.allocate);
 };
 
 

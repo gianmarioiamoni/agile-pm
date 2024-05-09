@@ -9,7 +9,7 @@ import NewProjectForm from "../components/project/NewProjectForm";
 import EditProjectDialog from "../components/project/EditProjectDialog";
 
 import { getAllProjects, createProject, updateProject, removeProject } from "../services/projectServices";
-import { canCreateProject, canViewProject, canEditProject, canDeleteProject } from "../services/rolesMapServices";
+import { canCreateProject, canViewProject, canEditProject, canDeleteProject, canAllocateProject } from "../services/rolesMapServices";
 
 export default function Dashboard({projects, setProjects, users, setUsers}) {
     const { currentUser } = useSelector(state => state.user);
@@ -33,13 +33,15 @@ export default function Dashboard({projects, setProjects, users, setUsers}) {
             const editProject = await canEditProject(currentUser);
             const deleteProject = await canDeleteProject(currentUser);
             const viewProject = await canViewProject(currentUser);
+            const allocateProject = await canAllocateProject(currentUser);
 
             setCanProjects((prev) => ({
                 ...prev,
                 create: createProject,
                 edit: editProject,
                 delete: deleteProject,
-                view: viewProject
+                view: viewProject,
+                allocate: allocateProject
             }));
         }
         checkPermissions();
@@ -101,6 +103,7 @@ export default function Dashboard({projects, setProjects, users, setUsers}) {
                                 onDelete={(project) => canProjects.delete && setDeleteProject(project)}
                                 isEditable={canProjects.edit}
                                 isDeletable={canProjects.delete}
+                                isAllocable={canProjects.allocate}
                                 users={users}
                             />
                         </div>

@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 
 import { getAssignments } from "../../services/assignmentServices";
 
-export default function ProjectsList({ projects, onEdit, onDelete, isEditable = true, isDeletable = true }) {
+export default function ProjectsList({ projects, onEdit, onDelete, isEditable = true, isDeletable = true, isAllocable = true }) {
     const [projectAssignments, setProjectAssignments] = useState({});
 
     useEffect(() => {
@@ -34,8 +34,8 @@ export default function ProjectsList({ projects, onEdit, onDelete, isEditable = 
                         <Typography variant="body2">Team Members: {projectAssignments && projectAssignments[project.id]?.map(assignment => assignment.username).join(', ')}</Typography>
                     </Grid>
                     <Grid item xs={3} container justifyContent="flex-end">
-                        <Link to={`/team-assignments/${project.id}`}>
-                            <IconButton>
+                        <Link to={`/team-assignments/${project.id}`} style={!isAllocable ? { pointerEvents: 'none' } : {}}>
+                            <IconButton disabled={!isAllocable}>
                                 <GroupsIcon />
                             </IconButton>
                         </Link>

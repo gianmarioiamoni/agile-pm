@@ -1,5 +1,6 @@
-import { error } from "console";
 import User from "../models/user.js";
+
+import { getCurrentRoles, getRoleId } from "../Authorizations.js";
 
 import jwt from "jsonwebtoken";
 
@@ -30,10 +31,12 @@ const createCookie = (req, res, user) => {
 // next() allows to use middleware
 export const signup = async (req, res, next) => {
     const { username, email, password, role } = req.body;
+    // get role id from roleKey
+    const roleId = await getRoleId(role);
 
     const hashedPassword = bcryptjs.hashSync(password, 10);
 
-    const newUser = new User({ username, email, password: hashedPassword, role });
+    const newUser = new User({ username, email, password: hashedPassword, role: roleId });
 
     // the user is authenticated; create a token and put It inside the cookie of the browser
     createCookie(req, res, newUser);
@@ -73,7 +76,7 @@ export const signin = async (req, res, next) => {
 export const google = async (req, res, next) => {
     const { name, email, photo, role } = req.body;
     try {
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).populate(role);
 
         if (user) {
             // const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
@@ -88,7 +91,9 @@ export const google = async (req, res, next) => {
             // create a username from Google displayName that is unique
             const newUsername = name.split(" ").join("").toLowerCase() + (Math.floor(Math.random() * 10000)).toString();
 
-            const newUser = new User({ username: newUsername, email, password: hashedPassword, role, profilePicture: photo })
+            const newUserRoleId = await getRoleId(role);
+
+            const newUser = new User({ username: newUsername, email, password: hashedPassword, role: newUserRoleId, profilePicture: photo })
 
             await newUser.save();
 
@@ -99,6 +104,14 @@ export const google = async (req, res, next) => {
         next(error);
     }
 };
+
+// // utility function to get roleId from roleKey
+// const getRoleId = async (roleKey) => {
+//     const rolesMap = await getCurrentRoles();
+//     const roleId = rolesMap.find((r) => r.roleKey === roleKey)._id;
+
+//     return roleId;
+// }
 
 export const signout = (req, res) => {
     res.clearCookie("access_token").status(200).json("Signout success");

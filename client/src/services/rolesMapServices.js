@@ -65,3 +65,9 @@ export const canDeleteProject = async (user) => {
 
     return res.data;
 };
+
+export const canAllocateProject = async (user) => {
+    const res = await axios.put(`/server/roles-map/can-allocate-project/`, user);
+
+    return res.data;
+};

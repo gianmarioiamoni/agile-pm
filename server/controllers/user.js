@@ -12,7 +12,7 @@ export const getUsers = async (req, res, next) => {
         //     return next(errorHandler(401, "Only Admin can get users list"));
         // }
         
-        const usersList = await User.find({});
+        const usersList = await User.find({}).populate(role);
 
         // remove the password from the response to be send to the client
         const restList = usersList.map((u) => {
@@ -33,8 +33,8 @@ export const updateUser = async (req, res, next) => {
     // check if the user is trying to updated his own account
     // or if is an Admin
     // req.user comes from validateUser middleware
-    const currentUser = await User.findById(req.user.id);
-    if (req.user.id !== req.params.id && currentUser.role !== 0) {
+    const currentUser = await User.findById(req.user.id).populate(role);
+    if (req.user.id !== req.params.id && currentUser.role.roleKey !== 0) {
         return next(errorHandler(401, "You can update your account only or you must be an Admin"));
     }
 
@@ -52,7 +52,7 @@ export const updateUser = async (req, res, next) => {
                 email: req.body.email,
                 password: req.body.password,
                 profilePicture: req.body.profilePicture,
-                role: req.body.role
+                role: req.body.role.id
             },
             { new: true } // we get back the updated user
         );
@@ -71,7 +71,7 @@ export const deleteUser = async (req, res, next) => {
     // check if the user is trying to delete his own account or if is an Admin
     // req.user comes from validateUser middleware
     const userArray = await User.find({ _id: req.user.id }).exec();
-    const role = userArray[0].role;
+    const role = userArray[0].role.roleKey;
 
     if (role !== 0 && req.user.id !== req.params.id) {
         return next(errorHandler(401, "You can delete your account only"));
@@ -90,8 +90,8 @@ export const deleteUser = async (req, res, next) => {
 export const addUser = async (req, res, next) => {
     // check if the user is trying to add his own account or if it is an Admin
     // req.user comes from validateUser middleware
-    const userArray = await User.find({ _id: req.user.id }).exec();
-    const role = userArray[0].role;
+    const userArray = await User.find({ _id: req.user.id }).populate(role).exec();
+    const role = userArray[0].role.roleKey;
 
     if (role !== 0 && req.user.id !== req.params.id) {
         return next(errorHandler(401, "You must be an Admin to do that"));
@@ -110,7 +110,7 @@ export const addUser = async (req, res, next) => {
                 username: req.body.username,
                 email: req.body.email,
                 password: req.body.password,
-                role: req.body.role
+                role: req.body.role._id
             }
         );
 

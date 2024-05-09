@@ -5,7 +5,8 @@ import {
     canCreateProject,
     canViewProject,
     canEditProject,
-    canDeleteProject
+    canDeleteProject,
+    canAllocateProject
 } from "../Authorizations.js";
 
 
@@ -69,6 +70,12 @@ export const checkEditProject = async (req, res) => {
 export const checkDeleteProject = async (req, res) => {
     const user = req.body;
     const resp = await canDeleteProject(user);
+    res.json(resp);
+};
+
+export const checkAllocateProject = async (req, res) => {
+    const user = req.body;
+    const resp = await canAllocateProject(user);
     res.json(resp);
 };
 

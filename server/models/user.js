@@ -20,9 +20,12 @@ const userSchema = new mongoose.Schema({
         default: "https://img.freepik.com/premium-vector/man-avatar-profile-picture-vector-illustration_268834-538.jpg"
     },
     role: {
-        type: Number,
-        min: 0,
-        default: 3
+        // type: Number,
+        // min: 0,
+        // default: 3
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Role',
+        required: true
     }
 }, { timestamps: true });  // each user will have time of creation and time of edit associated
     
