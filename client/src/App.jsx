@@ -31,13 +31,7 @@ export default function App() {
   const [canAllocateProjectsTeam, setCanAllocateProjectsTeam] = useState(true);
 
   useEffect(() => {
-    const getProjects = async () => {
-      const projectsListFromDB = await getAllProjects();
-      const projectsList = projectsListFromDB.map((p) => ({ ...p, id: p._id }));
-
-      setProjects(projectsList);
-    }
-    getProjects();
+    
 
     // get current users from the DB
     const setCurrentUsers = async () => {
@@ -55,12 +49,29 @@ export default function App() {
     };
     setCurrentRoles();
 
+    
+
+  }, []);
+
+  useEffect(() => {
     const checkPermissions = async () => {
       setCanAllocateProjectsTeam(await canAllocateProject(currentUser))
     };
-    checkPermissions();
+    if (currentUser != null) {
+      checkPermissions();
+    }
+    
+    const getProjects = async () => {
+      const projectsListFromDB = await getAllProjects();
+      const projectsList = projectsListFromDB.map((p) => ({ ...p, id: p._id }));
 
-  }, []);
+      setProjects(projectsList);
+    }
+    if (currentUser != null) {
+      getProjects();
+    }
+    
+  }, [currentUser])
   
 
   return (

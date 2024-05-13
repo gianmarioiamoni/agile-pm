@@ -8,6 +8,7 @@ import { resetState, signInStart, signInSuccess, signInFailure } from "../redux/
 
 import OAuth from "../components/OAuth.jsx";
 import Header from "../components/Header.jsx";
+import { getCurrentRoles } from '../services/roleServices.js';
 
 const loginImage = "/backgrounds/login-1.jpg"
 
@@ -43,6 +44,7 @@ export default function SignIn() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
+
             const data = await res.json();
 
             if (!data.success) {
@@ -52,9 +54,14 @@ export default function SignIn() {
                 return;
             }
 
+            const roles = await getCurrentRoles();
+            const role = roles.find((r) => r._id === data.role)
+            const dataFilledWithRole = {...data, role}
+            
             // intead of setIsLoading(false) we change the state of redux
-            dispatch(signInSuccess(data));
-
+            // dispatch(signInSuccess(data));
+            dispatch(signInSuccess(dataFilledWithRole));
+            console.log("dataFilledWithRole: ", dataFilledWithRole)
             // user is authenticated; navigate to /
             navigate("/");
 

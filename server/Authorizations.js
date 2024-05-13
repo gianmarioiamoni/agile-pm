@@ -1,7 +1,7 @@
 // Authorizations.js
 import bcryptjs from 'bcryptjs';
 
-import Role from "./models/role.js";
+import Role from "./models/role.js"
 import RolesMap from "./models/rolesMap.js";
 import User from "./models/user.js";
 
@@ -14,8 +14,10 @@ const initUser = async () => {
     
     
     // role = 0 is Admin
-    const adminRoleId = await getRoleId(0);
-    const adminUser = await User.findOne({ role: adminRoleId });
+    // const adminRoleId = await getRoleId(0);
+    // const adminUser = await User.findOne({ role: adminRoleId });
+    const users = await User.find({}).populate('role');
+    const adminUser = users.find((u) => u.role.roleKey === 0);
 
     if (adminUser == null || adminUser == undefined) {
         const adminUserData = {
@@ -32,8 +34,8 @@ const initUser = async () => {
 // Init Roles
 const initRoles = async () => {
     try {
-        const currRoles = await Role.find({}).exec();
-
+        const currRoles = await Role.findOne({});
+        
         if (!currRoles || currRoles.length === 0) {
             await Role.insertMany(defaultRolesMap);
             console.log("current Roles Map initialized")
@@ -46,12 +48,12 @@ const initRoles = async () => {
 };
 
 // utility function to get roleId from roleKey
-export const getRoleId = async (roleKey) => {
-    const rolesMap = await getCurrentRoles();
-    const roleId = rolesMap.find((r) => r.roleKey === roleKey)._id;
+// export const getRoleId = async (roleKey) => {
+//     const rolesMap = await getCurrentRoles();
+//     const roleId = rolesMap.find((r) => r.roleKey === roleKey)._id;
 
-    return roleId;
-}
+//     return roleId;
+// }
 
 // Init RolePermissionsMap
 const initRolePermissions = async () => {
@@ -100,14 +102,14 @@ export const initDB = async () => {
 
 // GETTERS
 
-export const getCurrentRoles = async () => {
-    try {
-        const roles = await Role.find({});
-        return roles;
-    } catch (error) {
-        console.log(error)
-    }
-};
+// export const getCurrentRoles = async () => {
+//     try {
+//         const roles = await Role.find({});
+//         return roles;
+//     } catch (error) {
+//         console.log(error)
+//     }
+// };
 
 export const getDefaultRoles = () => {
     return defaultRolesMap;
@@ -330,22 +332,25 @@ export const defaultRolePermissionsMap = [
 // Function to check if the current user has permission to perform a specific action
 const hasPermission = async (currentUser, action) => {
     // check if the user is Admin
+    console.log("hasPermission() - currentUser = ", currentUser)
     if (currentUser.role === 0) {
         // Admin has all authorizations
         return true;
     }
 
-    const rolesMap = await getCurrentRoles();
+    // const rolesMap = await getCurrentRoles();
 
-    const currentUserRoleObj = rolesMap ? rolesMap.find((r) => {
-        return r.id === currentUser.role
-    }) : null;
+    // const currentUserRoleObj = rolesMap ? rolesMap.find((r) => {
+    //     return r.id === currentUser.role
+    // }) : null;
 
-    if (currentUserRoleObj == null) {
-        console.log("No user role found")
-        return;
-    }
-    const currentUserRole = currentUserRoleObj.description;
+
+    // if (currentUserRoleObj == null) {
+    //     console.log("No user role found")
+    //     return;
+    // }
+    // const currentUserRole = currentUserRoleObj.description;
+    const currentUserRole = currentUser.role._id;
     const rolePermissionsMap = await getCurrentRolesMap();
 
     // Check if the currentUserRole exists in rolePermissions mapping
@@ -363,24 +368,24 @@ const hasPermission = async (currentUser, action) => {
 };
 
 // utility functions to check permissions in components
-export const canEditProject = (currentUser) => {
-    return hasPermission(currentUser, projectPermissions.edit);
+export const canEditProject = async (currentUser) => {
+    return await hasPermission(currentUser, projectPermissions.edit);
 };
 
 export const canCreateProject = async (currentUser) => {
     return await hasPermission(currentUser, projectPermissions.create);
 };
 
-export const canDeleteProject = (currentUser) => {
-    return hasPermission(currentUser, projectPermissions.delete);
+export const canDeleteProject = async (currentUser) => {
+    return await hasPermission(currentUser, projectPermissions.delete);
 };
 
-export const canViewProject = (currentUser) => {
-    return hasPermission(currentUser, projectPermissions.view);
+export const canViewProject = async (currentUser) => {
+    return await hasPermission(currentUser, projectPermissions.view);
 };
 
-export const canAllocateProject = (currentUser) => {
-    return hasPermission(currentUser, projectPermissions.allocate);
+export const canAllocateProject = async (currentUser) => {
+    return await hasPermission(currentUser, projectPermissions.allocate);
 };
 
 

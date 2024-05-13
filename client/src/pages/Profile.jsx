@@ -14,8 +14,9 @@ import {
   signOut
 } from "../redux/user/userSlice";
 import Header from "../components/Header";
-// import { RolesContext } from '../utils/RolesProvider';
+
 import { getCurrentRoles } from "../services/roleServices";
+// import { getRoleId } from '../../../server/Authorizations';
 
 
 export default function Profile({currentRolesMap}) {
@@ -24,7 +25,14 @@ export default function Profile({currentRolesMap}) {
 
   const { currentUser, isLoading, isError } = useSelector(state => state.user);
 
-  const [editedUser, setEditedUser] = useState(currentUser);
+  const [editedUser, setEditedUser] = useState(
+    {
+      _id: currentUser._id,
+      username: currentUser.username,
+      email: currentUser.email,
+      role: currentUser.role.roleKey,
+      profilePicture: currentUser.profilePicture
+    });
 
   const [image, setImage] = useState(undefined);
   const [imagePercent, setImagePercent] = useState(0);
@@ -33,7 +41,6 @@ export default function Profile({currentRolesMap}) {
 
   const dispatch = useDispatch();
 
-  // const roles = useContext(RolesContext);
   const [roles, setRoles] = useState([...currentRolesMap]);
 
   const handleFileUpload = async (image) => {
@@ -61,11 +68,6 @@ export default function Profile({currentRolesMap}) {
   }; // handleFileUpload
 
   useEffect(() => {
-    // const getRoles = async () => {
-    //   const r = await getCurrentRoles();
-    //   setRoles(r);
-    // };
-    // getRoles();
     setRoles(currentRolesMap)
 
   } , []);
@@ -80,20 +82,40 @@ export default function Profile({currentRolesMap}) {
     setEditedUser((prev) => ({ ...prev, [e.target.id]: e.target.value }))
   };
 
+  const handleChangeRole = (e) => {
+    console.log(e.target.value)
+    setEditedUser((prev) => ({...prev, role: e.target.value}))
+  }
+
   const handleSubmit = async (e) => {
     // prevent the default behaviour that refreshes the page on submit
     e.preventDefault();
 
+    console.log("Profile() - handleSubmit()");
+
     try {
       dispatch(updateUserStart());
 
+      // create role for payload
+      const roles = await getCurrentRoles();
+      console.log("Profile() - handleSubmit() - roles: ", roles)
+      console.log("Profile() - handleSubmit() - editeUser: ", editedUser);
+      const role = roles.find((r) => r.roleKey == editedUser.role); 
+      console.log("Profile() - handleSubmit() - role: ", role)
+
+      const roleObj = { _id: role._id, roleKey: editedUser.role, roleDescription: role.roleDescription }
+      console.log("Profile() - handleSubmit() - roleObj: ", roleObj)
+      const userWithRoleObj = { ...editedUser, role: { ...roleObj } }
+      console.log("Profile() - handleSubmit() - userWithRoleObj: ", userWithRoleObj)
+      console.log("Profile() - handleSubmit() - currentUser: ", currentUser)
       const res = await fetch(`/server/user/update/${currentUser._id}`, {
         method: 'POST',
         headers:
         {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(editedUser)
+        // body: JSON.stringify(editedUser)
+        body: JSON.stringify(userWithRoleObj)
       });
 
       const data = await res.json();
@@ -103,8 +125,11 @@ export default function Profile({currentRolesMap}) {
         return;
       }
 
+      console.log("Profile() - handleSubmit() - data: ", data)
       // everything is fine
-      dispatch(updateUserSuccess(data));
+      // dispatch(updateUserSuccess(data));
+      const dataWithRoleObj = {...data, role: roleObj}
+      dispatch(updateUserSuccess(dataWithRoleObj));
       setIsUpdateSuccess(true);
 
     } catch (error) {
@@ -182,8 +207,8 @@ export default function Profile({currentRolesMap}) {
           <input type="email" id="email" placeholder="Email" defaultValue={editedUser.email} onChange={handleChange} className="bg-input-bg rounded-lg p-3"></input>
           <input type="password" id="password" placeholder="Password" onChange={handleChange} className="bg-input-bg rounded-lg p-3"></input>
           {/* Role selection */}
-          <select id="role" value={editedUser.role} onChange={handleChange} className='bg-slate-100 border-border border-2 p-3 rounded-lg'>
-            {roles.map((role, index) => (
+          <select id="role" value={editedUser.role} onChange={handleChangeRole} className='bg-slate-100 border-border border-2 p-3 rounded-lg'>
+            {currentRolesMap.map((role, index) => (
               <option key={index} value={role.roleKey}>{role.roleDescription}</option>
             ))}
           </select>
@@ -197,7 +222,7 @@ export default function Profile({currentRolesMap}) {
           <span onClick={handleDeleteAccount} className="text-red-700 cursor-pointer">Delete Account</span>
           <span onClick={handleSignOut} className="text-red-700 cursor-pointer">Sign Out</span>
         </div>
-        <p className='text-red-700 mt-5 text-center'>{isError && "Something went wrong"}</p>
+        <p className='text-red-700 mt-5 text-center'>{isError ? "Something went wrong" : ""}</p>
         <p className='text-green-700 mt-5 text-center'>{isUpdateSuccess && "Profile information correctly updated"}</p>
       </div>
     </>

@@ -9,11 +9,12 @@ export default function Home() {
   const navigate = useNavigate();
 
   const { currentUser } = useSelector(state => state.user);
+  console.log("Home() - currentUser: ", currentUser)
 
   return (
     <>
       {/* Header */}
-      <Header isShowAbout={true} isShowProfile={true} isShowDashboard={true} isShowSignIn={true} isShowSignUp={true} isShowAdmin={currentUser && currentUser.role === 0 } />
+      <Header isShowAbout={true} isShowProfile={true} isShowDashboard={true} isShowSignIn={true} isShowSignUp={true} isShowAdmin={currentUser && currentUser.role.roleKey == 0 } />
       <div style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center', minHeight: '100vh' }}>
         <div className='px-4, py-12 max-w-2xl mx-20'>
           <h1 className='text-3xl font-bold mb-4 text-slate-800'>Welcome to Agile Project Manager</h1>

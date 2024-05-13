@@ -77,7 +77,7 @@ export default function Dashboard({projects, setProjects, users, setUsers}) {
 
     return (
         <>
-            <Header isShowAbout={true} isShowProfile={true} isShowHome={true} isShowAdmin={currentUser.role === 0} />
+            <Header isShowAbout={true} isShowProfile={true} isShowHome={true} isShowAdmin={currentUser.role.roleKey == 0} />
             <div style={{ padding: '24px' }}>
                 <Typography variant="h3" gutterBottom>Dashboard</Typography>
 

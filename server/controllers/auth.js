@@ -1,12 +1,13 @@
 import User from "../models/user.js";
 
-import { getCurrentRoles, getRoleId } from "../Authorizations.js";
+// import { getCurrentRoles, getRoleId } from "../Authorizations.js";
 
 import jwt from "jsonwebtoken";
 
 import { errorHandler } from "../utils/error.js"
 
 import bcryptjs from "bcryptjs"; // use bcryptjs and NOT bcrypt, as It gives probles in production
+import Role from "../models/role.js";
 
 const createCookie = (req, res, user) => {
 
@@ -32,7 +33,8 @@ const createCookie = (req, res, user) => {
 export const signup = async (req, res, next) => {
     const { username, email, password, role } = req.body;
     // get role id from roleKey
-    const roleId = await getRoleId(role);
+    // const roleId = await getRoleId(role);
+    const roleId = role._id;
 
     const hashedPassword = bcryptjs.hashSync(password, 10);
 
@@ -52,14 +54,18 @@ export const signup = async (req, res, next) => {
 
 export const signin = async (req, res, next) => {
     const { email, password } = req.body;
+    console.log("signin() - email: ", email)
+    console.log("signin() - password: ", password)
     try {
         const validUser = await User.findOne({ email: email });
+        console.log("signin() - validUser: ", validUser)
 
         if (!validUser) {
             return next(errorHandler(401, "Invalid credentials"));
         }
 
         const validPassword = bcryptjs.compareSync(password, validUser.password);
+        console.log("signin() - validPassword: ", validPassword)
 
         if (!validPassword) {
             return next(errorHandler(401, "Invalid credentials"));
@@ -91,7 +97,8 @@ export const google = async (req, res, next) => {
             // create a username from Google displayName that is unique
             const newUsername = name.split(" ").join("").toLowerCase() + (Math.floor(Math.random() * 10000)).toString();
 
-            const newUserRoleId = await getRoleId(role);
+            // const newUserRoleId = await getRoleId(role);
+            const newUserRoleId = role._id;
 
             const newUser = new User({ username: newUsername, email, password: hashedPassword, role: newUserRoleId, profilePicture: photo })
 
