@@ -29,10 +29,11 @@ export async function deleteUser(id) {
 
 export async function addUser(user) {
     try {
+        console.log("userServices.js - addUser() - user: ", user)
         const res = await axios.post("/server/user", user);
         return res.data;
     } catch (error) {
-        console.log(err);
+        console.log(error);
     }
 };
 

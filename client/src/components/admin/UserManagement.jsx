@@ -28,6 +28,8 @@ export default function UserManagement({ users, setUsers, currentRolesMap, curre
     const [hasScrollableContent, setHasScrollableContent] = useState(false);
     const tableRef = useRef(null);
 
+    console.log("UserManagement() - users: ", users)
+
     useEffect(() => {
         const updateScrollableContent = () => {
             setHasScrollableContent(tableRef.current && tableRef.current.scrollHeight > tableRef.current.clientHeight);
@@ -48,15 +50,17 @@ export default function UserManagement({ users, setUsers, currentRolesMap, curre
 
     const handleOpenDialog = (userId = null) => {
         if (userId) {
+            // Edit mode
             setIsEditMode(true);
-            const user = users.find((u) => u.id === userId);
+            const user = users.find((u) => u._id === userId);
             setEditedUser(user);
             setEditFormData({
                 username: user.username,
                 email: user.email,
-                role: user.role,
+                role: user.role.roleKey,
             });
         } else {
+            // New user mode
             setIsEditMode(false);
             setEditFormData({
                 username: "",
@@ -74,8 +78,8 @@ export default function UserManagement({ users, setUsers, currentRolesMap, curre
 
 
     const handleDelete = async (userId) => {
-        const userDescr = users.find((u) => u.id === userId).username;
-        const newUsers = users.filter((user) => user.id !== userId);
+        const userDescr = users.find((u) => u._id === userId).username;
+        const newUsers = users.filter((user) => user._id !== userId);
         setUsers(newUsers);
         const res = await deleteUser(userId);
         if (res.status === 200) {
@@ -86,7 +90,7 @@ export default function UserManagement({ users, setUsers, currentRolesMap, curre
     };
 
     const handleResetPassword = async (userId) => {
-        const user = users.find((u) => u.id === userId);
+        const user = users.find((u) => u._id === userId);
 
         const newPassword = generateRandomPassword();
         const userWithNewPwd = { ...user, password: newPassword };
@@ -138,20 +142,20 @@ export default function UserManagement({ users, setUsers, currentRolesMap, curre
                             </TableHead>
                             <TableBody>
                                 {users.map((user) => (
-                                    <TableRow key={user.id}>
+                                    <TableRow key={user._id}>
                                         {/* User details */}
                                         <TableCell>{user.username}</TableCell>
                                         <TableCell>{user.email}</TableCell>
-                                        <TableCell>{getRoleDescription(user.role)}</TableCell>
+                                        <TableCell>{user.role.roleDescription}</TableCell>
                                         {/* Actions for the User */}
                                         <TableCell>
-                                            <IconButton onClick={() => handleOpenDialog(user.id)} aria-label="edit">
+                                            <IconButton onClick={() => handleOpenDialog(user._id)} aria-label="edit">
                                                 <Edit fontSize="small" />
                                             </IconButton>
-                                            <IconButton onClick={() => handleDelete(user.id)} aria-label="delete" disabled={user.id === currentUser._id}>
+                                            <IconButton onClick={() => handleDelete(user._id)} aria-label="delete" disabled={user.id === currentUser._id}>
                                                 <Delete fontSize="small" />
                                             </IconButton>
-                                            <IconButton onClick={() => handleResetPassword(user.id)} aria-label="reset">
+                                            <IconButton onClick={() => handleResetPassword(user._id)} aria-label="reset">
                                                 <LockReset fontSize="small" />
                                             </IconButton>
                                         </TableCell>

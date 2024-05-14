@@ -3,6 +3,7 @@ import sgMail from '@sendgrid/mail';
 
 import { errorHandler } from "../utils/error.js"
 import User from '../models/user.js';
+import Role from '../models/role.js';
 
 
 export const getUsers = async (req, res, next) => {
@@ -96,28 +97,36 @@ export const deleteUser = async (req, res, next) => {
 
 export const addUser = async (req, res, next) => {
     // check if the user is trying to add his own account or if it is an Admin
-    // req.user comes from validateUser middleware
-    const userArray = await User.find({ _id: req.user.id }).populate('role').exec();
-    const role = userArray[0].role.roleKey;
+    // req.user comes from verifyUser middleware
 
-    if (role !== 0 && req.user.id !== req.params.id) {
+    console.log("addUser() - req.body: ", req.body)
+    console.log("addUser() - req.user: ", req.user)
+    const currentUser = await User.findById(req.user.id).populate('role').exec();
+    console.log("addUser() - currentUser: ", currentUser)
+
+    const currentUserRoleKey = currentUser.role.roleKey;
+
+    if (currentUserRoleKey !== 0) {
         return next(errorHandler(401, "You must be an Admin to do that"));
     }
 
-    // the user is the owner of the profile
+    // the user is an Admin
+    const newUserRoleKey = req.body.role
+    const currentRoles = await Role.find({});
+    const newUserRoleId = currentRoles.find((r) => r.roleKey === newUserRoleKey)._id;
     try {
         // if there is a new password, we want encrypt it
         if (req.body.password) {
             req.body.password = bcryptjs.hashSync(req.body.password, 10);
         }
 
-        // add the user the user
+        // add the new user
         const newUser = new User(
             {
                 username: req.body.username,
                 email: req.body.email,
                 password: req.body.password,
-                role: req.body.role._id
+                role: newUserRoleId
             }
         );
 

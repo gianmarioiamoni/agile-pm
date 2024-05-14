@@ -18,7 +18,10 @@ export default function AddEditUserDialog({
     currentRolesMap,
     setUsers,
     users
-    }) {
+}) {
+    console.log("AddEditUserDialog() - editedUser: ", editedUser)
+    console.log("AddEditUserDialog() - editFormData: ", editFormData)
+    console.log("AddEditUserDialog() - currentRolesMap: ", currentRolesMap)
     
 
     const handleFormChange = (e) => {
@@ -32,7 +35,7 @@ export default function AddEditUserDialog({
         const newPassword = generateRandomPassword();
         const newUser = { ...editFormData, password: newPassword };
         const savedUser = await addUser(newUser);
-        const updatedUserWithId = { ...newUser, id: savedUser?._id };
+        const updatedUserWithId = { ...newUser, _id: savedUser?._id };
         setUsers((prevUsers) => [...prevUsers, updatedUserWithId]);
         sendNewUserEmail(newUser.email, newUser.username, newPassword);
         handleCloseDialog();
@@ -40,7 +43,7 @@ export default function AddEditUserDialog({
 
     const saveEditUserChanges = async () => {
         // const editedUserIndex = users.findIndex((user) => user.id === selectedUserId);
-        const editedUserIndex = users.findIndex((user) => user.id === editedUser.id);
+        const editedUserIndex = users.findIndex((user) => user._id === editedUser.id);
         if (editedUserIndex !== -1) {
             const updatedUsers = [...users];
             const edUser = {
@@ -100,7 +103,7 @@ export default function AddEditUserDialog({
                             sx={{ marginBottom: "10px" }}
                         />
                         <RoleSelect
-                            disabled={editedUser.role === 0}
+                            disabled={editedUser.role == 0}
                             value={isEditMode ? editedUser.role : editFormData.role}
                             onChange={isEditMode ?
                                 (e) => setEditedUser((prev) => ({ ...prev, role: e.target.value }))

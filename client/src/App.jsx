@@ -88,7 +88,7 @@ export default function App() {
         </Route>
         <Route path="/sign-in" element={currentUser ? <Home /> : <SignIn />} > </Route>
         <Route path="/sign-up" element={currentUser ? <Home /> : <SignUp />} > </Route>
-        <Route path="/admin" element={currentUser && currentUser.role === 0 ? <AdminPage users={users} setUsers={setUsers} currentRolesMap={currentRolesMap} setCurrentRolesMap={setCurrentRolesMap} /> : <SignIn />} > </Route>
+        <Route path="/admin" element={currentUser && currentUser.role.roleKey == 0 ? <AdminPage users={users} setUsers={setUsers} currentRolesMap={currentRolesMap} setCurrentRolesMap={setCurrentRolesMap} /> : <SignIn />} > </Route>
         {/* <Route path="/team-assignments/:projectId" element={canAllocateProjectsTeam && <TeamAssignmentsPage projects={projects} users={users} currentRolesMap={currentRolesMap} />} /> */}
         <Route path="/team-assignments/:projectId" element={<TeamAssignmentsPage projects={projects} users={users} currentRolesMap={currentRolesMap} />} />
 

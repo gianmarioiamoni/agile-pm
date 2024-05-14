@@ -56,15 +56,15 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
         {
             userId: u._id,
             username: u.username,
-            roleId: currentRolesMap.find((r) => (r.roleKey === u.role))._id,
-            roleDescription: currentRolesMap.find((r) => (r.roleKey === u.role)).roleDescription 
+            roleId: currentRolesMap.find((r) => (r.roleKey === u.role.roleKey))._id,
+            roleDescription: currentRolesMap.find((r) => (r.roleKey === u.role.roleKey)).roleDescription 
         })).sort((a, b) => a.username.localeCompare(b.username)));
     const [originalUsers, setOriginalUsers] = useState([...users].map((u) => (
         {
             userId: u._id,
             username: u.username,
-            roleId: currentRolesMap.find((r) => (r.roleKey === u.role))._id,
-            roleDescription: currentRolesMap.find((r) => (r.roleKey === u.role)).roleDescription 
+            roleId: currentRolesMap.find((r) => (r.roleKey === u.role.roleKey))._id,
+            roleDescription: currentRolesMap.find((r) => (r.roleKey === u.role.roleKey)).roleDescription 
         })).sort((a, b) => a.username.localeCompare(b.username)));
 
     const [sortValue, setSortValue] = useState("username");
@@ -81,8 +81,8 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
             {
                 userId: u._id,
                 username: u.username,
-                role: currentRolesMap.find((r) => (r.roleKey === u.role))._id,
-                roleDescription: currentRolesMap.find((r) => (r.roleKey === u.role)).roleDescription
+                role: currentRolesMap.find((r) => (r.roleKey === u.role.roleKey))._id,
+                roleDescription: currentRolesMap.find((r) => (r.roleKey === u.role.roleKey)).roleDescription
             }));
         localUsers.sort((a, b) => a.username.localeCompare(b.username));
         setAvailableUsers(localUsers);
