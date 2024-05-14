@@ -8,7 +8,7 @@ import ProjectsList from "../components/project/ProjectsList";
 import NewProjectForm from "../components/project/NewProjectForm";
 import EditProjectDialog from "../components/project/EditProjectDialog";
 
-import { getAllProjects, createProject, updateProject, removeProject } from "../services/projectServices";
+import { createProject, updateProject, removeProject } from "../services/projectServices";
 import { canCreateProject, canViewProject, canEditProject, canDeleteProject, canAllocateProject } from "../services/rolesMapServices";
 
 export default function Dashboard({projects, setProjects, users, setUsers}) {
@@ -34,7 +34,8 @@ export default function Dashboard({projects, setProjects, users, setUsers}) {
             const deleteProject = await canDeleteProject(currentUser);
             const viewProject = await canViewProject(currentUser);
             const allocateProject = await canAllocateProject(currentUser);
-
+            console.log("createProject: ", createProject)
+            console.log("editProject: ", editProject)
             setCanProjects((prev) => ({
                 ...prev,
                 create: createProject,
@@ -45,6 +46,7 @@ export default function Dashboard({projects, setProjects, users, setUsers}) {
             }));
         }
         checkPermissions();
+        
 
     }, []);
 

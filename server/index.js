@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import bcryptjs from 'bcryptjs';
 
 import userRoutes from "./routes/user.js";
 import authRoutes from "./routes/auth.js";
@@ -9,6 +10,8 @@ import projectsRoutes from "./routes/project.js";
 import roleRoutes from "./routes/role.js";
 import rolesMapRoutes from "./routes/rolesMap.js";
 import assignmentsRoutes from "./routes/assignment.js";
+
+import Role from './models/role.js';
 
 import { initDB } from "./Authorizations.js";
 
@@ -39,6 +42,29 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));  // Use cors middleware
+
+// Init user
+const initUser = async () => {
+    const hashedPassword = bcryptjs.hashSync(process.env.DEFAULT_ADMIN_PWD, 10);
+
+
+    // role = 0 is Admin
+    const adminRoleId = await Role.findOne({roleKey: 0})._id;
+    // const adminUser = await User.findOne({ role: adminRoleId });
+    const users = await User.find({}).populate('role');
+    const adminUser = users.find((u) => u.role.roleKey === 0);
+
+    if (adminUser == null || adminUser == undefined) {
+        const adminUserData = {
+            username: "admin",
+            email: "agileprojectmanagerinfo@gmail.com",
+            password: hashedPassword,
+            role: adminRoleId
+        }
+        await User.create(adminUserData);
+        console.log("default Admin user created")
+    }
+};
 
 // DB Initialization
 async function initializeDatabase() {

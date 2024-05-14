@@ -219,7 +219,12 @@ export default function Profile({currentRolesMap}) {
           </button>
         </form>
         <div className="flex justify-between mt-5">
-          <span onClick={handleDeleteAccount} className="text-red-700 cursor-pointer">Delete Account</span>
+          {currentUser.role.roleKey == 0 ? (
+            <span style={{ color: 'GrayText' }}>Delete Account</span>
+          ) : (
+            <span onClick={handleDeleteAccount} className="text-red-700 cursor-pointer">Delete Account</span>
+          )}
+
           <span onClick={handleSignOut} className="text-red-700 cursor-pointer">Sign Out</span>
         </div>
         <p className='text-red-700 mt-5 text-center'>{isError ? "Something went wrong" : ""}</p>

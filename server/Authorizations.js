@@ -14,7 +14,7 @@ const initUser = async () => {
     
     
     // role = 0 is Admin
-    // const adminRoleId = await getRoleId(0);
+    // const adminRoleId = ;
     // const adminUser = await User.findOne({ role: adminRoleId });
     const users = await User.find({}).populate('role');
     const adminUser = users.find((u) => u.role.roleKey === 0);
@@ -47,13 +47,6 @@ const initRoles = async () => {
 
 };
 
-// utility function to get roleId from roleKey
-// export const getRoleId = async (roleKey) => {
-//     const rolesMap = await getCurrentRoles();
-//     const roleId = rolesMap.find((r) => r.roleKey === roleKey)._id;
-
-//     return roleId;
-// }
 
 // Init RolePermissionsMap
 const initRolePermissions = async () => {
@@ -94,7 +87,7 @@ const initRolePermissions = async () => {
 };
 
 export const initDB = async () => {
-    await initUser();
+    // await initUser();
     await initRoles();
     await initRolePermissions();
 };
@@ -117,13 +110,12 @@ export const getDefaultRoles = () => {
 
 const getCurrentRolesMap = async () => {
     try {
-        const name = "current";
-        const rolePermissionsMap = await RolesMap.findOne({ name });
+        const rolePermissionsMap = await RolesMap.findOne({ name: 'current' });
         if (!rolePermissionsMap) {
             await initRolePermissions();
-            rolePermissionsMap = await RolesMap.findOne({ name });
+            rolePermissionsMap = await RolesMap.findOne({ name: 'current' });
         }
-        return rolePermissionsMap.permissions;
+        return rolePermissionsMap.roles;
     } catch (error) {
        console.log(error);
     }
@@ -332,39 +324,29 @@ export const defaultRolePermissionsMap = [
 // Function to check if the current user has permission to perform a specific action
 const hasPermission = async (currentUser, action) => {
     // check if the user is Admin
-    console.log("hasPermission() - currentUser = ", currentUser)
     if (currentUser.role === 0) {
         // Admin has all authorizations
         return true;
     }
 
-    // const rolesMap = await getCurrentRoles();
-
-    // const currentUserRoleObj = rolesMap ? rolesMap.find((r) => {
-    //     return r.id === currentUser.role
-    // }) : null;
-
-
-    // if (currentUserRoleObj == null) {
-    //     console.log("No user role found")
-    //     return;
-    // }
-    // const currentUserRole = currentUserRoleObj.description;
-    const currentUserRole = currentUser.role._id;
+    const currentUserRoleDescr = currentUser.role.roleDescription;
     const rolePermissionsMap = await getCurrentRolesMap();
 
     // Check if the currentUserRole exists in rolePermissions mapping
-    const currentUserPermissions = rolePermissionsMap ? rolePermissionsMap.find((rp) => rp.role === currentUserRole) : null;
+    const currentUserPermissions = rolePermissionsMap ? rolePermissionsMap.find((rp) => rp.role === currentUserRoleDescr) : null;
+    let allowed = false;
+
     if (currentUserPermissions) {
         // Check if the action exists for the currentUserRole
         currentUserPermissions.permissions.map((up) => {
             const permissionsArray = Object.values(up);
-            if (permissionsArray.includes(action)) {
-                return true;
+            if (permissionsArray[0].includes(action)) {
+                allowed = true;
             }
+
         })
     }
-    return false; // User does not have permission to perform the action
+    return allowed; 
 };
 
 // utility functions to check permissions in components
