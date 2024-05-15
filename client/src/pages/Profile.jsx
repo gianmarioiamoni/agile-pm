@@ -207,9 +207,15 @@ export default function Profile({currentRolesMap}) {
           <input type="email" id="email" placeholder="Email" defaultValue={editedUser.email} onChange={handleChange} className="bg-input-bg rounded-lg p-3"></input>
           <input type="password" id="password" placeholder="Password" onChange={handleChange} className="bg-input-bg rounded-lg p-3"></input>
           {/* Role selection */}
-          <select id="role" value={editedUser.role} onChange={handleChangeRole} className='bg-slate-100 border-border border-2 p-3 rounded-lg'>
+          <select
+            id="role"
+            disabled={editedUser.role == 0}
+            value={editedUser.role}
+            onChange={handleChangeRole}
+            style={editedUser.role == 0 ? { color: 'GrayText' } : ''}
+            className='bg-slate-100 border-border border-2 p-3 rounded-lg'>
             {currentRolesMap.map((role, index) => (
-              <option key={index} value={role.roleKey}>{role.roleDescription}</option>
+              <option color="red" key={index} value={role.roleKey}>{role.roleDescription}</option>
             ))}
           </select>
           <button
