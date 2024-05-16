@@ -58,9 +58,12 @@ export default function AdminPage({users, setUsers, currentRolesMap, setCurrentR
                             <Typography variant="h5" gutterBottom fontWeight="bold">Roles Management</Typography>
                             <Divider />
                             <RoleManagement
-                                currentRolesMap={currentRolesMap} setCurrentRolesMap={setCurrentRolesMap}
+                                currentRolesMap={currentRolesMap}
+                                setCurrentRolesMap={setCurrentRolesMap}
                                 rolePermissionsMap={rolePermissionsMap}  
                                 refreshPermissions={refreshPermissions}
+                                users={users}
+                                setUsers={setUsers}
                                 />
                         </Box>
                     </Grid>

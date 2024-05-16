@@ -16,7 +16,7 @@ import { addRole, editRole, deleteRole, getDefaultRoles, restoreRoles } from "..
 import { getRolePermissionsMap, updateRolePermissionsMap } from "../../services/rolesMapServices";
 
 
-export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, rolePermissionsMap, refreshPermissions }) {
+export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, rolePermissionsMap, refreshPermissions, users, setUsers }) {
 
     const [openRoleEditDialog, setOpenRoleEditDialog] = useState(false);
     const [roleEditFormData, setRoleEditFormData] = useState({
@@ -63,13 +63,30 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
     };
 
     const handleCloseRoleEditDialog = () => {
+        setRoleEditFormData({ roleKey: "", roleDescription: "" });
         setOpenRoleEditDialog(false);
     };
 
-const handleSaveRole = async () => {
+    const handleSaveRole = async () => {
+    const updateUsersRole = async () => {
+        const updatedUsers = users.map((user) => {
+            if (user.role?.roleKey === roleEditFormData.roleKey) {
+                return {
+                    ...user,
+                    role: {
+                        roleKey: roleEditFormData.roleKey,
+                        roleDescription: roleEditFormData.roleDescription
+                    }
+                };
+            }
+            return user;
+        });
+        setUsers(updatedUsers);
+    }
     
     try {
         const existingRole = currentRolesMap.find(role => role.roleKey === roleEditFormData.roleKey);
+        console.log("handleSaveRole - existingRole: ", existingRole);
         if (existingRole) {
             // Edit existing role
             if (!roleEditFormData || !roleEditFormData.roleKey || !roleEditFormData.roleDescription) {
@@ -86,6 +103,7 @@ const handleSaveRole = async () => {
                 return role;
             });
             setCurrentRolesMap(updatedRoles);
+            updateUsersRole();
 
             await editRole(roleEditFormData.roleKey, roleEditFormData.roleDescription);
 
@@ -138,12 +156,10 @@ const handleSaveRole = async () => {
 const handleEditRole = (roleKey) => {
     try {
         const selectedRole = currentRolesMap.find(role => role.roleKey === roleKey);
+        console.log("handleEditRole - selectedRole: ", selectedRole);
         if (selectedRole) {
-            console.log("Selected role:", selectedRole);
-            setRoleEditFormData({ roleKey: selectedRole.roleKey, description: selectedRole.roleDescription });
-            console.log("Role edit form data set:", { roleKey: selectedRole.roleKey, description: selectedRole.roleDescription });
+            setRoleEditFormData((prev) => ({...prev, roleKey: selectedRole.roleKey, roleDescription: selectedRole.roleDescription }));
             setOpenRoleEditDialog(true);
-            console.log("Role edit dialog opened");
         } else {
             console.log("Selected role not found");
         }
@@ -161,9 +177,6 @@ const handleEditRole = (roleKey) => {
         try {
             const res = await deleteRole(roleId);
 
-            console.log("res:", res);
-
-
             if (res.success) {
                 const updatedRoles = currentRolesMap.filter(role => role.roleKey !== roleKey);
                 // update the current roles map
@@ -172,7 +185,6 @@ const handleEditRole = (roleKey) => {
 
                 // update current and default role-permissions map with deleted role
                 const updatedRolePermissionsMap = rolePermissionsMap.filter((rp) => rp.role !== roleDescrToDelete);
-                console.log("RoleManagement() - updatedRolePermissionsMap:", updatedRolePermissionsMap);
                 await updateRolePermissionsMap("current", [...updatedRolePermissionsMap]);
 
                 const defaultRolesPermissionsMap = await getRolePermissionsMap("default");
