@@ -78,7 +78,7 @@ const initRolePermissions = async () => {
 
         if (!currRolePermissionsMap) {
             await RolesMap.create(currentRolePermissionsData);
-            console.log("current Role-Permissions Map restore as default")
+            console.log("current Role-Permissions Map restored as default")
         }
         
     } catch (error) {
@@ -323,7 +323,6 @@ export const defaultRolePermissionsMap = [
 
 // Function to check if the current user has permission to perform a specific action
 const hasPermission = async (currentUser, action) => {
-    console.log("hasPermission() - currentUser: ", currentUser)
     // check if the user is Admin
     if (currentUser.role.roleKey == 0) {
         // Admin has all authorizations

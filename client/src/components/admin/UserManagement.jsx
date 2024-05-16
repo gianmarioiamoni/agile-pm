@@ -31,8 +31,9 @@ export default function UserManagement({ users, setUsers, currentRolesMap, curre
     console.log("UserManagement() - users: ", users)
 
     useEffect(() => {
+        console.log("UserManagement() - useEffect() ")
         const updateScrollableContent = () => {
-            setHasScrollableContent(tableRef.current && tableRef.current.scrollHeight > tableRef.current.clientHeight);
+            setHasScrollableContent(tableRef.current && (tableRef.current.scrollHeight > tableRef.current.clientHeight));
         };
 
         // Update initial state
@@ -48,28 +49,29 @@ export default function UserManagement({ users, setUsers, currentRolesMap, curre
         };
     }, [users]);
 
-    const handleOpenDialog = (userId = null) => {
-        if (userId) {
-            // Edit mode
+const handleOpenDialog = (selectedUserId = null) => {
+    if (selectedUserId) {
+        const selectedUser = users.find((user) => user._id === selectedUserId);
+        if (selectedUser) {
             setIsEditMode(true);
-            const user = users.find((u) => u._id === userId);
-            setEditedUser(user);
+            setEditedUser(selectedUser);
             setEditFormData({
-                username: user.username,
-                email: user.email,
-                role: user.role.roleKey,
-            });
-        } else {
-            // New user mode
-            setIsEditMode(false);
-            setEditFormData({
-                username: "",
-                email: "",
-                role: "",
+                username: selectedUser.username || "",
+                email: selectedUser.email || "",
+                role: selectedUser.role?.roleKey || "",
             });
         }
-        setOpenDialog(true);
-    };
+    } else {
+        setIsEditMode(false);
+        setEditedUser({});
+        setEditFormData({
+            username: "",
+            email: "",
+            role: "",
+        });
+    }
+    setOpenDialog(true);
+};
 
     const handleCloseDialog = () => {
         setOpenDialog(false);
@@ -115,7 +117,7 @@ export default function UserManagement({ users, setUsers, currentRolesMap, curre
 
     return (
         <>
-            <Grid container component={Paper} sx={{ position: "relative", height: '30vh', overflowY: "auto" }}>
+            <Grid container component={Paper} ref={tableRef} sx={{ position: "relative", height: '30vh', overflowY: "auto" }}>
                 {/* Users Table */}
                 <Grid item xs={12}>
                     {hasScrollableContent && (

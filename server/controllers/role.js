@@ -1,4 +1,5 @@
 import Role from "../models/role.js";
+import User from "../models/user.js"
 
 import { getDefaultRoles } from "../Authorizations.js";
 
@@ -19,7 +20,6 @@ export const editRole = async (req, res) => {
     const { id } = req.params;
     try {
         const role = await Role.findOneAndUpdate({ roleKey: id }, { roleDescription: roleObj.description })
-        // await Role.findOneAndUpdate({ id }, {description} );
         res.status(201).json(role);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -30,9 +30,24 @@ export const restoreRoles = async (req, res) => {
     const rolesArray = req.body;
 
     try {
+        if (!rolesArray || !Array.isArray(rolesArray)) {
+            throw new Error("Invalid roles data provided");
+        }
+
+        const defaultRoles = getDefaultRoles();
+        if (!defaultRoles || !Array.isArray(defaultRoles)) {
+            throw new Error("Default roles data is missing or invalid");
+        }
+
+        const currentRoles = await Role.find();
+        if (currentRoles.length !== defaultRoles.length) {
+            res.status(400).json({ message: "Impossible to restore the roles. There are users with no default roles" });
+            return;
+        }
+
         await Role.deleteMany({});
         await Role.insertMany(rolesArray);
-        res.status(201).json({message: "default roles restored"});
+        res.status(201).json({ message: "Default roles restored" });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -40,11 +55,35 @@ export const restoreRoles = async (req, res) => {
 
 export const deleteRole = async (req, res) => {
     const { id } = req.params;
+    console.log("deleteRole() - id: ", id)
     try {
-        await Role.findOneAndDelete({ roleKey: id });
-        res.status(201).json({message: "role cancelled"});
+        // check if there are users with the role
+        const users = await User.find({ role: id }).populate('role');
+        console.log("Users with the role:", users);
+
+        if (users.length > 0) {
+            const roleDescription = users[0].role.roleDescription || "unknown";
+            console.log(`Impossible to delete the role. There are ${users.length} users with the ${roleDescription} role`);
+            res.json({ success: false, message: `Impossible to delete the role. There are ${users.length} users with the ${roleDescription} role` });
+            return;
+        }
+
+        // there are no users with the role. We can delete it
+        const deletedRole = await Role.findByIdAndDelete(id);
+            console.log("Deleted Role:", deletedRole);
+
+        if (!deletedRole) {
+            console.log("Role not found");
+            res.status(404).json({ message: "Role not found" });
+            return;
+        }
+
+        console.log("Role deleted successfully");
+        res.json({ success: true, message: "Role deleted successfully" });
+        return;
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        console.log("Error:", error.message);
+        res.status(500).json({ message: error.message });
     }
 };
 

@@ -44,28 +44,26 @@ const corsOptions = {
 
 app.use(cors(corsOptions));  // Use cors middleware
 
-// Init user
 const initUser = async () => {
-    console.log("initUser()")
-    const hashedPassword = bcryptjs.hashSync(process.env.DEFAULT_ADMIN_PWD, 10);
+    try {
+        const hashedPassword = bcryptjs.hashSync(process.env.DEFAULT_ADMIN_PWD, 10);
 
-    // role = 0 is Admin
+        const adminRole = await Role.findOne({ roleKey: 0 });
+        const users = await User.find({}).populate('role');
+        const adminUser = users.find((u) => u.role && u.role.roleKey == 0);
 
-    const adminRole = await Role.findOne({ roleKey: 0 });
-    console.log("initUser() - adminRole: ", adminRole)
-    // const adminUser = await User.findOne({ role: adminRoleId });
-    const users = await User.find({}).populate('role');
-    const adminUser = users.find((u) => u.role.roleKey == 0);
-
-    if (adminUser == null || adminUser == undefined) {
-        const adminUserData = {
-            username: "admin",
-            email: "agileprojectmanagerinfo@gmail.com",
-            password: hashedPassword,
-            role: adminRole._id
+        if (!adminUser) {
+            const adminUserData = {
+                username: "admin",
+                email: "agileprojectmanagerinfo@gmail.com",
+                password: hashedPassword,
+                role: adminRole._id
+            };
+            await User.create(adminUserData);
+            console.log("Default Admin user created");
         }
-        await User.create(adminUserData);
-        console.log("default Admin user created")
+    } catch (error) {
+        console.error("Error in initializing default admin user:", error);
     }
 };
 

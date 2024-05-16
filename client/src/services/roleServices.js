@@ -45,17 +45,15 @@ export async function editRole(id, description) {
 }
 
 export async function deleteRole(id) {
-    try {
-        await axios.delete(`/server/roles/${id}`);
-    } catch (error) {
-        console.log(error);
-    }
+    const res = await axios.delete(`/server/roles/${id}`);
+    console.log("deleteRole() - res: ", res)
+    return res.data;
 }
 
 export async function restoreRoles(rolesArray) {
     try {
-        await axios.put(`/server/roles`, rolesArray);
-        return;
+        const res = await axios.put(`/server/roles`, rolesArray);
+        return res.data;
     } catch (error) {
         console.log(error);
     } 

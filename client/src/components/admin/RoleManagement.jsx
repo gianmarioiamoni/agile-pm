@@ -13,7 +13,7 @@ import { Edit, Delete, Add, ArrowDownward, Restore } from '@mui/icons-material';
 import { v4 as uuidv4 } from 'uuid';
 
 import { addRole, editRole, deleteRole, getDefaultRoles, restoreRoles } from "../../services/roleServices";
-import { getPermissionsLabelValues, getRolePermissionsMap, updateRolePermissionsMap } from "../../services/rolesMapServices";
+import { getRolePermissionsMap, updateRolePermissionsMap } from "../../services/rolesMapServices";
 
 
 export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, rolePermissionsMap, refreshPermissions }) {
@@ -34,7 +34,6 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
             // const plv = await getPermissionsLabelValues();
             // setPermissionsLabelValueArray(plv);
             const defRoles = await getDefaultRoles();
-            console.log("defRoles: ", defRoles)
 
             setDefaultRolesMap(defRoles)
         };
@@ -67,11 +66,16 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
         setOpenRoleEditDialog(false);
     };
 
-    const handleSaveRole = async () => {
-        // Verify if we are adding a new role or editing an existing one
+const handleSaveRole = async () => {
+    
+    try {
         const existingRole = currentRolesMap.find(role => role.roleKey === roleEditFormData.roleKey);
         if (existingRole) {
-            // Editing an existing role
+            // Edit existing role
+            if (!roleEditFormData || !roleEditFormData.roleKey || !roleEditFormData.roleDescription) {
+                console.log("Error: roleEditFormData is missing key or description");
+                return;
+            }
             const updatedRoles = currentRolesMap.map(role => {
                 if (role.roleKey === roleEditFormData.roleKey) {
                     return {
@@ -83,15 +87,8 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
             });
             setCurrentRolesMap(updatedRoles);
 
-            // update DB with edited role
-            try {
-                // await editRoles(updatedRoles);
-                await editRole(roleEditFormData.roleKey, roleEditFormData.roleDescription);
-            } catch (err) {
-                console.log(err)
-            }
+            await editRole(roleEditFormData.roleKey, roleEditFormData.roleDescription);
 
-            // updated current and default role-permissions map in DB
             const updatedRolePermissionsMap = rolePermissionsMap.map((role) => {
                 if (role.role === existingRole.roleDescription) {
                     return { ...role, role: roleEditFormData.roleDescription }
@@ -99,100 +96,94 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
                 return role;
             });
 
-            try {
-                await updateRolePermissionsMap("current", updatedRolePermissionsMap);
-                
-                const defaultRolesPermissionsMap = await getRolePermissionsMap("default");
-                const updatedDefaultRolePermissionsMap = await defaultRolesPermissionsMap.map((role) => {
-                    
-                    if (role.role === existingRole.roleDescription) {
-                        return { ...role, role: roleEditFormData.roleDescription };
-                    }
-                    return role;
-                });
-                await updateRolePermissionsMap("default", updatedDefaultRolePermissionsMap)
-                refreshPermissions();
-            } catch (error) {
-                console.log(error)
-            }
-
+            await updateRolePermissionsMap("current", updatedRolePermissionsMap);
+            
+            const defaultRolesPermissionsMap = await getRolePermissionsMap("default");
+            const updatedDefaultRolePermissionsMap = defaultRolesPermissionsMap.map((role) => {
+                if (role.role === existingRole.roleDescription) {
+                    return { ...role, role: roleEditFormData.roleDescription };
+                }
+                return role;
+            });
+            await updateRolePermissionsMap("default", updatedDefaultRolePermissionsMap);
+            refreshPermissions();
         } else {
-            // Adding a new role
-            const newRoleKey = currentRolesMap[currentRolesMap.length - 1].roleKey + 1;
-            console.log("adding a new role - currentRolesMap: ", currentRolesMap)
+            // Add new role
+            const newRoleKey = currentRolesMap.length > 0 ? currentRolesMap[currentRolesMap.length - 1].roleKey + 1 : 1;
             const newRole = { roleKey: newRoleKey, roleDescription: roleEditFormData.roleDescription };
-            setCurrentRolesMap((prev) => ([...prev, newRole]));
 
-            // update role-permissions map with the new role
             const newRoleForPermissionsMap = {
                 role: newRole.roleDescription,
                 permissions: []
             };
 
-            // update DB with new role
-            try {
-                await addRole(newRole.roleKey, newRole.roleDescription);
-            } catch (err) {
-                console.log(err)
-            }
+            const res = await addRole(newRole.roleKey, newRole.roleDescription);
+            setCurrentRolesMap((prev) => ([...prev, { ...newRole, _id: res._id }]));
 
-            // update DB with new current and default role-permissions map
-            try {
-                await updateRolePermissionsMap("current", [...rolePermissionsMap, newRoleForPermissionsMap]);
+            await updateRolePermissionsMap("current", [...rolePermissionsMap, newRoleForPermissionsMap]);
 
-                const defaultRolesPermissionsMap = await getRolePermissionsMap("default");
-                const updatedDefaultRolePermissionsMap = [...defaultRolesPermissionsMap, newRoleForPermissionsMap];
-                await updateRolePermissionsMap("default", updatedDefaultRolePermissionsMap);
+            const defaultRolesPermissionsMap = await getRolePermissionsMap("default");
+            const updatedDefaultRolePermissionsMap = [...defaultRolesPermissionsMap, newRoleForPermissionsMap];
+            await updateRolePermissionsMap("default", updatedDefaultRolePermissionsMap);
 
-                refreshPermissions();
-
-            } catch (err) {
-                console.log(err)
-            }
+            refreshPermissions();
         }
+    } catch (error) {
+        console.log(error);
+    }
 
-        // close the dialog
-        handleCloseRoleEditDialog();
-    }; // handleSaveRole()
+    handleCloseRoleEditDialog();
+};
 
-    const handleEditRole = (roleKey) => {
-        // find the selected role
+const handleEditRole = (roleKey) => {
+    try {
         const selectedRole = currentRolesMap.find(role => role.roleKey === roleKey);
         if (selectedRole) {
-            // setup role data into the edit form
+            console.log("Selected role:", selectedRole);
             setRoleEditFormData({ roleKey: selectedRole.roleKey, description: selectedRole.roleDescription });
-            // open the role edit dialog
+            console.log("Role edit form data set:", { roleKey: selectedRole.roleKey, description: selectedRole.roleDescription });
             setOpenRoleEditDialog(true);
+            console.log("Role edit dialog opened");
+        } else {
+            console.log("Selected role not found");
         }
-    };
+    } catch (error) {
+        console.log("An error occurred:", error);
+    }
+};
 
     const handleDeleteRole = async (roleKey) => {
         // filter the roles excluding the one to be deleted
         const roleDescrToDelete = currentRolesMap.find((r) => r.roleKey === roleKey).roleDescription;
-        const updatedRoles = currentRolesMap.filter(role => role.roleKey !== roleKey);
-        // update the current roles map
-        setCurrentRolesMap(updatedRoles);
+        const roleId = currentRolesMap.find((r) => r.roleKey === roleKey)._id;
 
         // update DB with deleted role
         try {
-            // await editRoles(updatedRoles);
-            await deleteRole(roleKey)
-            alert(`role ${roleDescrToDelete} deleted`);
-        } catch (err) {
-            alert("Impossible to delete the role");
-            console.log(err)
-        }
+            const res = await deleteRole(roleId);
 
-        // update current and default role-permissions map with deleted role
-        const updatedRolePermissionsMap = rolePermissionsMap.filter((rp) => rp.role !== roleDescrToDelete);
-        try {
-            await updateRolePermissionsMap("current", [...updatedRolePermissionsMap]);
-            
-            const defaultRolesPermissionsMap = await getRolePermissionsMap("default");
-            const updatedDefaultRolePermissionsMap = defaultRolesPermissionsMap.filter((rp) => rp.role !== roleDescrToDelete)
-            await updateRolePermissionsMap("default", updatedDefaultRolePermissionsMap)
-            
-            refreshPermissions();
+            console.log("res:", res);
+
+
+            if (res.success) {
+                const updatedRoles = currentRolesMap.filter(role => role.roleKey !== roleKey);
+                // update the current roles map
+                setCurrentRolesMap(updatedRoles);
+                alert(`role ${roleDescrToDelete} deleted successfully`);
+
+                // update current and default role-permissions map with deleted role
+                const updatedRolePermissionsMap = rolePermissionsMap.filter((rp) => rp.role !== roleDescrToDelete);
+                console.log("RoleManagement() - updatedRolePermissionsMap:", updatedRolePermissionsMap);
+                await updateRolePermissionsMap("current", [...updatedRolePermissionsMap]);
+
+                const defaultRolesPermissionsMap = await getRolePermissionsMap("default");
+                const updatedDefaultRolePermissionsMap = defaultRolesPermissionsMap.filter((rp) => rp.role !== roleDescrToDelete)
+                await updateRolePermissionsMap("default", updatedDefaultRolePermissionsMap)
+
+                refreshPermissions();
+            }
+            else {
+                alert(res.message);
+            }
         } catch (error) {
             console.log(error);
         }
@@ -202,23 +193,26 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
         try {
             // copy default RolesMap into current
             const defaultRolesArray = await getDefaultRoles();
-            await restoreRoles(defaultRolesArray);
-            setCurrentRolesMap(defaultRolesArray);
-            
-            
-            // set current and default rolePermissionsMap with default roles
-            const updatedRolePermissionsMap = rolePermissionsMap.slice(0, defaultRolesArray.length - 1);
-            await updateRolePermissionsMap("current", updatedRolePermissionsMap)
-            
-            const defaultRolesPermissionsMap = await getRolePermissionsMap("default");
-            const updatedDefaultRolePermissionsMap = defaultRolesPermissionsMap.slice(0, defaultRolesArray.length)
-            await updateRolePermissionsMap("default", updatedDefaultRolePermissionsMap)
+            const res = await restoreRoles(defaultRolesArray);
+            if (res.success) {
+                setCurrentRolesMap(defaultRolesArray);
 
-            refreshPermissions();
+                // set current and default rolePermissionsMap with default roles
+                const updatedRolePermissionsMap = rolePermissionsMap.slice(0, defaultRolesArray.length - 1);
+                await updateRolePermissionsMap("current", updatedRolePermissionsMap)
+
+                const defaultRolesPermissionsMap = await getRolePermissionsMap("default");
+                const updatedDefaultRolePermissionsMap = defaultRolesPermissionsMap.slice(0, defaultRolesArray.length)
+                await updateRolePermissionsMap("default", updatedDefaultRolePermissionsMap)
+
+                refreshPermissions();
+            } else {
+                alert(res.message)
+            }
 
         } catch (error) {
             console.log(error)
-        } 
+        }
     }
 
     return (

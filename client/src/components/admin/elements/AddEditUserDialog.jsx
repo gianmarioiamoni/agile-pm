@@ -34,6 +34,7 @@ export default function AddEditUserDialog({
     const saveAddUserChanges = async () => {
         const newPassword = generateRandomPassword();
         const newUser = { ...editFormData, password: newPassword };
+        console.log("AddEditUserDialog() - newUser: ", newUser)
         const savedUser = await addUser(newUser);
         console.log("AddEditUserDialog() - savedUser: ", savedUser)
         const newUserRoleObj = currentRolesMap.find((r) => r._id === savedUser.role);
