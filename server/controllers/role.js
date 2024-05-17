@@ -27,27 +27,34 @@ export const editRole = async (req, res) => {
 };
 
 export const restoreRoles = async (req, res) => {
-    const rolesArray = req.body;
 
     try {
-        if (!rolesArray || !Array.isArray(rolesArray)) {
-            throw new Error("Invalid roles data provided");
-        }
-
         const defaultRoles = getDefaultRoles();
+        console.log("restoreRoles() - defaultRoles:", defaultRoles);
+
         if (!defaultRoles || !Array.isArray(defaultRoles)) {
             throw new Error("Default roles data is missing or invalid");
         }
 
-        const currentRoles = await Role.find();
-        if (currentRoles.length !== defaultRoles.length) {
-            res.status(400).json({ message: "Impossible to restore the roles. There are users with no default roles" });
+        // check if there are users with no default roles
+        const users = await User.find({}).populate('role');
+        const usersWithNoDefaultRole = users.filter((u) => !u.role.isDefault);
+
+        if (usersWithNoDefaultRole.length > 0) {
+            res.json({ success: false, message: "Impossible to restore the roles. There are users with no default roles" });
             return;
         }
 
+        const rolesArray = defaultRoles.map((role) => {
+            return { ...role, isDefault: true };
+        })
+
         await Role.deleteMany({});
+        console.log("restoreRoles() - deleted current roles");
+        console.log("restoreRoles() - rolesArray:", rolesArray);
         await Role.insertMany(rolesArray);
-        res.status(201).json({ message: "Default roles restored" });
+        console.log("restoreRoles() - inserted new roles");
+        res.json({ success: true, defaultRoles, message: "Default roles restored" });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -59,7 +66,6 @@ export const deleteRole = async (req, res) => {
     try {
         // check if there are users with the role
         const users = await User.find({ role: id }).populate('role');
-        console.log("Users with the role:", users);
 
         if (users.length > 0) {
             const roleDescription = users[0].role.roleDescription || "unknown";

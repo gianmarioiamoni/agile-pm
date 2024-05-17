@@ -10,6 +10,10 @@ const roleSchema = new mongoose.Schema({
     roleDescription: {
         type: String,
         // required: true,
+    },
+    isDefault: {
+        type: Boolean,
+        required: true
     }
 });  
 

@@ -35,9 +35,15 @@ const initUser = async () => {
 const initRoles = async () => {
     try {
         const currRoles = await Role.findOne({});
+        const defaultRolesMapWithBooleans = defaultRolesMap.map((role) => {
+            return {
+                ...role,
+                isDefault: true
+            }
+        })
         
         if (!currRoles || currRoles.length === 0) {
-            await Role.insertMany(defaultRolesMap);
+            await Role.insertMany(defaultRolesMapWithBooleans);
             console.log("current Roles Map initialized")
         }
 

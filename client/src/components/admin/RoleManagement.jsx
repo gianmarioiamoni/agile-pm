@@ -12,7 +12,7 @@ import { Edit, Delete, Add, ArrowDownward, Restore } from '@mui/icons-material';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { addRole, editRole, deleteRole, getDefaultRoles, restoreRoles } from "../../services/roleServices";
+import { addRole, editRole, deleteRole, getDefaultRoles } from "../../services/roleServices";
 import { getRolePermissionsMap, updateRolePermissionsMap } from "../../services/rolesMapServices";
 
 
@@ -29,10 +29,9 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
     const [hasScrollableContent, setHasScrollableContent] = useState(false);
     const tableRef = useRef(null);
 
+
     useEffect(() => {
         const initState = async () => {
-            // const plv = await getPermissionsLabelValues();
-            // setPermissionsLabelValueArray(plv);
             const defRoles = await getDefaultRoles();
 
             setDefaultRolesMap(defRoles)
@@ -201,31 +200,6 @@ const handleEditRole = (roleKey) => {
         }
     };
 
-    const handleRestoreDefault = async () => {
-        try {
-            // copy default RolesMap into current
-            const defaultRolesArray = await getDefaultRoles();
-            const res = await restoreRoles(defaultRolesArray);
-            if (res.success) {
-                setCurrentRolesMap(defaultRolesArray);
-
-                // set current and default rolePermissionsMap with default roles
-                const updatedRolePermissionsMap = rolePermissionsMap.slice(0, defaultRolesArray.length - 1);
-                await updateRolePermissionsMap("current", updatedRolePermissionsMap)
-
-                const defaultRolesPermissionsMap = await getRolePermissionsMap("default");
-                const updatedDefaultRolePermissionsMap = defaultRolesPermissionsMap.slice(0, defaultRolesArray.length)
-                await updateRolePermissionsMap("default", updatedDefaultRolePermissionsMap)
-
-                refreshPermissions();
-            } else {
-                alert(res.message)
-            }
-
-        } catch (error) {
-            console.log(error)
-        }
-    }
 
     return (
         <>
@@ -250,7 +224,7 @@ const handleEditRole = (roleKey) => {
                                 <TableCell>{role.roleDescription}</TableCell>
                                 {/* Buttons to edit and delete roles. Visible only for custom roles */}
                                 {/* {role.roleKey > 3 ? ( */}
-                                {role.roleKey > defaultRolesMap.length-1 ? (
+                                {!role.isDefault ? (
                                     <TableCell>
                                         <IconButton onClick={() => handleEditRole(role.roleKey)} aria-label="edit">
                                             <Edit fontSize="small" />
@@ -271,7 +245,7 @@ const handleEditRole = (roleKey) => {
 
             {/* button to add a new role */}
             <Box display="flex" alignItems="flex-start"  >
-                <Grid item xs={4}>
+                <Grid item xs={6}>
                     <Button
                         variant="contained"
                         startIcon={<Add />}
@@ -279,17 +253,6 @@ const handleEditRole = (roleKey) => {
                         fullWidth
                     >
                         Add Role
-                    </Button>
-                </Grid>
-                {/* button to restore default role */}
-                <Grid item xs={4} sx={{marginLeft: 2}}>
-                    <Button
-                        variant="contained"
-                        startIcon={<Restore />}
-                        onClick={handleRestoreDefault}
-                        fullWidth
-                    >
-                        Default
                     </Button>
                 </Grid>
             </Box>
