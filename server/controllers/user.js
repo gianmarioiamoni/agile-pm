@@ -92,8 +92,10 @@ export const deleteUser = async (req, res, next) => {
 export const addUser = async (req, res, next) => {
     // check if the user is trying to add his own account or if it is an Admin
     // req.user comes from verifyUser middleware
+    console.log("addUser() - req.user: ", req.user)
+    const currentUser = await User.findById(req.user.id).populate('role');
+    console.log("addUser() - currentUser: ", currentUser)
 
-    const currentUser = await User.findById(req.user.id).populate('role').exec();
 
     const currentUserRoleKey = currentUser.role.roleKey;
 
