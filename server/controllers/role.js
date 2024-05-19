@@ -30,7 +30,6 @@ export const restoreRoles = async (req, res) => {
 
     try {
         const defaultRoles = getDefaultRoles();
-        console.log("restoreRoles() - defaultRoles:", defaultRoles);
 
         if (!defaultRoles || !Array.isArray(defaultRoles)) {
             throw new Error("Default roles data is missing or invalid");
@@ -50,10 +49,7 @@ export const restoreRoles = async (req, res) => {
         })
 
         await Role.deleteMany({});
-        console.log("restoreRoles() - deleted current roles");
-        console.log("restoreRoles() - rolesArray:", rolesArray);
         await Role.insertMany(rolesArray);
-        console.log("restoreRoles() - inserted new roles");
         res.json({ success: true, defaultRoles, message: "Default roles restored" });
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -62,7 +58,6 @@ export const restoreRoles = async (req, res) => {
 
 export const deleteRole = async (req, res) => {
     const { id } = req.params;
-    console.log("deleteRole() - id: ", id)
     try {
         // check if there are users with the role
         const users = await User.find({ role: id }).populate('role');
@@ -76,7 +71,6 @@ export const deleteRole = async (req, res) => {
 
         // there are no users with the role. We can delete it
         const deletedRole = await Role.findByIdAndDelete(id);
-            console.log("Deleted Role:", deletedRole);
 
         if (!deletedRole) {
             console.log("Role not found");

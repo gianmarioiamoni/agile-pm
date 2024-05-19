@@ -9,9 +9,6 @@ import Role from '../models/role.js';
 export const getUsers = async (req, res, next) => {
     try {
         //// check if the user is trying to get users list is an Admin
-        // if (req.user.role !== 0) {
-        //     return next(errorHandler(401, "Only Admin can get users list"));
-        // }
         
         const usersList = await User.find({}).populate('role');
 
@@ -92,10 +89,7 @@ export const deleteUser = async (req, res, next) => {
 export const addUser = async (req, res, next) => {
     // check if the user is trying to add his own account or if it is an Admin
     // req.user comes from verifyUser middleware
-    console.log("addUser() - req.user: ", req.user)
     const currentUser = await User.findById(req.user.id).populate('role');
-    console.log("addUser() - currentUser: ", currentUser)
-
 
     const currentUserRoleKey = currentUser.role.roleKey;
 

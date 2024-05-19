@@ -6,7 +6,6 @@ import { addUser, editUser, sendNewUserEmail } from "../../../services/userServi
 
 import { generateRandomPassword } from "../../../utils/utilities";
 
-
 export default function AddEditUserDialog({
     openDialog,
     handleCloseDialog,
@@ -19,25 +18,6 @@ export default function AddEditUserDialog({
     setUsers,
     users
 }) {
-    console.log("AddEditUserDialog() - editedUser: ", editedUser)
-    console.log("AddEditUserDialog() - editFormData: ", editFormData)
-    console.log("AddEditUserDialog() - currentRolesMap: ", currentRolesMap)
-
-    if (!currentRolesMap || currentRolesMap.length === 0) {
-        console.error('currentRolesMap is not defined or is empty');
-        throw new Error('currentRolesMap is not defined or is empty');
-    }
-
-    if (!users || users.length === 0) {
-        console.error('users is not defined or is empty');
-        throw new Error('users is not defined or is empty');
-    }
-
-    if (!editedUser && isEditMode) {
-        console.error('editedUser is not defined when isEditMode is true');
-        throw new Error('editedUser is not defined when isEditMode is true');
-    }
-
     const handleFormChange = (e) => {
         const { id, value } = e.target;
         setEditFormData((prevFormData) => ({ ...prevFormData, [id]: value }));
@@ -47,13 +27,9 @@ export default function AddEditUserDialog({
         try {
             const newPassword = generateRandomPassword();
             const newUser = { ...editFormData, password: newPassword };
-            console.log("AddEditUserDialog() - newUser: ", newUser)
             const savedUser = await addUser(newUser);
-            console.log("AddEditUserDialog() - savedUser: ", savedUser)
             const newUserRoleObj = currentRolesMap.find((r) => r._id === savedUser.role);
-            console.log("AddEditUserDialog() - newUserRoleObj: ", newUserRoleObj)
             const updatedUserWithId = { ...newUser, _id: savedUser?._id, role: newUserRoleObj };
-            console.log("AddEditUserDialog() - updatedUserWithId: ", updatedUserWithId)
             setUsers((prevUsers) => [...prevUsers, updatedUserWithId]);
             sendNewUserEmail(newUser.email, newUser.username, newPassword);
             handleCloseDialog();
