@@ -10,6 +10,7 @@ import projectsRoutes from "./routes/project.js";
 import roleRoutes from "./routes/role.js";
 import rolesMapRoutes from "./routes/rolesMap.js";
 import assignmentsRoutes from "./routes/assignment.js";
+import sprintsRoutes from "./routes/sprint.js";
 
 import Role from './models/role.js';
 import User from './models/user.js';
@@ -99,6 +100,7 @@ app.use("/server/projects", projectsRoutes);
 app.use("/server/roles", roleRoutes);
 app.use("/server/roles-map", rolesMapRoutes);
 app.use("/server/assignments", assignmentsRoutes);
+app.use("/server/sprints", sprintsRoutes);
 
 // middleware to manage errors
 app.use((err, req, res, next) => {

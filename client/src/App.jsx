@@ -8,9 +8,10 @@ import Profile from "./pages/Profile";
 import Dashboard from "./pages/Dashboard";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
-import AdminPage from './pages/AdminPage';
+import AdminPage from "./pages/AdminPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import TeamAssignmentsPage from './pages/TeamAssignmentsPage';
+import TeamAssignmentsPage from "./pages/TeamAssignmentsPage";
+import SprintsManagementPage from "./pages/SprintsManagementPage";
 
 import PrivateRoute from "./components/PrivateRoute";
 
@@ -31,12 +32,10 @@ export default function App() {
   const [canAllocateProjectsTeam, setCanAllocateProjectsTeam] = useState(true);
 
   useEffect(() => {
-    
 
     // get current users from the DB
     const setCurrentUsers = async () => {
       const u = await getCurrentUsers();
-      console.log("u: ", u)
       setUsers(u);
     };
     setCurrentUsers();
@@ -44,12 +43,9 @@ export default function App() {
     // get current rolesMap from the DB
     const setCurrentRoles = async () => {
       const r = await getCurrentRoles();
-      console.log("r: ", r)
       setCurrentRolesMap(r);
     };
     setCurrentRoles();
-
-    
 
   }, []);
 
@@ -89,8 +85,8 @@ export default function App() {
         <Route path="/sign-in" element={currentUser ? <Home /> : <SignIn />} > </Route>
         <Route path="/sign-up" element={currentUser ? <Home /> : <SignUp />} > </Route>
         <Route path="/admin" element={currentUser && currentUser.role.roleKey == 0 ? <AdminPage users={users} setUsers={setUsers} currentRolesMap={currentRolesMap} setCurrentRolesMap={setCurrentRolesMap} /> : <SignIn />} > </Route>
-        {/* <Route path="/team-assignments/:projectId" element={canAllocateProjectsTeam && <TeamAssignmentsPage projects={projects} users={users} currentRolesMap={currentRolesMap} />} /> */}
         <Route path="/team-assignments/:projectId" element={<TeamAssignmentsPage projects={projects} users={users} currentRolesMap={currentRolesMap} />} />
+        <Route path="/sprints-management/:projectId" element={<SprintsManagementPage />} />
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

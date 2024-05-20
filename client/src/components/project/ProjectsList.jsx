@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Grid, Typography, IconButton } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
 import GroupsIcon from '@mui/icons-material/Groups';
+import ViewTimeLineIcon from '@mui/icons-material/ViewTimeline';
 
 import { Link } from 'react-router-dom';
 
@@ -37,6 +38,11 @@ export default function ProjectsList({ projects, onEdit, onDelete, isEditable = 
                         <Link to={`/team-assignments/${project.id}`} style={!isAllocable ? { pointerEvents: 'none' } : {}}>
                             <IconButton disabled={!isAllocable}>
                                 <GroupsIcon />
+                            </IconButton>
+                        </Link>
+                        <Link to={`/sprints-management/${project.id}`} style={!isAllocable ? { pointerEvents: 'none' } : {}}>
+                            <IconButton>
+                                <ViewTimeLineIcon />
                             </IconButton>
                         </Link>
                         <IconButton onClick={() => onEdit(project)} disabled={!isEditable}>

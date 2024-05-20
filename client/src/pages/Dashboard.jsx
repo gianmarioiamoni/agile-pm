@@ -13,7 +13,6 @@ import { canCreateProject, canViewProject, canEditProject, canDeleteProject, can
 
 export default function Dashboard({projects, setProjects, users, setUsers}) {
     const { currentUser } = useSelector(state => state.user);
-    // const [projects, setProjects] = useState([]);
     const [editProject, setEditProject] = useState(null);
     const [deleteProject, setDeleteProject] = useState(null);
 
@@ -34,8 +33,6 @@ export default function Dashboard({projects, setProjects, users, setUsers}) {
             const deleteProject = await canDeleteProject(currentUser);
             const viewProject = await canViewProject(currentUser);
             const allocateProject = await canAllocateProject(currentUser);
-            console.log("createProject: ", createProject)
-            console.log("editProject: ", editProject)
             setCanProjects((prev) => ({
                 ...prev,
                 create: createProject,
@@ -47,7 +44,6 @@ export default function Dashboard({projects, setProjects, users, setUsers}) {
         }
         checkPermissions();
         
-
     }, []);
 
     // callbacks for event handling
