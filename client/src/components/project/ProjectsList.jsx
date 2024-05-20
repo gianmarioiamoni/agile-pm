@@ -1,12 +1,9 @@
-// ProjectsList.jsx
 import React, { useState, useEffect } from 'react';
-import { Grid, Typography, IconButton } from '@mui/material';
+import { Grid, Typography, IconButton, Tooltip } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
 import GroupsIcon from '@mui/icons-material/Groups';
 import ViewTimeLineIcon from '@mui/icons-material/ViewTimeline';
-
 import { Link } from 'react-router-dom';
-
 import { getAssignments } from "../../services/assignmentServices";
 
 export default function ProjectsList({ projects, onEdit, onDelete, isEditable = true, isDeletable = true, isAllocable = true }) {
@@ -36,21 +33,37 @@ export default function ProjectsList({ projects, onEdit, onDelete, isEditable = 
                     </Grid>
                     <Grid item xs={3} container justifyContent="flex-end">
                         <Link to={`/team-assignments/${project.id}`} style={!isAllocable ? { pointerEvents: 'none' } : {}}>
-                            <IconButton disabled={!isAllocable}>
-                                <GroupsIcon />
-                            </IconButton>
+                            <Tooltip title="Manage Team Assignments" arrow>
+                                <div>
+                                    <IconButton disabled={!isAllocable}>
+                                        <GroupsIcon />
+                                    </IconButton>
+                                </div>
+                            </Tooltip>
                         </Link>
                         <Link to={`/sprints-management/${project.id}`} style={!isAllocable ? { pointerEvents: 'none' } : {}}>
-                            <IconButton>
-                                <ViewTimeLineIcon />
-                            </IconButton>
+                            <Tooltip title="Manage Sprints" arrow>
+                                <div>
+                                    <IconButton>
+                                        <ViewTimeLineIcon />
+                                    </IconButton>
+                                </div>
+                            </Tooltip>
                         </Link>
-                        <IconButton onClick={() => onEdit(project)} disabled={!isEditable}>
-                            <Edit />
-                        </IconButton>
-                        <IconButton onClick={() => onDelete(project)} disabled={!isDeletable}>
-                            <Delete />
-                        </IconButton>
+                        <Tooltip title="Edit Project" arrow>
+                            <div>
+                                <IconButton onClick={() => onEdit(project)} disabled={!isEditable}>
+                                    <Edit />
+                                </IconButton>
+                            </div>
+                        </Tooltip>
+                        <Tooltip title="Delete Project" arrow>
+                            <div>
+                                <IconButton onClick={() => onDelete(project)} disabled={!isDeletable}>
+                                    <Delete />
+                                </IconButton>
+                            </div>
+                        </Tooltip>
                     </Grid>
                 </Grid>
             ))}

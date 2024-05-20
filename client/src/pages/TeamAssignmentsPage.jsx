@@ -32,23 +32,12 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
 
     const { projectId } = useParams();
 
-    // teamAssignments: [
-    // { _id: "fhweioghwpghowpgrh",
-    //   userId: "wt4uwowgwhrgwrhg",
-    //   username: "Joe Doe",
-    //   roleId: "14faefhiweghoweg223",
-    //   roleDescription: "Scrum Master"
-    // }, ...]
     const [teamAssignments, setTeamAssignments] = useState([]);
     const [projectDescription, setProjectDescription] = useState('');
 
     const [selectedMember, setSelectedMember] = useState(null);
     console.log("users: ", users)
     console.log("currentrolesMap: ", currentRolesMap)
-    // availableUsers: [ 
-    // { userId: "1w2542425645fwertwr6", username: "Joe Doe",
-    //   role: "14faefhiweghoweg223", roleDescription: "Scrum Master"
-    // }, ...]
     const [availableUsers, setAvailableUsers] = useState([...users].map((u) => (
         {
             userId: u._id,

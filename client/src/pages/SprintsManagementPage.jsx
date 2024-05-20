@@ -3,10 +3,11 @@ import { Container, Typography, Grid, Box } from '@mui/material';
 
 import { useParams } from 'react-router-dom';
 
-import axios from 'axios';
-
 import AddSprint from "../components/sprint/AddSprint";
 import SprintList from "../components/sprint/SprintList";
+
+import { getSprintsByProjectId } from "../services/sprintServices";
+
 
 /**
  * Page for managing sprints for a project
@@ -31,11 +32,11 @@ export default function SprintsManagementPage() {
          * Fetchs the sprints for the given project from the server.
          * The response is then set as the state of the sprints.
          */
-        console.log("useEffect() - projectId: ", projectId);
         const fetchSprints = async () => {
             try {
-                const response = await axios.get(`/server/sprints/${projectId}`);
-                setSprints(response.data);
+                // const response = await axios.get(`/server/sprints/${projectId}`);
+                const sprintsData = await getSprintsByProjectId(projectId);
+                setSprints(sprintsData);
             } catch (error) {
                 console.error('Error fetching sprints:', error);
             }

@@ -3,6 +3,10 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Box, TextField, Button, Typography } from '@mui/material';
 
+import { Add } from '@mui/icons-material';
+
+import { addSprint } from "../../services/sprintServices";
+
 /**
  * A React component that renders a form to create a new sprint for a project.
  *
@@ -31,8 +35,8 @@ export default function AddSprint({ projectId, sprints, setSprints }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('/server/sprints', sprint);
-            setSprints([...sprints, response.data]);
+            const addedSprint = await addSprint(sprint);
+            setSprints([...sprints, addedSprint]);
             setSprint({
                 name: '',
                 projectId,
@@ -97,7 +101,7 @@ export default function AddSprint({ projectId, sprints, setSprints }) {
                 margin="normal"
                 name="goal"
             />
-            <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
+            <Button type="submit" variant="contained" color="primary" startIcon={<Add />} sx={{ mt: 2 }}>
                 Add Sprint
             </Button>
         </Box>

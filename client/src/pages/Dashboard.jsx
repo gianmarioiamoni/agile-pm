@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Grid, Typography, Divider, Button, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@mui/material';
+import { Grid, Typography, Divider, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 
 import Header from "../components/Header"
@@ -11,7 +11,7 @@ import EditProjectDialog from "../components/project/EditProjectDialog";
 import { createProject, updateProject, removeProject } from "../services/projectServices";
 import { canCreateProject, canViewProject, canEditProject, canDeleteProject, canAllocateProject } from "../services/rolesMapServices";
 
-export default function Dashboard({projects, setProjects, users, setUsers}) {
+export default function Dashboard({projects, setProjects, users}) {
     const { currentUser } = useSelector(state => state.user);
     const [editProject, setEditProject] = useState(null);
     const [deleteProject, setDeleteProject] = useState(null);
