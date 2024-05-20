@@ -18,7 +18,7 @@ import { getSprintsByProjectId } from "../services/sprintServices";
  * @param {string} props.projectId - The ID of the project for which the sprints are being managed
  * @returns {ReactElement} The SprintsManagementPage component
  */
-export default function SprintsManagementPage() {
+export default function SprintsManagementPage({getProjectName}) {
 
     const { projectId } = useParams();
 
@@ -52,7 +52,7 @@ export default function SprintsManagementPage() {
     return (
         <Container>
             <Typography variant="h4" gutterBottom>
-                Sprints Management for Project {projectId}
+                Sprints Management for Project {getProjectName(projectId)}
             </Typography>
              {/* The grid containing the AddSprint and SprintList components */}
             <Grid container spacing={2}>

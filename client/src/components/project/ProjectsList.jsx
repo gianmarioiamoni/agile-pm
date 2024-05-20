@@ -16,7 +16,6 @@ export default function ProjectsList({ projects, onEdit, onDelete, isEditable = 
                 assignments[project.id] = await getAssignments(project.id);
             }
             setProjectAssignments(assignments);
-            console.log("assignments: ", assignments)
         };
         fetchProjectAssignments();
     }, [projects]);

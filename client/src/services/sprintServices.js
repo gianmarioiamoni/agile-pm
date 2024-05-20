@@ -23,3 +23,17 @@ export const getSprintsByProjectId = async (projectId) => {
         return response.data;
     } catch (err) { console.log(err) }
 };
+
+export const updateSprint = async (sprint) => {
+    try {
+        const response = await axios.put(`/server/sprints/${sprint._id}`, sprint);
+        return response.data;
+    } catch (err) { console.log(err) }
+};
+
+export const removeSprint = async (id) => {
+    try {
+        const response = await axios.delete(`/server/sprints/${id}`);
+        return response.data;
+    } catch (err) { console.log(err) }
+}

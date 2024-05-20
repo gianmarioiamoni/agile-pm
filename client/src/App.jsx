@@ -68,6 +68,11 @@ export default function App() {
     }
     
   }, [currentUser])
+
+  const getProjectName = (projectId) => {
+    const project = projects.find((p) => p.id === projectId);
+    return project ? project.name : '';
+  }
   
 
   return (
@@ -86,7 +91,7 @@ export default function App() {
         <Route path="/sign-up" element={currentUser ? <Home /> : <SignUp />} > </Route>
         <Route path="/admin" element={currentUser && currentUser.role.roleKey == 0 ? <AdminPage users={users} setUsers={setUsers} currentRolesMap={currentRolesMap} setCurrentRolesMap={setCurrentRolesMap} /> : <SignIn />} > </Route>
         <Route path="/team-assignments/:projectId" element={<TeamAssignmentsPage projects={projects} users={users} currentRolesMap={currentRolesMap} />} />
-        <Route path="/sprints-management/:projectId" element={<SprintsManagementPage />} />
+        <Route path="/sprints-management/:projectId" element={<SprintsManagementPage getProjectName={getProjectName} />} />
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
