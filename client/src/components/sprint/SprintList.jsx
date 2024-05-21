@@ -1,9 +1,7 @@
 import { Box, List, ListItem, ListItemText, Typography, IconButton, Tooltip, Grid } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
 import { useState } from 'react';
-
 import EditSprintDialog from "./EditSprintDialog";
-
 import { updateSprint, removeSprint } from "../../services/sprintServices";
 import { toDate } from 'date-fns';
 
@@ -28,7 +26,6 @@ export default function SprintList({ projectId, sprints, setSprints, canEditSpri
         setCurrentSprint(sprint);
         setEditDialogOpen(true);
     };
-
 
     const handleSave = async (editedSprint) => {
         try {
@@ -59,23 +56,23 @@ export default function SprintList({ projectId, sprints, setSprints, canEditSpri
                 {sprints?.map((sprint) => (
                     <ListItem key={sprint._id} divider>
                         <ListItemText
+                            width="100%"
                             primary={sprint.name}
                             secondary={
-                                <>
-                                    <Typography component="span" variant="body2" color="textPrimary">
+                                <Box component="span" width={'auto'}>
+                                    <Box component="span" display="block" fontWeight="fontWeightMedium">
                                         Goal: {sprint.goal}
-                                    </Typography>
-                                    <br />
-                                    <Typography component="span" variant="body2" color="textSecondary">
+                                    </Box>
+                                    <Box component="span" display="block" color="textSecondary" minWidth="250px">
                                         Start: {new Date(sprint.startDate).toLocaleDateString()} - End: {new Date(sprint.endDate).toLocaleDateString()}
-                                    </Typography>
-                                </>
+                                    </Box>
+                                </Box>
                             }
                         />
                         <Grid container justifyContent="flex-end" alignItems="center">
                             <Tooltip title="Edit Sprint" arrow>
                                 <div>
-                                    <IconButton disabled={!canEditSprint} onClick={() => handleEdit(sprint) }>
+                                    <IconButton disabled={!canEditSprint} onClick={() => handleEdit(sprint)}>
                                         <Edit fontSize='small' />
                                     </IconButton>
                                 </div>
@@ -99,4 +96,4 @@ export default function SprintList({ projectId, sprints, setSprints, canEditSpri
             />
         </Box>
     );
-};
+}

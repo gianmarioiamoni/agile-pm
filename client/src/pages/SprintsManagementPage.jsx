@@ -45,7 +45,6 @@ export default function SprintsManagementPage({getProjectName, canCreateSprint =
 
         // Fetch sprints only if they haven't already been fetched
         if (!sprints || sprints.length === 0) {
-            console.log("fetching sprints");
             fetchSprints();
         }
 

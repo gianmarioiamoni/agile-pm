@@ -28,10 +28,8 @@ export default function UserManagement({ users, setUsers, currentRolesMap, curre
     const [hasScrollableContent, setHasScrollableContent] = useState(false);
     const tableRef = useRef(null);
 
-    console.log("UserManagement() - users: ", users)
 
     useEffect(() => {
-        console.log("UserManagement() - useEffect() ")
         const updateScrollableContent = () => {
             setHasScrollableContent(tableRef.current && (tableRef.current.scrollHeight > tableRef.current.clientHeight));
         };

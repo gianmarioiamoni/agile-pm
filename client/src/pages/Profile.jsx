@@ -83,7 +83,6 @@ export default function Profile({currentRolesMap}) {
   };
 
   const handleChangeRole = (e) => {
-    console.log(e.target.value)
     setEditedUser((prev) => ({...prev, role: e.target.value}))
   }
 
@@ -91,23 +90,15 @@ export default function Profile({currentRolesMap}) {
     // prevent the default behaviour that refreshes the page on submit
     e.preventDefault();
 
-    console.log("Profile() - handleSubmit()");
-
     try {
       dispatch(updateUserStart());
 
       // create role for payload
       const roles = await getCurrentRoles();
-      console.log("Profile() - handleSubmit() - roles: ", roles)
-      console.log("Profile() - handleSubmit() - editeUser: ", editedUser);
       const role = roles.find((r) => r.roleKey == editedUser.role); 
-      console.log("Profile() - handleSubmit() - role: ", role)
 
       const roleObj = { _id: role._id, roleKey: editedUser.role, roleDescription: role.roleDescription }
-      console.log("Profile() - handleSubmit() - roleObj: ", roleObj)
       const userWithRoleObj = { ...editedUser, role: { ...roleObj } }
-      console.log("Profile() - handleSubmit() - userWithRoleObj: ", userWithRoleObj)
-      console.log("Profile() - handleSubmit() - currentUser: ", currentUser)
       const res = await fetch(`/server/user/update/${currentUser._id}`, {
         method: 'POST',
         headers:
@@ -125,9 +116,7 @@ export default function Profile({currentRolesMap}) {
         return;
       }
 
-      console.log("Profile() - handleSubmit() - data: ", data)
       // everything is fine
-      // dispatch(updateUserSuccess(data));
       const dataWithRoleObj = {...data, role: roleObj}
       dispatch(updateUserSuccess(dataWithRoleObj));
       setIsUpdateSuccess(true);

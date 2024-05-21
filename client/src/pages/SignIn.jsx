@@ -61,7 +61,6 @@ export default function SignIn() {
             // intead of setIsLoading(false) we change the state of redux
             // dispatch(signInSuccess(data));
             dispatch(signInSuccess(dataFilledWithRole));
-            console.log("dataFilledWithRole: ", dataFilledWithRole)
             // user is authenticated; navigate to /
             navigate("/");
 

@@ -47,8 +47,6 @@ export const getPermissionsLabelValues = async () => {
 export const canCreateProject = async (user) => {
     const res = await axios.put(`/server/roles-map/check/can-create-project/`, user);
 
-    console.log("canCreateProject() - res: ", res)
-
     return res.data;
 };
 
@@ -79,8 +77,6 @@ export const canAllocateProject = async (user) => {
 // Sprint Permissions
 export const canCreateSprint = async (user) => {
     const res = await axios.put(`/server/roles-map/check/can-create-sprint/`, user);
-
-    console.log("canCreateSprint() - res: ", res)
 
     return res.data;
 };  

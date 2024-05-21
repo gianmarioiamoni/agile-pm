@@ -7,7 +7,6 @@ export async function getAssignments(projectId) {
     try {
         const response = await axios.get(`/server/assignments/project/${projectId}`);
         const assignmentsFromDB = response.data;
-        console.log("getAssignments() - assignmentsFromDB: ", assignmentsFromDB)
         const teamAssignments = assignmentsFromDB.map((a) => ({
             _id: a._id,
             userId: a.userId._id,
@@ -15,7 +14,6 @@ export async function getAssignments(projectId) {
             roleId: a.roleId._id,
             roleDescription: a.roleId.roleDescription
         }));
-        console.log("getAssignments() - teamAssignments: ", teamAssignments)
 
         return teamAssignments;
     } catch (error) {

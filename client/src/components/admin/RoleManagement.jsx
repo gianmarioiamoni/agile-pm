@@ -85,7 +85,6 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
     
     try {
         const existingRole = currentRolesMap.find(role => role.roleKey === roleEditFormData.roleKey);
-        console.log("handleSaveRole - existingRole: ", existingRole);
         if (existingRole) {
             // Edit existing role
             if (!roleEditFormData || !roleEditFormData.roleKey || !roleEditFormData.roleDescription) {
@@ -155,7 +154,6 @@ export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, ro
 const handleEditRole = (roleKey) => {
     try {
         const selectedRole = currentRolesMap.find(role => role.roleKey === roleKey);
-        console.log("handleEditRole - selectedRole: ", selectedRole);
         if (selectedRole) {
             setRoleEditFormData((prev) => ({...prev, roleKey: selectedRole.roleKey, roleDescription: selectedRole.roleDescription }));
             setOpenRoleEditDialog(true);

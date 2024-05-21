@@ -36,8 +36,6 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
     const [projectDescription, setProjectDescription] = useState('');
 
     const [selectedMember, setSelectedMember] = useState(null);
-    console.log("users: ", users)
-    console.log("currentrolesMap: ", currentRolesMap)
     const [availableUsers, setAvailableUsers] = useState([...users].map((u) => (
         {
             userId: u._id,

@@ -46,7 +46,6 @@ export async function editRole(id, description) {
 
 export async function deleteRole(id) {
     const res = await axios.delete(`/server/roles/${id}`);
-    console.log("deleteRole() - res: ", res)
     return res.data;
 }
 

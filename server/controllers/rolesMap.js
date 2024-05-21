@@ -58,9 +58,7 @@ export const getPermissionsLabelValues = (req, res) => {
 
 export const checkCreateProject = async (req, res) => {
     const user = req.body;
-    console.log("checkCreateProject() - user: ", user)
     const resp = await canCreateProject(user);
-    console.log("checkCreateProject() - resp: ", resp)
     res.json(resp);
 };
 
@@ -91,9 +89,7 @@ export const checkAllocateProject = async (req, res) => {
 // Sprint Permissions
 export const checkCreateSprint = async (req, res) => {
     const user = req.body;
-    console.log("checkCreateSprint() - user: ", user)
     const resp = await canCreateSprint(user);
-    console.log("checkCreateSprint() - resp: ", resp)
     res.json(resp);
 };
 

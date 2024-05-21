@@ -8,8 +8,6 @@ export async function getCurrentUsers() {
     try {
         const res = await axios.get(`/server/user`);
 
-        console.log("getCurrentUsers() - res.data: ", res.data)
-
         const usersArray = res.data.map((u) => ({ ...u, id: u._id }));
 
         return usersArray;
@@ -29,7 +27,6 @@ export async function deleteUser(id) {
 
 export async function addUser(user) {
     try {
-        console.log("userServices.js - addUser() - user: ", user)
         const res = await axios.post("/server/user", user);
         return res.data;
     } catch (error) {
@@ -39,10 +36,7 @@ export async function addUser(user) {
 
 export async function editUser(user) {
     try {
-
-        console.log("editUser() - user: ", user)
         const res = await axios.post(`/server/user/update/${user.id}`, user);
-        console.log("editUser() - res: ", res)
 
         return res;
     } catch (error) {

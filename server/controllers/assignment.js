@@ -4,9 +4,7 @@ import Assignment from "../models/assignment.js";
 export const saveAssignments = async (req, res) => {
     const { projectId } = req.params;
     const {payload} = req.body;
-    console.log("projectId: ", projectId)
     const assignments = payload.map((a) => ({userId: a.userId, projectId, roleId: a.roleId}))
-    console.log("assignments: ", assignments)
 
     try {
         await Assignment.deleteMany({ projectId });

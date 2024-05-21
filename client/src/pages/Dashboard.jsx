@@ -49,7 +49,6 @@ export default function Dashboard({projects, setProjects, users, canSprints, set
 
             // get Sprints permissions
             const createSprint = await canCreateSprint(currentUser);
-            console.log("createSprint: ", createSprint)
             const editSprint = await canEditSprint(currentUser);
             const monitorSprint = await canMonitorSprint(currentUser);
             const deleteSprint = await canDeleteSprint(currentUser);

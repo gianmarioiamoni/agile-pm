@@ -387,8 +387,6 @@ export const canPlanSprint = async (currentUser) => {
     return await hasPermission(currentUser, sprintPermissions.plan);
 };
 export const canMonitorSprint = async (currentUser) => {
-    console.log("canMonitorSprint() - currentUser: ", currentUser)
-    console.log("canMonitorSprint() - sprintPermissions: ", sprintPermissions)
     return await hasPermission(currentUser, sprintPermissions.monitor);
 };
 export const canEditSprint = async (currentUser) => {
