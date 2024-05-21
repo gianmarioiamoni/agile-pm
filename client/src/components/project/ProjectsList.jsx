@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
+
 import { Grid, Typography, IconButton, Tooltip } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
 import GroupsIcon from '@mui/icons-material/Groups';
 import ViewTimeLineIcon from '@mui/icons-material/ViewTimeline';
+
 import { Link } from 'react-router-dom';
+
 import { getAssignments } from "../../services/assignmentServices";
 
-export default function ProjectsList({ projects, onEdit, onDelete, isEditable = true, isDeletable = true, isAllocable = true }) {
+export default function ProjectsList({ projects, onEdit, onDelete,
+    canEditProject = true, canDeleteProject = true, canAllocateProject = true,
+    canManageSprints = true }) {
+    
     const [projectAssignments, setProjectAssignments] = useState({});
 
     useEffect(() => {
@@ -31,19 +37,19 @@ export default function ProjectsList({ projects, onEdit, onDelete, isEditable = 
                         <Typography variant="body2">Team Members: {projectAssignments && projectAssignments[project.id]?.map(assignment => assignment.username).join(', ')}</Typography>
                     </Grid>
                     <Grid item xs={3} container justifyContent="flex-end">
-                        <Link to={`/team-assignments/${project.id}`} style={!isAllocable ? { pointerEvents: 'none' } : {}}>
+                        <Link to={`/team-assignments/${project.id}`} style={!canAllocateProject ? { pointerEvents: 'none' } : {}}>
                             <Tooltip title="Manage Team Assignments" arrow>
                                 <div>
-                                    <IconButton disabled={!isAllocable}>
+                                    <IconButton disabled={!canAllocateProject}>
                                         <GroupsIcon />
                                     </IconButton>
                                 </div>
                             </Tooltip>
                         </Link>
-                        <Link to={`/sprints-management/${project.id}`} style={!isAllocable ? { pointerEvents: 'none' } : {}}>
+                        <Link to={`/sprints-management/${project.id}`} style={!canManageSprints ? { pointerEvents: 'none' } : {}}>
                             <Tooltip title="Manage Sprints" arrow>
                                 <div>
-                                    <IconButton>
+                                    <IconButton disabled={!canManageSprints}>
                                         <ViewTimeLineIcon />
                                     </IconButton>
                                 </div>
@@ -51,14 +57,14 @@ export default function ProjectsList({ projects, onEdit, onDelete, isEditable = 
                         </Link>
                         <Tooltip title="Edit Project" arrow>
                             <div>
-                                <IconButton onClick={() => onEdit(project)} disabled={!isEditable}>
+                                <IconButton onClick={() => onEdit(project)} disabled={!canEditProject}>
                                     <Edit />
                                 </IconButton>
                             </div>
                         </Tooltip>
                         <Tooltip title="Delete Project" arrow>
                             <div>
-                                <IconButton onClick={() => onDelete(project)} disabled={!isDeletable}>
+                                <IconButton onClick={() => onDelete(project)} disabled={!canDeleteProject}>
                                     <Delete />
                                 </IconButton>
                             </div>

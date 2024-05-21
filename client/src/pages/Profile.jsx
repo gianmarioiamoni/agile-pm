@@ -212,7 +212,7 @@ export default function Profile({currentRolesMap}) {
             disabled={editedUser.role == 0}
             value={editedUser.role}
             onChange={handleChangeRole}
-            style={editedUser.role == 0 ? { color: 'GrayText' } : ''}
+            style={editedUser.role == 0 ? { color: 'GrayText' } : {}}
             className='bg-slate-100 border-border border-2 p-3 rounded-lg'>
             {currentRolesMap.map((role, index) => (
               <option color="red" key={index} value={role.roleKey}>{role.roleDescription}</option>

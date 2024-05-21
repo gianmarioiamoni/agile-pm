@@ -31,6 +31,14 @@ export default function App() {
 
   const [canAllocateProjectsTeam, setCanAllocateProjectsTeam] = useState(true);
 
+  const [canSprints, setCanSprints] = useState({
+      create: false,
+      edit: false,
+      monitor: false,
+      delete: false,
+      manage: false
+  }); 
+
   useEffect(() => {
 
     // get current users from the DB
@@ -85,13 +93,20 @@ export default function App() {
           <Route path="/profile" element={<Profile currentRolesMap={currentRolesMap} />} > </Route>
         </Route>
         <Route element={<PrivateRoute />}>
-          <Route path="/dashboard" element={<Dashboard projects={projects} setProjects={setProjects} />} > </Route>
+          <Route path="/dashboard" element={<Dashboard
+            projects={projects}
+            setProjects={setProjects}
+            canSprints={canSprints}
+            setCanSprints={setCanSprints}
+            users={users}
+            canAllocateProjectsTeam={canAllocateProjectsTeam} />} >
+          </Route>
         </Route>
         <Route path="/sign-in" element={currentUser ? <Home /> : <SignIn />} > </Route>
         <Route path="/sign-up" element={currentUser ? <Home /> : <SignUp />} > </Route>
         <Route path="/admin" element={currentUser && currentUser.role.roleKey == 0 ? <AdminPage users={users} setUsers={setUsers} currentRolesMap={currentRolesMap} setCurrentRolesMap={setCurrentRolesMap} /> : <SignIn />} > </Route>
         <Route path="/team-assignments/:projectId" element={<TeamAssignmentsPage projects={projects} users={users} currentRolesMap={currentRolesMap} />} />
-        <Route path="/sprints-management/:projectId" element={<SprintsManagementPage getProjectName={getProjectName} />} />
+        <Route path="/sprints-management/:projectId" element={<SprintsManagementPage getProjectName={getProjectName} canEditSprint={canSprints.edit} canCreateSprint={canSprints.create} canDeleteSprint={canSprints.delete}/>} />
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

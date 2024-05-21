@@ -16,7 +16,7 @@ import { addSprint } from "../../services/sprintServices";
  * @param {function} setSprints A callback to update the array of sprints.
  * @return {ReactElement} The component element.
  */
-export default function AddSprint({ projectId, sprints, setSprints }) {
+export default function AddSprint({ projectId, sprints, setSprints, canCreateSprint = true }) {
     /**
      * The state of the form, containing the name, start date, end date, and goal of the sprint to create.
      */
@@ -51,7 +51,7 @@ export default function AddSprint({ projectId, sprints, setSprints }) {
 
     return (
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" gutterBottom sx={!canCreateSprint ? { color: "gray" } : {}}>
                 Create New Sprint
             </Typography>
             <TextField
@@ -62,6 +62,7 @@ export default function AddSprint({ projectId, sprints, setSprints }) {
                 }
                 required
                 fullWidth
+                disabled={!canCreateSprint}
                 margin="normal"
                 name="name"
             />
@@ -74,6 +75,7 @@ export default function AddSprint({ projectId, sprints, setSprints }) {
                 }
                 required
                 fullWidth
+                disabled={!canCreateSprint}
                 margin="normal"
                 InputLabelProps={{ shrink: true }}
                 name="startDate"
@@ -87,6 +89,7 @@ export default function AddSprint({ projectId, sprints, setSprints }) {
                 }
                 required
                 fullWidth
+                disabled={!canCreateSprint}
                 margin="normal"
                 InputLabelProps={{ shrink: true }}
                 name="endDate"
@@ -98,10 +101,11 @@ export default function AddSprint({ projectId, sprints, setSprints }) {
                     setSprint((prev) => ({ ...prev, goal: e.target.value }))
                 }
                 fullWidth
+                disabled={!canCreateSprint}
                 margin="normal"
                 name="goal"
             />
-            <Button type="submit" variant="contained" color="primary" startIcon={<Add />} sx={{ mt: 2 }}>
+            <Button disabled={!canCreateSprint} type="submit" variant="contained" color="primary" startIcon={<Add />} sx={{ mt: 2 }}>
                 Add Sprint
             </Button>
         </Box>

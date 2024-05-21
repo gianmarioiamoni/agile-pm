@@ -14,9 +14,8 @@ import { toDate } from 'date-fns';
  * @param {Array} props.sprints - The sprints for the project
  * @param {Function} props.setSprints - A function to update the state with new sprints
  */
-export default function SprintList({ projectId, sprints, setSprints }) {
+export default function SprintList({ projectId, sprints, setSprints, canEditSprint = true, canDeleteSprint = true }) {
     const [editDialogOpen, setEditDialogOpen] = useState(false);
-    // const [currentSprint, setCurrentSprint] = useState(null);
     const [currentSprint, setCurrentSprint] = useState({
         name: '',
         projectId,
@@ -76,14 +75,14 @@ export default function SprintList({ projectId, sprints, setSprints }) {
                         <Grid container justifyContent="flex-end" alignItems="center">
                             <Tooltip title="Edit Sprint" arrow>
                                 <div>
-                                    <IconButton onClick={() => handleEdit(sprint)}>
+                                    <IconButton disabled={!canEditSprint} onClick={() => handleEdit(sprint) }>
                                         <Edit fontSize='small' />
                                     </IconButton>
                                 </div>
                             </Tooltip>
                             <Tooltip title="Delete Sprint" arrow>
                                 <div>
-                                    <IconButton onClick={() => handleDelete(sprint._id)}>
+                                    <IconButton disabled={!canDeleteSprint} onClick={() => handleDelete(sprint._id)}>
                                         <Delete fontSize='small' />
                                     </IconButton>
                                 </div>

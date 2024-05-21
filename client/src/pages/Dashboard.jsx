@@ -9,9 +9,12 @@ import NewProjectForm from "../components/project/NewProjectForm";
 import EditProjectDialog from "../components/project/EditProjectDialog";
 
 import { createProject, updateProject, removeProject } from "../services/projectServices";
-import { canCreateProject, canViewProject, canEditProject, canDeleteProject, canAllocateProject } from "../services/rolesMapServices";
+import {
+    canCreateProject, canViewProject, canEditProject, canDeleteProject, canAllocateProject,
+    canMonitorSprint, canEditSprint, canDeleteSprint, canCreateSprint, canParticipateSprint
+ } from "../services/rolesMapServices";
 
-export default function Dashboard({projects, setProjects, users}) {
+export default function Dashboard({projects, setProjects, users, canSprints, setCanSprints}) {
     const { currentUser } = useSelector(state => state.user);
     const [editProject, setEditProject] = useState(null);
     const [deleteProject, setDeleteProject] = useState(null);
@@ -33,6 +36,8 @@ export default function Dashboard({projects, setProjects, users}) {
             const deleteProject = await canDeleteProject(currentUser);
             const viewProject = await canViewProject(currentUser);
             const allocateProject = await canAllocateProject(currentUser);
+
+            // set Projects permissions
             setCanProjects((prev) => ({
                 ...prev,
                 create: createProject,
@@ -41,6 +46,29 @@ export default function Dashboard({projects, setProjects, users}) {
                 view: viewProject,
                 allocate: allocateProject
             }));
+
+            // get Sprints permissions
+            const createSprint = await canCreateSprint(currentUser);
+            console.log("createSprint: ", createSprint)
+            const editSprint = await canEditSprint(currentUser);
+            const monitorSprint = await canMonitorSprint(currentUser);
+            const deleteSprint = await canDeleteSprint(currentUser);
+            const participateSprint = await canParticipateSprint(currentUser);
+
+            // can reach Sprints Management Page
+            const manageSprint = createSprint || editSprint || monitorSprint || deleteSprint || participateSprint;  
+
+
+            // set Sprints permissions
+            setCanSprints((prev) => ({
+                ...prev,
+                create: createSprint,
+                edit: editSprint,
+                monitor: monitorSprint,
+                delete: deleteSprint,
+                manage: manageSprint,
+            }));
+
         }
         checkPermissions();
         
@@ -87,7 +115,7 @@ export default function Dashboard({projects, setProjects, users}) {
                         <Divider />
                         <NewProjectForm
                             onCreateProject={handleCreateProject}
-                            isCreable={canProjects.create} />
+                            canCreateProject={canProjects.create} />
                     </Grid>
 
                     {/* Projects List */}
@@ -99,9 +127,10 @@ export default function Dashboard({projects, setProjects, users}) {
                                 projects={projects}
                                 onEdit={(project) => canProjects.edit && setEditProject(project)}
                                 onDelete={(project) => canProjects.delete && setDeleteProject(project)}
-                                isEditable={canProjects.edit}
-                                isDeletable={canProjects.delete}
-                                isAllocable={canProjects.allocate}
+                                canEditProject={canProjects.edit}
+                                canDeleteProject={canProjects.delete}
+                                canAllocateProject={canProjects.allocate}
+                                canManageSprints={canSprints.manage}
                                 users={users}
                             />
                         </div>

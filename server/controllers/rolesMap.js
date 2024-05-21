@@ -2,11 +2,18 @@ import RolesMap from "../models/rolesMap.js";
 
 import {
     permissionsLabelValueArray,
+
     canCreateProject,
     canViewProject,
     canEditProject,
     canDeleteProject,
-    canAllocateProject
+    canAllocateProject,
+
+    canCreateSprint,
+    canEditSprint,
+    canMonitorSprint,
+    canDeleteSprint,
+    canParticipateSprint
 } from "../Authorizations.js";
 
 
@@ -51,7 +58,9 @@ export const getPermissionsLabelValues = (req, res) => {
 
 export const checkCreateProject = async (req, res) => {
     const user = req.body;
+    console.log("checkCreateProject() - user: ", user)
     const resp = await canCreateProject(user);
+    console.log("checkCreateProject() - resp: ", resp)
     res.json(resp);
 };
 
@@ -76,6 +85,39 @@ export const checkDeleteProject = async (req, res) => {
 export const checkAllocateProject = async (req, res) => {
     const user = req.body;
     const resp = await canAllocateProject(user);
+    res.json(resp);
+};
+
+// Sprint Permissions
+export const checkCreateSprint = async (req, res) => {
+    const user = req.body;
+    console.log("checkCreateSprint() - user: ", user)
+    const resp = await canCreateSprint(user);
+    console.log("checkCreateSprint() - resp: ", resp)
+    res.json(resp);
+};
+
+export const checkEditSprint = async (req, res) => {
+    const user = req.body;
+    const resp = await canEditSprint(user);
+    res.json(resp);
+};  
+
+export const checkMonitorSprint = async (req, res) => {
+    const user = req.body;
+    const resp = await canMonitorSprint(user);
+    res.json(resp);
+};      
+
+export const checkDeleteSprint = async (req, res) => {
+    const user = req.body;
+    const resp = await canDeleteSprint(user);
+    res.json(resp);
+};  
+
+export const checkParticipateSprint = async (req, res) => {
+    const user = req.body;
+    const resp = await canParticipateSprint(user);
     res.json(resp);
 };
 

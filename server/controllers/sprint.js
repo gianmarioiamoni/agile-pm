@@ -14,7 +14,6 @@ export const createSprint = async (req, res) => {
 
 export const getSprintsByProjectId = async (req, res) => {
     const { projectId } = req.params;
-    console.log("getSprintsByProjectId - projectId: ", projectId)
     try {
         const sprints = await Sprint.find({ projectId });
         res.status(200).json(sprints);

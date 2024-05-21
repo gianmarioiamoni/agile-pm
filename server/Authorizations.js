@@ -262,7 +262,8 @@ export const defaultRolePermissionsMap = [
             },
             {
                 sprint: [
-                    sprintPermissions.plan,
+                    sprintPermissions.create,
+                    sprintPermissions.edit,
                     sprintPermissions.monitor,
                 ]
             },
@@ -356,6 +357,8 @@ const hasPermission = async (currentUser, action) => {
 };
 
 // utility functions to check permissions in components
+
+// Project Permissions
 export const canEditProject = async (currentUser) => {
     return await hasPermission(currentUser, projectPermissions.edit);
 };
@@ -374,6 +377,28 @@ export const canViewProject = async (currentUser) => {
 
 export const canAllocateProject = async (currentUser) => {
     return await hasPermission(currentUser, projectPermissions.allocate);
+};
+
+// Sprint Permissions
+export const canCreateSprint = async (currentUser) => {
+    return await hasPermission(currentUser, sprintPermissions.create);
+};
+export const canPlanSprint = async (currentUser) => {
+    return await hasPermission(currentUser, sprintPermissions.plan);
+};
+export const canMonitorSprint = async (currentUser) => {
+    console.log("canMonitorSprint() - currentUser: ", currentUser)
+    console.log("canMonitorSprint() - sprintPermissions: ", sprintPermissions)
+    return await hasPermission(currentUser, sprintPermissions.monitor);
+};
+export const canEditSprint = async (currentUser) => {
+    return await hasPermission(currentUser, sprintPermissions.edit);
+};
+export const canDeleteSprint = async (currentUser) => {
+    return await hasPermission(currentUser, sprintPermissions.delete);
+};
+export const canParticipateSprint = async (currentUser) => {
+    return await hasPermission(currentUser, sprintPermissions.participate);
 };
 
 
