@@ -12,6 +12,7 @@ import AdminPage from "./pages/AdminPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import TeamAssignmentsPage from "./pages/TeamAssignmentsPage";
 import SprintsManagementPage from "./pages/SprintsManagementPage";
+import SprintAssignmentPage from "./pages/SprintAssignmentPage";
 
 import PrivateRoute from "./components/PrivateRoute";
 
@@ -19,7 +20,7 @@ import { getAllProjects } from "./services/projectServices";
 import { getCurrentUsers } from "./services/userServices";
 import { getCurrentRoles } from "./services/roleServices";
 
-import { canAllocateProject } from './services/rolesMapServices';
+import { canAllocateProject } from "./services/rolesMapServices";
 
 
 export default function App() {
@@ -105,8 +106,9 @@ export default function App() {
         <Route path="/sign-in" element={currentUser ? <Home /> : <SignIn />} > </Route>
         <Route path="/sign-up" element={currentUser ? <Home /> : <SignUp />} > </Route>
         <Route path="/admin" element={currentUser && currentUser.role.roleKey == 0 ? <AdminPage users={users} setUsers={setUsers} currentRolesMap={currentRolesMap} setCurrentRolesMap={setCurrentRolesMap} /> : <SignIn />} > </Route>
-        <Route path="/team-assignments/:projectId" element={<TeamAssignmentsPage projects={projects} users={users} currentRolesMap={currentRolesMap} />} />
-        <Route path="/sprints-management/:projectId" element={<SprintsManagementPage getProjectName={getProjectName} canEditSprint={canSprints.edit} canCreateSprint={canSprints.create} canDeleteSprint={canSprints.delete}/>} />
+        <Route path="/team-assignments/:projectId" element={<TeamAssignmentsPage projects={projects} users={users} currentRolesMap={currentRolesMap} />} > </Route>
+        <Route path="/sprints-management/:projectId" element={<SprintsManagementPage getProjectName={getProjectName} canEditSprint={canSprints.edit} canCreateSprint={canSprints.create} canDeleteSprint={canSprints.delete}/>} > </Route> 
+        <Route path="/sprint-assignment/:sprintId" element={<SprintAssignmentPage />} > </Route> 
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

@@ -1,9 +1,16 @@
-import { Box, List, ListItem, ListItemText, Typography, IconButton, Tooltip, Grid } from '@mui/material';
-import { Edit, Delete } from '@mui/icons-material';
 import { useState } from 'react';
+
+import { Routes, Route, Link } from 'react-router-dom';
+
+import { Box, List, ListItem, ListItemText, Typography, IconButton, Tooltip, Grid } from '@mui/material';
+import { Edit, Delete, PlaylistAdd } from '@mui/icons-material';
+
+import { toDate } from 'date-fns';
+
 import EditSprintDialog from "./EditSprintDialog";
 import { updateSprint, removeSprint } from "../../services/sprintServices";
-import { toDate } from 'date-fns';
+
+import SprintAssignmentPage from '../../pages/SprintAssignmentPage';
 
 /**
  * SprintList component renders a list of sprints for a given project.
@@ -12,7 +19,7 @@ import { toDate } from 'date-fns';
  * @param {Array} props.sprints - The sprints for the project
  * @param {Function} props.setSprints - A function to update the state with new sprints
  */
-export default function SprintList({ projectId, sprints, setSprints, canEditSprint = true, canDeleteSprint = true }) {
+export default function SprintList({ projectId, sprints, setSprints, canEditSprint = true, canDeleteSprint = true, canAssignSprint = true }) {
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [currentSprint, setCurrentSprint] = useState({
         name: '',
@@ -45,6 +52,10 @@ export default function SprintList({ projectId, sprints, setSprints, canEditSpri
         } catch (error) {
             console.error('Error deleting sprint:', error);
         }
+    };
+
+    const handleAssignTasks = async (sprintId) => {
+        console.log("assign tasks to sprint: ", sprintId);
     };
 
     return (
@@ -84,10 +95,21 @@ export default function SprintList({ projectId, sprints, setSprints, canEditSpri
                                     </IconButton>
                                 </div>
                             </Tooltip>
+                            <Link to={`/sprint-assignment/${sprint._id}`} style={!canAssignSprint ? { pointerEvents: 'none' } : {}}>
+                                <Tooltip title="Assign Tasks" arrow>
+                                    <div>
+                                        <IconButton disabled={!canAssignSprint}>
+                                            <PlaylistAdd fontSize='small' />
+                                        </IconButton>
+                                    </div>
+                                </Tooltip>
+                            </Link>
+                            
                         </Grid>
                     </ListItem>
                 ))}
             </List>
+
             <EditSprintDialog
                 open={editDialogOpen}
                 onClose={() => setEditDialogOpen(false)}
