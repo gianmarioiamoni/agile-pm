@@ -4,6 +4,7 @@ import bcryptjs from 'bcryptjs';
 import Role from "./models/role.js"
 import RolesMap from "./models/rolesMap.js";
 import User from "./models/user.js";
+import Task from './models/task.js';
 
 
 // DB INITIALIZATION
@@ -92,10 +93,22 @@ const initRolePermissions = async () => {
     }
 };
 
+const initTasks = async () => {
+    try {
+        const tasks = await Task.find({});
+        if (tasks.length === 0) {
+            await Task.insertMany(defaultAvailableTasks);
+            console.log("default tasks created");
+        }
+    } catch (error) {
+        console.log(error);
+    }
+};
 export const initDB = async () => {
     // await initUser();
     await initRoles();
     await initRolePermissions();
+    await initTasks();
 };
 
 
@@ -326,6 +339,15 @@ export const defaultRolePermissionsMap = [
             }
         ]
     },
+];
+
+export const defaultAvailableTasks = [
+    { key: 'task1', content: 'Task 1' },
+    { key: 'task2', content: 'Task 2' },
+    { key: 'task3', content: 'Task 3' },
+    { key: 'task4', content: 'Task 4' },
+    { key: 'task5', content: 'Task 5' },
+    { key: 'task6', content: 'Task 6' },
 ];
 
 // Function to check if the current user has permission to perform a specific action

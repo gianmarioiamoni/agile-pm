@@ -15,7 +15,7 @@ export const createSprint = async (req, res) => {
 export const getSprintsByProjectId = async (req, res) => {
     const { projectId } = req.params;
     try {
-        const sprints = await Sprint.find({ projectId });
+        const sprints = await Sprint.find({ projectId }).populate('tasks');
         res.status(200).json(sprints);
     } catch (error) {
         res.status(500).json({ error: error.message });

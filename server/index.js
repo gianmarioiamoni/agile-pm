@@ -11,6 +11,7 @@ import roleRoutes from "./routes/role.js";
 import rolesMapRoutes from "./routes/rolesMap.js";
 import assignmentsRoutes from "./routes/assignment.js";
 import sprintsRoutes from "./routes/sprint.js";
+import taskRoutes from "./routes/task.js";
 
 import Role from './models/role.js';
 import User from './models/user.js';
@@ -101,6 +102,7 @@ app.use("/server/roles", roleRoutes);
 app.use("/server/roles-map", rolesMapRoutes);
 app.use("/server/assignments", assignmentsRoutes);
 app.use("/server/sprints", sprintsRoutes);
+app.use("/server/tasks", taskRoutes);
 
 // middleware to manage errors
 app.use((err, req, res, next) => {
