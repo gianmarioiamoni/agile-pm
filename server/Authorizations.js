@@ -342,12 +342,12 @@ export const defaultRolePermissionsMap = [
 ];
 
 export const defaultAvailableTasks = [
-    { key: 'task1', content: 'Task 1' },
-    { key: 'task2', content: 'Task 2' },
-    { key: 'task3', content: 'Task 3' },
-    { key: 'task4', content: 'Task 4' },
-    { key: 'task5', content: 'Task 5' },
-    { key: 'task6', content: 'Task 6' },
+    { key: 'task1', title: 'Task 1', content: 'Task 1 content' },
+    { key: 'task2', title: 'Task 2', content: 'Task 2 content' },
+    { key: 'task3', title: 'Task 3', content: 'Task 3 content' },
+    { key: 'task4', title: 'Task 4', content: 'Task 4 content' },
+    { key: 'task5', title: 'Task 5', content: 'Task 5 content' },
+    { key: 'task6', title: 'Task 6', content: 'Task 6 content' },
 ];
 
 // Function to check if the current user has permission to perform a specific action
