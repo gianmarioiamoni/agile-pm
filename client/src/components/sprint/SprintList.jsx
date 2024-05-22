@@ -77,6 +77,9 @@ export default function SprintList({ projectId, sprints, setSprints, canEditSpri
                                     <Box component="span" display="block" color="textSecondary" minWidth="250px">
                                         Start: {new Date(sprint.startDate).toLocaleDateString()} - End: {new Date(sprint.endDate).toLocaleDateString()}
                                     </Box>
+                                    <Box component="span" display="block" color={sprint.tasks.length > 0 ? "green" : "red"}>
+                                        Tasks: {sprint.tasks?.length || 0}
+                                    </Box>
                                 </Box>
                             }
                         />

@@ -1,6 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import { useSelector } from "react-redux";
+import { useSelector } from 'react-redux';
+
+import { Button } from '@mui/material';
 
 // Application Header
 // all links are hidden by default; activate them based on the specific page
@@ -14,8 +16,12 @@ export default function Header({
     isShowProfile = false,
     isShowSignIn = false,
     isShowSignUp = false,
-    isShowAdmin = false
+    isShowAdmin = false,
+    isShowBack = false
 }) {
+
+    const navigate = useNavigate();
+
     const { currentUser } = useSelector(state => {
         return state.user;
     });
@@ -32,6 +38,11 @@ export default function Header({
                         <Link to="/">
                             <li>Home</li>
                         </Link>
+                    }
+                    {isShowBack &&
+                        <Button onClick={() => navigate(-1)} color="inherit">
+                            Back
+                        </Button>
                     }
                     {isShowAdmin &&
                         <Link to="/admin">
