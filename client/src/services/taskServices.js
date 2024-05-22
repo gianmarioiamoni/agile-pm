@@ -6,7 +6,6 @@ const serverUrl = "http://localhost:3000";
 export const getAvailableTasksAndSprintTasks = async () => {
     try {
         const response = await axios.get("/server/tasks");
-        console.log("getAvailableTasksAndSprintTasks() response.data: ", response.data);
         return response.data;
     } catch (err) { console.log(err) }
 }

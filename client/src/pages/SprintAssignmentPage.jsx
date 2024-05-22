@@ -9,12 +9,6 @@ import axios from 'axios';
 
 import { getAvailableTasksAndSprintTasks } from '../services/taskServices';
 
-// const initialAvailableTasks = [
-//     { id: 'task1', content: 'Task 1' },
-//     { id: 'task2', content: 'Task 2' },
-//     { id: 'task3', content: 'Task 3' },
-// ];
-
 export default function SprintAssignmentPage() {
     const { sprintId } = useParams();
     const [availableTasks, setAvailableTasks] = useState([]);
@@ -28,11 +22,9 @@ export default function SprintAssignmentPage() {
             setSprintTasks(sprintTasks.tasks);
         };
         fetchAvailableTasks();
-        console.log("Available tasks fetched");
     }, []);
 
     const handleDragEnd = async (result) => {
-        console.log("Handle drag end called");
         const { source, destination } = result;
 
         if (!destination) {
@@ -40,43 +32,27 @@ export default function SprintAssignmentPage() {
             return;
         }
 
-        console.log(`source.droppableId: ${source.droppableId}`);
-        console.log(`destination.droppableId: ${destination.droppableId}`);
-
         if (source.droppableId === destination.droppableId) {
-            console.log("Drop within same droppable");
             const items = source.droppableId === 'availableTasks' ? Array.from(availableTasks) : Array.from(sprintTasks);
-            console.log(`items.length: ${items.length}`);
             const [removed] = items.splice(source.index, 1);
-            console.log(`removed: ${removed}`);
             items.splice(destination.index, 0, removed);
-            console.log(`items after splice: ${items}`);
 
             if (source.droppableId === 'availableTasks') {
-                console.log("Updating available tasks");
                 setAvailableTasks(items);
             } else {
-                console.log("Updating sprint tasks");
                 setSprintTasks(items);
             }
         } else {
-            console.log("Drop between different droppables");
             const sourceItems = source.droppableId === 'availableTasks' ? Array.from(availableTasks) : Array.from(sprintTasks);
-            console.log(`sourceItems: ${sourceItems}`);
             const destItems = destination.droppableId === 'availableTasks' ? Array.from(availableTasks) : Array.from(sprintTasks);
-            console.log(`destItems: ${destItems}`);
             const [removed] = sourceItems.splice(source.index, 1);
-            console.log(`removed: ${removed}`);
             destItems.splice(destination.index, 0, removed);
-            console.log(`destItems after splice: ${destItems}`);
 
             if (source.droppableId === 'availableTasks') {
-                console.log("Updating available tasks and sprint tasks");
                 setAvailableTasks(sourceItems);
                 setSprintTasks(destItems);
                 await updateTaskAssignment(removed._id, sprintId);
             } else {
-                console.log("Updating available tasks and sprint tasks");
                 setAvailableTasks(destItems);
                 setSprintTasks(sourceItems);
                 await updateTaskAssignment(removed._id, null);
@@ -87,7 +63,6 @@ export default function SprintAssignmentPage() {
     const updateTaskAssignment = async (taskId, sprintId) => {
         try {
             await axios.post('/server/tasks/assign', { taskId, sprintId });
-            console.log(`Task ${taskId} assigned to sprint ${sprintId}`);
         } catch (error) {
             console.error('Error assigning task:', error);
         }
