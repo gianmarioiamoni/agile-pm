@@ -23,9 +23,9 @@ export const getBacklogItems = async (req, res) => {
 
 export const updateBacklogItem = async (req, res) => {
     const { id } = req.params;
-    const { title, description, status } = req.body;
+    const { title, description, status, priority } = req.body;
     try {
-        const updatedItem = await Backlog.findByIdAndUpdate(id, { title, description, status }, { new: true });
+        const updatedItem = await Backlog.findByIdAndUpdate(id, { title, description, status, priority }, { new: true });
         res.status(200).json(updatedItem);
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });

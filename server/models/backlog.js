@@ -20,6 +20,10 @@ const backlogSchema = new Schema({
         enum: ['To Do', 'In Progress', 'Done'],
         default: 'To Do'
     },
+    priority: {
+        type: Number,
+        default: 1
+    },
     createdAt: {
         type: Date,
         default: Date.now

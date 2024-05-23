@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Typography, Grid, Paper, Button, TextField, IconButton } from '@mui/material';
-import { ArrowUpward as ArrowUpwardIcon, ArrowDownward as ArrowDownwardIcon } from '@mui/icons-material';
 
 import { getBacklogItems, deleteBacklogItem, updateBacklogItem } from "../services/backlogServices";
+
 import { getProject } from "../services/projectServices";
-import Header from "../components/Header";
+
 import BacklogItemForm from "../components/backlog/BacklogItemForm";
+import Header from "../components/Header";
 
 export default function BacklogPage() {
     const { projectId } = useParams();
@@ -81,28 +82,6 @@ export default function BacklogPage() {
         setEditedDescription('');
     };
 
-    const handleMoveUp = (index) => {
-        if (index === 0) {
-            return;
-        }
-        const items = [...backlogItems];
-        const temp = items[index];
-        items[index] = items[index - 1];
-        items[index - 1] = temp;
-        setBacklogItems(items);
-    };
-
-    const handleMoveDown = (index) => {
-        if (index === backlogItems.length - 1) {
-            return;
-        }
-        const items = [...backlogItems];
-        const temp = items[index];
-        items[index] = items[index + 1];
-        items[index + 1] = temp;
-        setBacklogItems(items);
-    };
-
     return (
         <>
             <Header isShowProfile={true} isShowBack={true} />
@@ -113,7 +92,7 @@ export default function BacklogPage() {
             </Typography>
             <BacklogItemForm projectId={projectId} onItemCreated={handleItemCreated} />
             <Grid container spacing={3} style={{ marginTop: '20px' }}>
-                {backlogItems.map((item, index) => (
+                {backlogItems.map(item => (
                     <Grid item xs={12} key={item._id}>
                         <Paper style={{ padding: '20px', display: 'flex', justifyContent: 'space-between' }}>
                             {editingItem && editingItem._id === item._id ? (
@@ -168,22 +147,16 @@ export default function BacklogPage() {
                                     variant="contained"
                                     color="secondary"
                                     onClick={() => handleDeleteItem(item._id)}
-                                    style={{ marginRight: '10px' }}
                                 >
                                     Delete
                                 </Button>
-                                <IconButton onClick={() => handleMoveUp(index)} disabled={index === 0}>
-                                    <ArrowUpwardIcon />
-                                </IconButton>
-                                <IconButton onClick={() => handleMoveDown(index)} disabled={index === backlogItems.length - 1}>
-                                    <ArrowDownwardIcon />
-                                </IconButton>
                             </div>
                         </Paper>
                     </Grid>
                 ))}
-                </Grid>
+            </Grid>
             </div>
         </>
     );
 }
+
