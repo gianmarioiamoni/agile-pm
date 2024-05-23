@@ -5,6 +5,8 @@ import { Paper, Grid, Typography, Button } from '@mui/material';
 
 import { getTasksBySprintId, updateTaskStatus } from "../services/taskServices";
 
+import Header from "../components/Header";
+
 export default function SprintTaskStatusPage() {
     const { sprintId } = useParams();
     const [tasks, setTasks] = useState([]);
@@ -65,19 +67,23 @@ export default function SprintTaskStatusPage() {
     };
 
     return (
-        <div style={{ padding: '20px' }}>
-            <Typography variant="h4">Sprint Task Status</Typography>
-            <Grid container spacing={3} marginTop={4} alignContent={'center'}>
-                <Grid item xs={4}>
-                    {renderTasks('To Do', 'red')}
+        <>
+            <Header isShowProfile={true} isShowBack={true} />
+
+            <div style={{ padding: '20px' }}>
+                <Typography variant="h4">Sprint Task Status</Typography>
+                <Grid container spacing={3} marginTop={4} alignContent={'center'}>
+                    <Grid item xs={4}>
+                        {renderTasks('To Do', 'red')}
+                    </Grid>
+                    <Grid item xs={4}>
+                        {renderTasks('In Progress', 'orange')}
+                    </Grid>
+                    <Grid item xs={4}>
+                        {renderTasks('Done', 'green')}
+                    </Grid>
                 </Grid>
-                <Grid item xs={4}>
-                    {renderTasks('In Progress', 'orange')}
-                </Grid>
-                <Grid item xs={4}>
-                    {renderTasks('Done', 'green')}
-                </Grid>
-            </Grid>
-        </div>
+            </div>
+        </>
     );
 }

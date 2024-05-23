@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { Grid, Typography, IconButton, Tooltip } from '@mui/material';
-import { Edit, Delete } from '@mui/icons-material';
+import { Edit, Delete, Assignment } from '@mui/icons-material';
 import GroupsIcon from '@mui/icons-material/Groups';
 import ViewTimeLineIcon from '@mui/icons-material/ViewTimeline';
 
@@ -51,6 +51,15 @@ export default function ProjectsList({ projects, onEdit, onDelete,
                                 <div>
                                     <IconButton disabled={!canManageSprints}>
                                         <ViewTimeLineIcon />
+                                    </IconButton>
+                                </div>
+                            </Tooltip>
+                        </Link>
+                        <Link to={`/project/${project.id}/backlog`} >
+                            <Tooltip title="Backlog" arrow>
+                                <div>
+                                    <IconButton >
+                                        <Assignment />
                                     </IconButton>
                                 </div>
                             </Tooltip>

@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-
 import { Paper, Grid, Typography, Button } from '@mui/material';
-
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-
 import Header from "../components/Header";
 import { getAvailableTasksAndSprintTasks, updateTaskAssignment } from "../services/taskServices";
 
@@ -61,6 +58,14 @@ export default function SprintAssignmentPage() {
         }
     };
 
+    const getStatusColor = (status) => {
+        switch (status) {
+            case 'To Do': return 'red';
+            case 'In Progress': return 'orange';
+            case 'Done': return 'green';
+            default: return '#f9f9f9';
+        }
+    };
 
     return (
         <>
@@ -105,14 +110,14 @@ export default function SprintAssignmentPage() {
                                                                 style={{
                                                                     padding: '10px',
                                                                     margin: '0 0 10px 0',
-                                                                    backgroundColor: '#f9f9f9',
+                                                                    backgroundColor: getStatusColor(task.status),
                                                                     border: '1px solid black',
                                                                     cursor: 'pointer',
                                                                     ...provided.draggableProps.style,
                                                                 }}
                                                             >
-                                                                <div style={{ fontWeight: 'bold' }} >{task.title}</div>
-                                                                <div style={{ fontWeight: 'lighter'}}>{task.content}</div>
+                                                                <div style={{ fontWeight: 'bold', color: '#fff' }}>{task.title}</div>
+                                                                <div style={{ fontWeight: 'lighter', color: '#fff' }}>{task.content}</div>
                                                             </div>
                                                         )}
                                                     </Draggable>
@@ -161,9 +166,8 @@ export default function SprintAssignmentPage() {
                                                                 ...provided.draggableProps.style,
                                                             }}
                                                         >
-                                                            <div style={{ fontWeight: 'bold' }} >{task.title}</div>
+                                                            <div style={{ fontWeight: 'bold' }}>{task.title}</div>
                                                             <div style={{ fontWeight: 'lighter' }}>{task.content}</div>
-                                                          
                                                         </div>
                                                     )}
                                                 </Draggable>
@@ -180,3 +184,4 @@ export default function SprintAssignmentPage() {
         </>
     );
 }
+

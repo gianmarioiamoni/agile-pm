@@ -14,6 +14,8 @@ import TeamAssignmentsPage from "./pages/TeamAssignmentsPage";
 import SprintsManagementPage from "./pages/SprintsManagementPage";
 import SprintAssignmentPage from "./pages/SprintAssignmentPage";
 import SprintTaskStatusPage from "./pages/SprintTaskStatusPage";
+import BacklogPage from "./pages/BacklogPage";
+
 
 import PrivateRoute from "./components/PrivateRoute";
 
@@ -111,6 +113,7 @@ export default function App() {
         <Route path="/sprints-management/:projectId" element={<SprintsManagementPage getProjectName={getProjectName} canEditSprint={canSprints.edit} canCreateSprint={canSprints.create} canDeleteSprint={canSprints.delete}/>} > </Route> 
         <Route path="/sprint-assignment/:sprintId" element={<SprintAssignmentPage />} > </Route> 
         <Route path="/sprint-task-status/:sprintId" element={<SprintTaskStatusPage />} > </Route>
+        <Route path="/project/:projectId/backlog" element={<BacklogPage />} > </Route>
 
 
         <Route path="*" element={<NotFoundPage />} />
