@@ -28,15 +28,15 @@ export default function SprintTaskStatusPage() {
         }
     };
 
-    const renderTasks = (status) => (
+    const renderTasks = (status, color) => (
         <div>
-            <Typography variant="h6">{status}</Typography>
+            <Typography variant="h6" style={{ color, textAlign: 'center' }}>{status}</Typography>
             {tasks.filter(task => task.status === status).map(task => (
-                <Paper key={task._id} style={{ padding: '10px', margin: '10px 0' }}>
-                    <Typography variant="body1">{task.title}</Typography>
+                <Paper key={task._id} style={{ padding: '10px', margin: '10px 0', backgroundColor: color }}>
+                    <Typography variant="body1" style={{ color: '#fff' }}>{task.title}</Typography>
                     <Button
                         variant="contained"
-                        color="primary"
+                        style={{ backgroundColor: '#fff', color, marginTop: '10px' }}
                         onClick={() => updateTaskStatus(task._id, getNextStatus(status))}
                     >
                         {getNextStatusLabel(status)}
@@ -65,15 +65,15 @@ export default function SprintTaskStatusPage() {
     return (
         <div style={{ padding: '20px' }}>
             <Typography variant="h4">Sprint Task Status</Typography>
-            <Grid container spacing={3}>
+            <Grid container spacing={3} marginTop={4} alignContent={'center'}>
                 <Grid item xs={4}>
-                    {renderTasks('To Do')}
+                    {renderTasks('To Do', 'red')}
                 </Grid>
                 <Grid item xs={4}>
-                    {renderTasks('In Progress')}
+                    {renderTasks('In Progress', 'orange')}
                 </Grid>
                 <Grid item xs={4}>
-                    {renderTasks('Done')}
+                    {renderTasks('Done', 'green')}
                 </Grid>
             </Grid>
         </div>
