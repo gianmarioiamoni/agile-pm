@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+
 import { Paper, Grid, Typography, Button } from '@mui/material';
-import axios from 'axios';
+
+import { getTasksBySprintId, updateTaskStatus } from "../services/taskServices";
 
 export default function SprintTaskStatusPage() {
     const { sprintId } = useParams();
@@ -10,8 +12,8 @@ export default function SprintTaskStatusPage() {
     useEffect(() => {
         const fetchTasks = async () => {
             try {
-                const response = await axios.get(`/server/tasks/sprint/${sprintId}`);
-                setTasks(response.data);
+                const sprintTasks = await getTasksBySprintId(sprintId);
+                setTasks(sprintTasks);
             } catch (error) {
                 console.error('Error fetching tasks:', error);
             }
@@ -19,9 +21,9 @@ export default function SprintTaskStatusPage() {
         fetchTasks();
     }, [sprintId]);
 
-    const updateTaskStatus = async (taskId, status) => {
+    const handleUpdateTaskStatus = async (taskId, status) => {
         try {
-            await axios.post('/server/tasks/updateStatus', { taskId, status });
+            await updateTaskStatus(taskId, status);
             setTasks(tasks.map(task => (task._id === taskId ? { ...task, status } : task)));
         } catch (error) {
             console.error('Error updating task status:', error);
@@ -37,7 +39,7 @@ export default function SprintTaskStatusPage() {
                     <Button
                         variant="contained"
                         style={{ backgroundColor: '#fff', color, marginTop: '10px' }}
-                        onClick={() => updateTaskStatus(task._id, getNextStatus(status))}
+                        onClick={() => handleUpdateTaskStatus(task._id, getNextStatus(status))}
                     >
                         {getNextStatusLabel(status)}
                     </Button>

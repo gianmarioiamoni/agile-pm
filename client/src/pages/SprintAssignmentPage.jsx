@@ -5,10 +5,8 @@ import { Paper, Grid, Typography, Button } from '@mui/material';
 
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
-import axios from 'axios';
-
 import Header from "../components/Header";
-import { getAvailableTasksAndSprintTasks } from "../services/taskServices";
+import { getAvailableTasksAndSprintTasks, updateTaskAssignment } from "../services/taskServices";
 
 export default function SprintAssignmentPage() {
     const { sprintId } = useParams();
@@ -63,13 +61,6 @@ export default function SprintAssignmentPage() {
         }
     };
 
-    const updateTaskAssignment = async (taskId, sprintId) => {
-        try {
-            await axios.post('/server/tasks/assign', { taskId, sprintId });
-        } catch (error) {
-            console.error('Error assigning task:', error);
-        }
-    };
 
     return (
         <>
