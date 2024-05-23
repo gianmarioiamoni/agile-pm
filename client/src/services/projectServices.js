@@ -36,11 +36,20 @@ export async function updateProject(updatedProject) {
     } catch (err) { console.log(err) }
 }
 
+
+export async function getProject(id) {
+    try {
+        const res = await axios.get(`/server/projects/${id}`);
+        return res.data;
+    } catch (err) { console.log(err) }
+}
+
 export async function removeProject(id) {
     try {
         const res = await axios.delete(`/server/projects/${id}`);
         return res;
     } catch (err) { console.log(err) }
 }
+
 
 
