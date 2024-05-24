@@ -19,3 +19,10 @@ export const deleteBacklogItem = async (id) => {
     const response = await axios.delete(`/server/backlog/delete/${id}`);
     return response.data;
 };
+
+export const updatePriorities = async (projectId, items) => {
+    console.log("updatePriorities", items);
+
+    const response = await axios.put(`/server/backlog/projects/${projectId}/reorder`, { items });
+    return response.data;
+};

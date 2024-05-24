@@ -42,3 +42,25 @@ export const deleteBacklogItem = async (req, res) => {
         res.status(400).json({ success: false, message: error.message });
     }
 };
+
+export const updatePriorities = async (req, res) => {
+    const { projectId } = req.params;
+    const { items } = req.body;
+
+    try {
+        // Verify user permissions here  
+
+        await Backlog.bulkWrite(items.map(({ id, priority }) => ({
+            updateOne: {
+                filter: { _id: id, projectId: projectId },
+                update: { priority },
+            },
+        })));
+
+        res.status(200).json({ success: true });
+    } catch (error) {
+        console.error('Error reordering backlog items:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
