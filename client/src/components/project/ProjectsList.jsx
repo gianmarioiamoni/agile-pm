@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { Grid, Typography, IconButton, Tooltip } from '@mui/material';
-import { Edit, Delete, Assignment } from '@mui/icons-material';
+import { Edit, Delete, Assignment, Dashboard } from '@mui/icons-material';
 import GroupsIcon from '@mui/icons-material/Groups';
 import ViewTimeLineIcon from '@mui/icons-material/ViewTimeline';
 
@@ -78,6 +78,15 @@ export default function ProjectsList({ projects, onEdit, onDelete,
                                 </IconButton>
                             </div>
                         </Tooltip>
+                        <Link to={`/project-dashboard/${project.id}`} >
+                            <Tooltip title="Project Dashboard" arrow>
+                                <div>
+                                    <IconButton >
+                                        <Dashboard color='secondary' />
+                                    </IconButton>
+                                </div>
+                            </Tooltip>
+                        </Link>
                     </Grid>
                 </Grid>
             ))}
