@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const { Schema } = mongoose;
 
-const backlogSchema = new Schema({
+const backlogItemSchema = new Schema({
     projectId: {
         type: Schema.Types.ObjectId,
         ref: 'Project',
@@ -24,12 +24,17 @@ const backlogSchema = new Schema({
         type: Number,
         default: 1
     },
+    sprint: {
+        type: Schema.Types.ObjectId,
+        ref: 'Sprint',
+        default: null
+    },
     createdAt: {
         type: Date,
         default: Date.now
     }
 });
 
-const Backlog = mongoose.model('Backlog', backlogSchema);
+const BacklogItem = mongoose.model('BacklogItem', backlogItemSchema);
 
-export default Backlog;
+export default BacklogItem;

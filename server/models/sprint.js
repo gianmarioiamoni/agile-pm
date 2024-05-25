@@ -9,7 +9,8 @@ const sprintSchema = new Schema({
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
     goal: { type: String, required: false },
-    tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }]
+    items: [{ type: mongoose.Schema.Types.ObjectId, ref: 'BacklogItem', default: [] }],
+    tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }] // TO BE REMOVED
 });
 
 const Sprint = mongoose.model('Sprint', sprintSchema);

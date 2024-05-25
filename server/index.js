@@ -12,7 +12,7 @@ import rolesMapRoutes from "./routes/rolesMap.js";
 import assignmentsRoutes from "./routes/assignment.js";
 import sprintsRoutes from "./routes/sprint.js";
 import taskRoutes from "./routes/task.js";
-import backlogRoutes from "./routes/backlog.js";
+import backlogRoutes from "./routes/backlog-item.js";
 
 import Role from './models/role.js';
 import User from './models/user.js';
@@ -104,7 +104,7 @@ app.use("/server/roles-map", rolesMapRoutes);
 app.use("/server/assignments", assignmentsRoutes);
 app.use("/server/sprints", sprintsRoutes);
 app.use("/server/tasks", taskRoutes);
-app.use("/server/backlog", backlogRoutes);
+app.use("/server/backlog-items", backlogRoutes);
 
 // middleware to manage errors
 app.use((err, req, res, next) => {

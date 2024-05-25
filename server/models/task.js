@@ -6,7 +6,8 @@ const taskSchema = new Schema({
     key: { type: String, required: true },
     title: { type: String, required: true, default: 'Untitled' },
     content: { type: String, required: true },
-    sprintId: { type: mongoose.Schema.Types.ObjectId, ref: 'Sprint', default: null },
+    item: { type: mongoose.Schema.Types.ObjectId, ref: 'BacklogItem', default: null },
+    sprintId: { type: mongoose.Schema.Types.ObjectId, ref: 'Sprint', default: null }, // TO BE REMOVED
     status: { type: String, required: true, default: 'To Do' } // 'To Do', 'In Progress', 'Done'
 });
 
