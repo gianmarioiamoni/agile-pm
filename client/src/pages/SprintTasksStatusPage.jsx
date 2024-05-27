@@ -1,31 +1,52 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Typography, Grid, Box, Container, Card, CardContent } from '@mui/material';
+import { Typography, Grid, Box, Container, Card, CardContent, TextField, Button } from '@mui/material';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 import Header from "../components/Header";
 import TaskCard from "../components/task/TaskCard";
 import { getSprint } from "../services/sprintServices";
-import { updateTaskStatus } from "../services/taskServices";
+import { updateTaskStatus, getTasksByBacklogItemId, createTask } from "../services/taskServices";
 import { getBacklogItem, updateBacklogItem } from "../services/backlogServices";
 
 /**
  * Page for managing tasks within a sprint.
  */
-export default function SprintTasksPage() {
+export default function SprintTasksStatusPage() {
     const { sprintId } = useParams();
     const [sprint, setSprint] = useState(null);
     const [backlogItems, setBacklogItems] = useState([]);
+    const [newTask, setNewTask] = useState({ title: '', description: '' });
+    const [currentBacklogItemId, setCurrentBacklogItemId] = useState(null);
 
     useEffect(() => {
         const fetchSprint = async () => {
             try {
                 const sprintData = await getSprint(sprintId);
+                console.log('SprintTasksPage: fetchSprint: sprintData:', sprintData);
+
                 setSprint(sprintData);
-                const itemPromises = sprintData.items.map(itemId => getBacklogItem(itemId));
-                const itemsData = await Promise.all(itemPromises);
-                console.log('SprintTasksPage: fetchSprint: itemsData:', itemsData);
-                setBacklogItems(itemsData);
+
+                if (sprintData.items && sprintData.items.length > 0) {
+                    sprintData.items.forEach(item => console.log('Item:', item));
+
+                    const itemPromises = sprintData.items.map(async (item) => {
+                        const itemId = item._id || item;
+                        const itemData = await getBacklogItem(itemId);
+                        console.log(`SprintTasksPage: fetchSprint: itemData for itemId ${itemId}:`, itemData);
+
+                        const tasks = await getTasksByBacklogItemId(itemId);
+                        console.log(`SprintTasksPage: fetchSprint: tasks for itemId ${itemId}:`, tasks);
+                        itemData.tasks = tasks;
+                        return itemData;
+                    });
+
+                    const itemsData = await Promise.all(itemPromises);
+                    console.log('SprintTasksPage: fetchSprint: itemsData:', itemsData);
+                    setBacklogItems(itemsData);
+                } else {
+                    console.log('SprintTasksPage: fetchSprint: No items found in sprintData');
+                }
             } catch (error) {
                 console.error('Error fetching sprint:', error);
             }
@@ -85,8 +106,50 @@ export default function SprintTasksPage() {
 
         if (backlogItem.status !== newStatus) {
             backlogItem.status = newStatus;
-            // Assume updateBacklogItem is a service that updates the backlog item in the backend
             await updateBacklogItem(backlogItem._id, { status: newStatus });
+        }
+    };
+
+    const handleNewTaskChange = (e) => {
+        const { name, value } = e.target;
+        setNewTask(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+
+    const handleAddTask = async (backlogItemId) => {
+        console.log('handleAddTask is called with backlogItemId:', backlogItemId);
+        if (newTask.title.trim() === '') {
+            console.log('Task title is required.');
+            alert('Task title is required.');
+            return;
+        }
+
+        try {
+            console.log('About to create new task with backlogItemId:', backlogItemId, 'and newTask:', newTask);
+            const createdTask = await createTask(backlogItemId, sprintId, newTask);
+            console.log('New task created:', createdTask);
+
+            const updatedBacklogItems = backlogItems.map(item => {
+                console.log('Mapping backlogItems:', item);
+                if (item._id === backlogItemId) {
+                    console.log('Found backlogItem with id:', backlogItemId);
+                    item.tasks.push(createdTask);
+                }
+                console.log('Updated backlogItem:', item);
+                return item;
+            });
+
+            console.log('Updated backlogItems:', updatedBacklogItems);
+            setBacklogItems(updatedBacklogItems);
+            console.log('Setting backlogItems to updatedBacklogItems in handleAddTask.');
+            setNewTask({ title: '', description: '' });
+            console.log('Setting newTask to empty object in handleAddTask.');
+            setCurrentBacklogItemId(null);
+            console.log('Setting currentBacklogItemId to null in handleAddTask.');
+        } catch (error) {
+            console.error('Error creating new task:', error);
         }
     };
 
@@ -126,6 +189,32 @@ export default function SprintTasksPage() {
                                         ))}
                                     </Grid>
                                     {provided.placeholder}
+                                    <Box mt={2}>
+                                        <Typography variant="h6">Add New Task</Typography>
+                                        <TextField
+                                            label="Title"
+                                            name="title"
+                                            value={newTask.title}
+                                            onChange={handleNewTaskChange}
+                                            fullWidth
+                                            margin="normal"
+                                        />
+                                        <TextField
+                                            label="Description"
+                                            name="description"
+                                            value={newTask.description}
+                                            onChange={handleNewTaskChange}
+                                            fullWidth
+                                            margin="normal"
+                                        />
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={() => handleAddTask(item._id)}
+                                        >
+                                            Add Task
+                                        </Button>
+                                    </Box>
                                 </Box>
                             )}
                         </Droppable>
@@ -135,3 +224,4 @@ export default function SprintTasksPage() {
         </>
     );
 }
+

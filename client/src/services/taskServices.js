@@ -17,12 +17,38 @@ export const getTasksBySprintId = async (sprintId) => {
     } catch (err) { console.log(err) }
 };
 
+
+export const getTasksByBacklogItemId = async (itemId) => {
+    try {
+        const response = await axios.get(`/server/tasks/backlogItems/${itemId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching tasks by backlog item ID:', error);
+        return [];
+    }
+};
+
+
 export const updateTaskAssignment = async (taskId, sprintId) => {
     try {
         const response = await axios.post('/server/tasks/assign', { taskId, sprintId });
         return response.data;
     } catch (error) {
         console.error('Error assigning task:', error);
+    }
+};
+
+export const createTask = async (backlogItemId, sprintId, data) => {
+    data = { ...data, backlogItemId, sprintId };
+
+    console.log('createTask function is being called with data:', data);
+    try {
+        const response = await axios.post('/server/tasks', data);
+        console.log('Response from server:', response);
+        return response.data;
+    } catch (error) {
+        console.error('Error creating task:', error);
+        console.error('Error creating task stack trace:', error.stack);
     }
 };
 

@@ -34,6 +34,7 @@ export const getAvailableTasksAndSprintTasks = async (req, res) => {
     }
 };
 
+
 export const getAvailableTasks = async (req, res) => {
     try {
         const tasks = await Task.find({ sprintId: null });
@@ -52,6 +53,34 @@ export const getTasksBySprintId = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+export const getTasksByBacklogItemId = async (req, res) => {
+    const { backlogItemId } = req.params;
+    try {
+        const tasks = await Task.find({ backlogItemId });
+        res.json(tasks);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+export const createTask = async (req, res) => {
+    console.log("createTask function is being called");
+    const { name, description, sprintId, backlogItemId } = req.body;
+    console.log("req.body is: ", req.body);
+    try {
+        console.log("req.body is: ", req.body);
+        const newTask = new Task({ name, description, sprintId, backlogItemId });
+        console.log("newTask is: ", newTask);
+        const savedTask = await newTask.save();
+        console.log("savedTask is: ", savedTask);
+        res.status(201).json(savedTask);
+    } catch (error) {
+        console.log("Error in createTask function: ", error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
 
 export const assignTask = async (req, res) => {
     const { taskId, sprintId } = req.body;

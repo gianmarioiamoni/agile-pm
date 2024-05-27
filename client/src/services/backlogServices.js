@@ -5,14 +5,31 @@ export const createBacklogItem = async (data) => {
     return response.data;
 };
 
-export const getBacklogItem = async (id) => {
-    const response = axios.get(`/server/backlog-items/${id}`);
-    return response.data;
-}
+// export const getBacklogItem = async (id) => {
+//     const response = axios.get(`/server/backlog-items/${id}`);
+//     return response.data;
+// }
+
+// 
+export const getBacklogItem = async (itemId) => {
+    try {
+        console.log('Fetching backlog item with ID:', itemId); // Log per verificare l'ID passato
+        const response = await axios.get(`/server/backlog-items/${itemId}`);
+        console.log('Response from server:', response); // Log della risposta completa
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching backlog item:', error); // Log dell'errore
+        return undefined;
+    }
+};
 
 export const getBacklogItems = async (projectId) => {
-    const response = await axios.get(`/server/backlog-items/project/${projectId}`);
-    return response.data;
+    try {
+        const response = await axios.get(`/server/backlog-items/project/${projectId}`);
+        return response.data;
+    } catch (err) {
+        console.error('Error fetching backlog items:', err);
+    }
 };
 
 export const updateBacklogItem = async (id, data) => {
