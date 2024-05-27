@@ -1,114 +1,113 @@
-// components/AddSprint.js
 import React, { useState } from 'react';
-import axios from 'axios';
-import { Box, TextField, Button, Typography } from '@mui/material';
+import { Button, TextField, Typography, List, ListItem, ListItemText, Checkbox, ListItemSecondaryAction } from '@mui/material';
+import { addSprint } from '../../services/sprintServices';
 
-import { Add } from '@mui/icons-material';
+export default function AddSprint({ projectId, sprints, setSprints, canCreateSprint, backlogItems }) {
+    const [newSprintName, setNewSprintName] = useState('');
+    const [newSprintStartDate, setNewSprintStartDate] = useState('');
+    const [newSprintEndDate, setNewSprintEndDate] = useState('');
+    const [selectedItems, setSelectedItems] = useState([]);
 
-import { addSprint } from "../../services/sprintServices";
+    console.log('AddSprint: backlogItems', backlogItems);
+    console.log('AddSprint: sprints', sprints);
 
-/**
- * A React component that renders a form to create a new sprint for a project.
- *
- * @param {object} props Component props.
- * @param {string} projectId The ID of the project for which to create the sprint.
- * @param {array} sprints An array of all sprints for the project.
- * @param {function} setSprints A callback to update the array of sprints.
- * @return {ReactElement} The component element.
- */
-export default function AddSprint({ projectId, sprints, setSprints, canCreateSprint = true }) {
-    /**
-     * The state of the form, containing the name, start date, end date, and goal of the sprint to create.
-     */
-    const [sprint, setSprint] = useState({
-        name: '',
-        projectId,
-        startDate: '',
-        endDate: '',
-        goal: '',
-    });
+    const handleCreateSprint = async () => {
+        console.log('handleCreateSprint called with the following values:');
+        console.log('newSprintName:', newSprintName);
+        console.log('projectId:', projectId);
+        console.log('newSprintStartDate:', newSprintStartDate);
+        console.log('newSprintEndDate:', newSprintEndDate);
+        console.log('selectedItems:', selectedItems);
 
-    /**
-     * Handles the submission of the form by creating a new sprint with the form data.
-     * @param {SyntheticEvent} e The event object.
-     */
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+        const newSprint = {
+            name: newSprintName,
+            projectId: projectId,
+            startDate: newSprintStartDate,
+            endDate: newSprintEndDate,
+            items: selectedItems
+        };
+
         try {
-            const addedSprint = await addSprint(sprint);
-            setSprints([...sprints, addedSprint]);
-            setSprint({
-                name: '',
-                projectId,
-                startDate: '',
-                endDate: '',
-                goal: '',
-            });
+            console.log('calling addSprint function with the following payload:');
+            console.log(newSprint);
+            const createdSprint = await addSprint(newSprint);
+            console.log('createdSprint:', createdSprint);
+            setSprints([...sprints, createdSprint]);
+            setNewSprintName('');
+            setNewSprintStartDate('');
+            setNewSprintEndDate('');
+            setSelectedItems([]);
         } catch (error) {
-            console.error('Error creating sprint:', error);
+            console.error('Error while creating sprint:', error);
         }
     };
 
+    const handleToggleItem = (itemId) => {
+        const currentIndex = selectedItems.indexOf(itemId);
+        const newSelectedItems = [...selectedItems];
+
+        if (currentIndex === -1) {
+            newSelectedItems.push(itemId);
+        } else {
+            newSelectedItems.splice(currentIndex, 1);
+        }
+
+        setSelectedItems(newSelectedItems);
+    };
+
     return (
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
-            <Typography variant="h6" gutterBottom sx={!canCreateSprint ? { color: "gray" } : {}}>
+        <div>
+            <Typography variant="h6" gutterBottom>
                 Create New Sprint
             </Typography>
             <TextField
                 label="Sprint Name"
-                value={sprint.name}
-                onChange={(e) =>
-                    setSprint((prev) => ({ ...prev, name: e.target.value }))
-                }
-                required
+                value={newSprintName}
+                onChange={(e) => setNewSprintName(e.target.value)}
                 fullWidth
-                disabled={!canCreateSprint}
-                margin="normal"
-                name="name"
+                style={{ marginBottom: '10px' }}
             />
             <TextField
                 label="Start Date"
                 type="date"
-                value={sprint.startDate}
-                onChange={(e) =>
-                    setSprint((prev) => ({ ...prev, startDate: e.target.value }))
-                }
-                required
+                value={newSprintStartDate}
+                onChange={(e) => setNewSprintStartDate(e.target.value)}
                 fullWidth
-                disabled={!canCreateSprint}
-                margin="normal"
                 InputLabelProps={{ shrink: true }}
-                name="startDate"
+                style={{ marginBottom: '10px' }}
             />
             <TextField
                 label="End Date"
                 type="date"
-                value={sprint.endDate}
-                onChange={(e) =>
-                    setSprint((prev) => ({ ...prev, endDate: e.target.value }))
-                }
-                required
+                value={newSprintEndDate}
+                onChange={(e) => setNewSprintEndDate(e.target.value)}
                 fullWidth
-                disabled={!canCreateSprint}
-                margin="normal"
                 InputLabelProps={{ shrink: true }}
-                name="endDate"
+                style={{ marginBottom: '10px' }}
             />
-            <TextField
-                label="Sprint Goal"
-                value={sprint.goal}
-                onChange={(e) =>
-                    setSprint((prev) => ({ ...prev, goal: e.target.value }))
-                }
-                fullWidth
-                disabled={!canCreateSprint}
-                margin="normal"
-                name="goal"
-            />
-            <Button disabled={!canCreateSprint} type="submit" variant="contained" color="primary" startIcon={<Add />} sx={{ mt: 2 }}>
-                Add Sprint
+            <Typography variant="h6" gutterBottom>
+                Assign Backlog Items
+            </Typography>
+            <List>
+                {backlogItems.map((item) => (
+                    <ListItem key={item._id} button onClick={() => handleToggleItem(item._id)}>
+                        <ListItemText primary={item.title} secondary={item.description} />
+                        <ListItemSecondaryAction>
+                            <Checkbox
+                                edge="end"
+                                onChange={() => handleToggleItem(item._id)}
+                                checked={selectedItems.indexOf(item._id) !== -1}
+                            />
+                        </ListItemSecondaryAction>
+                    </ListItem>
+                ))}
+            </List>
+            {/* <Button variant="contained" color="primary" onClick={handleCreateSprint} disabled={!canCreateSprint}> */}
+            <Button variant="contained" color="primary" onClick={handleCreateSprint} >
+                Create Sprint
             </Button>
-        </Box>
+        </div>
     );
-};
+}
+
 

@@ -1,4 +1,4 @@
-import BacklogItem from "../models/backlogItem";
+import BacklogItem from "../models/backlogItem.js";
 
 export const createBacklogItem = async (req, res) => {
     const { projectId, title, description } = req.body;
@@ -6,6 +6,16 @@ export const createBacklogItem = async (req, res) => {
         const newItem = new BacklogItem({ projectId, title, description });
         await newItem.save();
         res.status(201).json(newItem);
+    } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+};
+
+export const getBacklogItem = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const item = await BacklogItem.findById(id);
+        res.status(200).json(item);
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
     }

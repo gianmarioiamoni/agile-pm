@@ -15,7 +15,7 @@ router.post('/assign', assignTask);
 
 
 // update the status of a task
-router.post('/updateStatus', updateTaskStatus);
+router.put('/:taskId/updateStatus', updateTaskStatus);
 
 export default router;
 

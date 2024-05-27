@@ -5,14 +5,29 @@ const serverUrl = "http://localhost:3000";
 
 export const addSprint = async (sprint) => {
     try {
-        const response = axios.post("/server/sprints", sprint);
+        console.log("About to send request to add a sprint");
+        console.log(sprint);
+        const response = await axios.post("/server/sprints", sprint);
+        console.log("Response received from server");
+        console.log(response.data);
         return response.data;
-    } catch (err) { console.log(err) }
+    } catch (err) {
+        console.log("Error while adding sprint");
+        console.log(err);
+        return null;
+    }
 };
 
 export const getAllSprints = async () => {
     try {
         const response = await axios.get("/server/sprints");
+        return response.data;
+    } catch (err) { console.log(err) }
+};
+
+export const getSprint = async (id) => {
+    try {
+        const response = await axios.get(`/server/sprints/${id}`);
         return response.data;
     } catch (err) { console.log(err) }
 };
@@ -36,4 +51,6 @@ export const removeSprint = async (id) => {
         const response = await axios.delete(`/server/sprints/${id}`);
         return response.data;
     } catch (err) { console.log(err) }
-}
+};
+
+

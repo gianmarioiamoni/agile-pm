@@ -26,11 +26,22 @@ export const updateTaskAssignment = async (taskId, sprintId) => {
     }
 };
 
-export const updateTaskStatus = async (taskId, status) => {
+// export const updateTaskStatus = async (taskId, status) => {
+//     try {
+//         const response = await axios.post('/server/tasks/updateStatus', { taskId, status });
+//         return response.data;
+//     } catch (error) {
+//         console.error('Error updating task status:', error);
+
+
+//     }
+// };
+
+export const updateTaskStatus = async (taskId, backlogItemId) => {
     try {
-        const response = await axios.post('/server/tasks/updateStatus', { taskId, status });
+        const response = await axios.put(`/server/tasks/${taskId}/updateStatus`, { backlogItemId });
         return response.data;
-    } catch (error) {
-        console.error('Error updating task status:', error);
+    } catch (err) {
+        console.error('Error updating task status:', err);
     }
 };

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Container, Typography, Grid, Box } from '@mui/material';
-
 import { useParams } from 'react-router-dom';
 
 import Header from "../components/Header";
@@ -8,7 +7,7 @@ import AddSprint from "../components/sprint/AddSprint";
 import SprintList from "../components/sprint/SprintList";
 
 import { getSprintsByProjectId } from "../services/sprintServices";
-
+import { getBacklogItems } from "../services/backlogServices";
 
 /**
  * Page for managing sprints for a project
@@ -19,35 +18,36 @@ import { getSprintsByProjectId } from "../services/sprintServices";
  * @param {string} props.projectId - The ID of the project for which the sprints are being managed
  * @returns {ReactElement} The SprintsManagementPage component
  */
-export default function SprintsManagementPage({getProjectName, canCreateSprint = true, canEditSprint = true, canDeleteSprint = true}) {
-
+export default function SprintsManagementPage({ getProjectName, canCreateSprint = true, canEditSprint = true, canDeleteSprint = true }) {
     const { projectId } = useParams();
 
-    /**
-     * The sprints for the project
-     */
     const [sprints, setSprints] = useState([]);
+    const [backlogItems, setBacklogItems] = useState([]);
 
     useEffect(() => {
-        /**
-         * Fetchs the sprints for the given project from the server.
-         * The response is then set as the state of the sprints.
-         */
         const fetchSprints = async () => {
+            console.log('SprintsManagementPage: fetchSprints called with projectId:', projectId);
+
             try {
-                // const response = await axios.get(`/server/sprints/${projectId}`);
                 const sprintsData = await getSprintsByProjectId(projectId);
+                console.log('SprintsManagementPage: fetchSprints: sprintsData:', sprintsData);
                 setSprints(sprintsData);
             } catch (error) {
-                console.error('Error fetching sprints:', error);
+                console.error('SprintsManagementPage: fetchSprints: Error fetching sprints:', error);
             }
         };
 
-        // Fetch sprints only if they haven't already been fetched
-        if (!sprints || sprints.length === 0) {
-            fetchSprints();
-        }
+        const fetchBacklogItems = async () => {
+            try {
+                const items = await getBacklogItems(projectId);
+                setBacklogItems(items.filter(item => !item.sprint)); // Filtra solo gli item non assegnati
+            } catch (error) {
+                console.error('Error fetching backlog items:', error);
+            }
+        };
 
+        fetchSprints();
+        fetchBacklogItems();
     }, [projectId]);
 
     return (
@@ -58,27 +58,12 @@ export default function SprintsManagementPage({getProjectName, canCreateSprint =
                 <Typography variant="h4" gutterBottom>
                     Sprints Management for Project {getProjectName(projectId)}
                 </Typography>
-                {/* The grid containing the AddSprint and SprintList components */}
                 <Grid container spacing={2}>
-                    {/**
-                 * The component for adding new sprints
-                 * 
-                 * @param {string} projectId - The ID of the project for which the sprint is being added
-                 * @param {Array} sprints - The current list of sprints
-                 * @param {Function} setSprints - The function to update the sprints
-                 */}
                     <Grid item xs={12} md={4}>
                         <Box sx={{ padding: 2, boxShadow: 3, borderRadius: 2 }}>
-                            <AddSprint projectId={projectId} sprints={sprints} setSprints={setSprints} canCreateSprint={canCreateSprint} />
+                            <AddSprint projectId={projectId} sprints={sprints} setSprints={setSprints} canCreateSprint={canCreateSprint} backlogItems={backlogItems} />
                         </Box>
                     </Grid>
-                    {/**
-                 * The component for viewing the list of sprints
-                 * 
-                 * @param {string} projectId - The ID of the project for which the sprints are being viewed
-                 * @param {Array} sprints - The current list of sprints
-                 * @param {Function} setSprints - The function to update the sprints
-                 */}
                     <Grid item xs={12} md={8}>
                         <Box sx={{ padding: 2, boxShadow: 3, borderRadius: 2, marginLeft: 8 }}>
                             <SprintList

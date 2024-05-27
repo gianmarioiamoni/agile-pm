@@ -12,7 +12,7 @@ import rolesMapRoutes from "./routes/rolesMap.js";
 import assignmentsRoutes from "./routes/assignment.js";
 import sprintsRoutes from "./routes/sprint.js";
 import taskRoutes from "./routes/task.js";
-import backlogRoutes from "./routes/backlog-item.js";
+import backlogRoutes from "./routes/backlogItem.js";
 
 import Role from './models/role.js';
 import User from './models/user.js';

@@ -15,11 +15,6 @@ const backlogItemSchema = new Schema({
     description: {
         type: String
     },
-    status: {
-        type: String,
-        enum: ['To Do', 'In Progress', 'Done'],
-        default: 'To Do'
-    },
     priority: {
         type: Number,
         default: 1
@@ -29,6 +24,8 @@ const backlogItemSchema = new Schema({
         ref: 'Sprint',
         default: null
     },
+    tasks: [{ type: Schema.Types.ObjectId, ref: 'Task', default: [] }],
+    status: { type: String, enum: ['To Do', 'In Progress', 'Done'], default: 'To Do' },
     createdAt: {
         type: Date,
         default: Date.now

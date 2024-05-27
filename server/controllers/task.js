@@ -1,10 +1,32 @@
 import Task from "../models/task.js";
 import Sprint from "../models/sprint.js";
+import BacklogItem from "../models/backlogItem.js";
 
 export const getAvailableTasksAndSprintTasks = async (req, res) => {
     try {
+        console.log('Getting available tasks and sprint tasks...');
         const tasks = await Task.find({ sprintId: null });
-        const sprints = await Sprint.find().populate('tasks');
+        console.log('Found tasks:', tasks);
+        console.log(`Found ${tasks.length} tasks`);
+
+        const sprints = await Sprint.find().populate('items');
+        console.log(`Found ${sprints.length} sprints`);
+        console.log('Populating sprints with tasks...');
+        sprints.forEach(sprint => {
+            console.log(`${sprint.name} has ${sprint.items.length} items`);
+        });
+        // populating sprints items with tasks
+        sprints.forEach(sprint => {
+            sprint.items.forEach(item => {
+                tasks.forEach(task => {
+                    if (task._id === item.taskId) {
+                        task.sprintId = sprint._id;
+                    }
+                    if (item.taskId === null) {}
+                        task.save();
+                });
+            });
+        });
         res.json({ tasks, sprints });
         return;
     } catch (err) {
@@ -62,18 +84,35 @@ export const assignTask = async (req, res) => {
 };
 
 export const updateTaskStatus = async (req, res) => {
-    const { taskId, status } = req.body;
+    const { taskId } = req.params;
+    const { backlogItemId } = req.body;
 
     try {
-        const task = await Task.findByIdAndUpdate(taskId, { status }, { new: true });
-        if (!task) {
-            return res.status(404).send('Task not found');
+        const task = await Task.findById(taskId);
+        task.status = req.body.status || task.status;
+        await task.save();
+
+        if (backlogItemId) {
+            const backlogItem = await BacklogItem.findById(backlogItemId);
+            const totalTasks = backlogItem.tasks.length;
+            const doneTasks = backlogItem.tasks.filter(t => t.status === 'Done').length;
+
+            let newStatus = 'To Do';
+            if (doneTasks === totalTasks) {
+                newStatus = 'Done';
+            } else if (doneTasks > 0) {
+                newStatus = 'In Progress';
+            }
+
+            if (backlogItem.status !== newStatus) {
+                backlogItem.status = newStatus;
+                await backlogItem.save();
+            }
         }
 
-        res.status(200).json({ success: true, message: 'Task status updated successfully' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Error updating task status' });
+        res.status(200).json(task);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
-}
-
+};
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Routes, Route, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { Box, List, ListItem, ListItemText, Typography, IconButton, Tooltip, Grid } from '@mui/material';
 import { Edit, Delete, PlaylistAdd } from '@mui/icons-material';
@@ -10,7 +10,6 @@ import { toDate } from 'date-fns';
 import EditSprintDialog from "./EditSprintDialog";
 import { updateSprint, removeSprint } from "../../services/sprintServices";
 
-import SprintAssignmentPage from '../../pages/SprintAssignmentPage';
 
 /**
  * SprintList component renders a list of sprints for a given project.
@@ -27,6 +26,8 @@ export default function SprintList({ projectId, sprints, setSprints, canEditSpri
         startDate: toDate(new Date()),
         endDate: toDate(new Date()),
         goal: '',
+        items: [],
+        status: 'Planned'
     });
 
     const handleEdit = (sprint) => {
@@ -35,9 +36,11 @@ export default function SprintList({ projectId, sprints, setSprints, canEditSpri
     };
 
     const handleSave = async (editedSprint) => {
+        console.log("handleSave: editedSprint", editedSprint);
         try {
             const updatedSprint = await updateSprint(editedSprint);
-            setSprints(prevSprints =>
+            console.log("handleSave: updatedSprint", updatedSprint);
+            setSprints((prevSprints) =>
                 prevSprints.map(sprint => (sprint._id === editedSprint._id ? updatedSprint : sprint))
             );
         } catch (error) {
@@ -77,8 +80,10 @@ export default function SprintList({ projectId, sprints, setSprints, canEditSpri
                                     <Box component="span" display="block" color="textSecondary" minWidth="250px">
                                         Start: {new Date(sprint.startDate).toLocaleDateString()} - End: {new Date(sprint.endDate).toLocaleDateString()}
                                     </Box>
-                                    <Box component="span" display="block" color={sprint.tasks.length > 0 ? "green" : "red"}>
-                                        Tasks: {sprint.tasks?.length || 0}
+                                    {/* <Box component="span" display="block" color={sprint.tasks?.length > 0 ? "green" : "red"}> */}
+                                    <Box component="span" display="block" color={sprint.items?.length > 0 ? "green" : "red"}>
+                                        {/* Tasks: {sprint.tasks?.length || 0} */}
+                                        Items: {sprint.items?.length || 0}
                                     </Box>
                                 </Box>
                             }
@@ -98,8 +103,8 @@ export default function SprintList({ projectId, sprints, setSprints, canEditSpri
                                     </IconButton>
                                 </div>
                             </Tooltip>
-                            <Link to={`/sprint-assignment/${sprint._id}`} style={!canAssignSprint ? { pointerEvents: 'none' } : {}}>
-                                <Tooltip title="Assign Tasks" arrow>
+                            <Link to={`/sprint-tasks-status/${sprint._id}`} style={!canAssignSprint ? { pointerEvents: 'none' } : {}}>
+                                <Tooltip title="Assign Items" arrow>
                                     <div>
                                         <IconButton disabled={!canAssignSprint}>
                                             <PlaylistAdd fontSize='small' />
