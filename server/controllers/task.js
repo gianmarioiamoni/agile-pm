@@ -114,17 +114,25 @@ export const assignTask = async (req, res) => {
 
 export const updateTaskStatus = async (req, res) => {
     const { taskId } = req.params;
-    const { backlogItemId } = req.body;
+    const { status, backlogItemId } = req.body;
 
     try {
+        console.log("Getting task by id: ", taskId);
         const task = await Task.findById(taskId);
-        task.status = req.body.status || task.status;
+        console.log("Found task: ", task);
+        task.status = status || task.status;
+        console.log("Updating task status to: ", task.status);
         await task.save();
 
         if (backlogItemId) {
+            console.log("Getting backlogItem by id: ", backlogItemId);
             const backlogItem = await BacklogItem.findById(backlogItemId);
+            console.log("Found backlogItem: ", backlogItem);
+
             const totalTasks = backlogItem.tasks.length;
             const doneTasks = backlogItem.tasks.filter(t => t.status === 'Done').length;
+            console.log("Total tasks: ", totalTasks);
+            console.log("Done tasks: ", doneTasks);
 
             let newStatus = 'To Do';
             if (doneTasks === totalTasks) {
@@ -132,15 +140,18 @@ export const updateTaskStatus = async (req, res) => {
             } else if (doneTasks > 0) {
                 newStatus = 'In Progress';
             }
+            console.log("New status: ", newStatus);
 
             if (backlogItem.status !== newStatus) {
                 backlogItem.status = newStatus;
+                console.log("Updating backlogItem status to: ", newStatus);
                 await backlogItem.save();
             }
         }
-
+        console.log("Returning task: ", task);
         res.status(200).json(task);
     } catch (err) {
+        console.log("Error in updateTaskStatus function: ", err);
         res.status(500).json({ error: err.message });
     }
 };

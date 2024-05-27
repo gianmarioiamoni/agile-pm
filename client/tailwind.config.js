@@ -17,6 +17,7 @@ export default {
       'secondarySelection': '#FFC107',
       'primaryHighlight': '#673AB7',
       'secondaryHighlight': '#FFC107',
+      'contrastText': '#ffffff',
       'customBeige': '#F5F5F5',
       'white': '#ffffff',
       'black': '#000000',
