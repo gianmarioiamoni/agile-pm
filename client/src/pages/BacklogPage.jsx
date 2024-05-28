@@ -82,6 +82,20 @@ export default function BacklogPage() {
         setEditedDescription('');
     };
 
+    const updateBackendPriorities = async (updatedItems) => {
+        // Create an array of objects for the updated priorities
+        const updatedPriorities = updatedItems.map((item, index) => ({ id: item._id, priority: index }));
+
+        // Send request to backend to update priorities
+        // updatedPriorities array contains the new priority values
+        try {
+            await updatePriorities(projectId, updatedPriorities);
+        } catch (error) {
+            console.error('Error updating backlog priorities:', error);
+            // implement rollback here in case of failure
+        }
+    };
+
     const handleDragEnd = async (result) => {
         if (!result.destination) {
             return;
@@ -93,16 +107,64 @@ export default function BacklogPage() {
 
         setBacklogItems(reorderedItems);
 
-        // Create an array of objects for the updated priorities
-        const updatedPriorities = reorderedItems.map((item, index) => ({ id: item._id, priority: index }));
+        updateBackendPriorities(reorderedItems);
 
-        // Send request to backend to update priorities
-        // updatedPriorities array contains the new priority values
-        try {
-            await updatePriorities(projectId, updatedPriorities);
-        } catch (error) {
-            console.error('Error updating backlog priorities:', error);
-            // implement rollback here in case of failure
+        // // Create an array of objects for the updated priorities
+        // const updatedPriorities = reorderedItems.map((item, index) => ({ id: item._id, priority: index }));
+
+        // // Send request to backend to update priorities
+        // // updatedPriorities array contains the new priority values
+        // try {
+        //     await updatePriorities(projectId, updatedPriorities);
+        // } catch (error) {
+        //     console.error('Error updating backlog priorities:', error);
+        //     // implement rollback here in case of failure
+        // }
+    };
+
+    const handleMoveDown = async (itemId) => {
+        console.log('handleMoveDown called with item id:', itemId);
+        console.log('backlogItems:', backlogItems);
+        const currentItemIndex = backlogItems.findIndex(item => item._id === itemId);
+        console.log('currentItemIndex:', currentItemIndex);
+        if (currentItemIndex !== backlogItems.length - 1) {
+            const nextItem = backlogItems[currentItemIndex + 1];
+            const currentItem = backlogItems[currentItemIndex];
+            console.log('nextItem:', nextItem);
+            console.log('currentItem:', currentItem);
+            const updatedItems = [...backlogItems];
+            updatedItems[currentItemIndex] = nextItem;
+            updatedItems[currentItemIndex + 1] = currentItem;
+            console.log('updatedItems:', updatedItems);
+            setBacklogItems(updatedItems);
+
+            updateBackendPriorities(updatedItems);
+
+            // // Create an array of objects for the updated priorities
+            // const updatedPriorities = updatedItems.map((item, index) => ({ id: item._id, priority: index }));
+
+            // // Send request to backend to update priorities
+            // // updatedPriorities array contains the new priority values
+            // try {
+            //     await updatePriorities(projectId, updatedPriorities);
+            // } catch (error) {
+            //     console.error('Error updating backlog priorities:', error);
+            //     // implement rollback here in case of failure
+            // }
+        }
+    };
+
+    const handleMoveUp = async (itemId) => {
+        const currentItemIndex = backlogItems.findIndex(item => item._id === itemId);
+        if (currentItemIndex !== 0) {
+            const previousItem = backlogItems[currentItemIndex - 1];
+            const currentItem = backlogItems[currentItemIndex];
+            const updatedItems = [...backlogItems];
+            updatedItems[currentItemIndex] = previousItem;
+            updatedItems[currentItemIndex - 1] = currentItem;
+            setBacklogItems(updatedItems);
+
+            updateBackendPriorities(updatedItems);
         }
     };
 
@@ -181,11 +243,11 @@ export default function BacklogPage() {
                                                         >
                                                             Delete
                                                         </Button>
-                                                        <IconButton onClick={() => handleMoveUp(index)} disabled={index === 0}>
+                                                        <IconButton onClick={() => handleMoveUp(item._id)} disabled={index === 0}>
                                                             <ArrowUpwardIcon />
                                                         </IconButton>
                                                         
-                                                    <IconButton onClick={() => handleMoveDown(index)} disabled={index === backlogItems.length - 1}>
+                                                    <IconButton onClick={() => handleMoveDown(item._id)} disabled={index === backlogItems.length - 1}>
                                                         <ArrowDownwardIcon />
                                                     </IconButton>
                                                     </div>
