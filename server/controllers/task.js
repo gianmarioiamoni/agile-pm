@@ -66,11 +66,11 @@ export const getTasksByBacklogItemId = async (req, res) => {
 
 export const createTask = async (req, res) => {
     console.log("createTask function is being called");
-    const { name, description, sprintId, backlogItemId } = req.body;
+    const { title, description, sprintId, backlogItemId, assignee } = req.body;
     console.log("req.body is: ", req.body);
     try {
         console.log("req.body is: ", req.body);
-        const newTask = new Task({ name, description, sprintId, backlogItemId });
+        const newTask = new Task({ title, description, sprintId, backlogItemId, assignee });
         console.log("newTask is: ", newTask);
         const savedTask = await newTask.save();
         console.log("savedTask is: ", savedTask);

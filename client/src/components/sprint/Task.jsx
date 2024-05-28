@@ -4,8 +4,7 @@ import { Draggable } from 'react-beautiful-dnd';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DoneIcon from '@mui/icons-material/Done';
-
-import TaskCard from './TaskCard';
+import { styled } from '@mui/system';
 
 export default function Task({ task, index, handleTaskStatusChange }) {
     const getStatusColor = (status) => {
@@ -21,6 +20,42 @@ export default function Task({ task, index, handleTaskStatusChange }) {
         }
     };
 
+    const getChipPosition = (status) => {
+        switch (status) {
+            case 'To Do':
+                return 'flex-start';
+            case 'In Progress':
+                return 'center';
+            case 'Done':
+                return 'flex-end';
+            default:
+                return 'flex-start';
+        }
+    };
+
+    const StyledIconButton = styled(IconButton)(({ theme }) => ({
+        margin: theme.spacing(0.5),
+        color: 'white',
+        '&.to-do': {
+            backgroundColor: 'red',
+            '&:hover': {
+                backgroundColor: 'darkred',
+            },
+        },
+        '&.in-progress': {
+            backgroundColor: 'orange',
+            '&:hover': {
+                backgroundColor: 'darkorange',
+            },
+        },
+        '&.done': {
+            backgroundColor: 'green',
+            '&:hover': {
+                backgroundColor: 'darkgreen',
+            },
+        },
+    }));
+
     return (
         <Draggable draggableId={task._id} index={index} key={task._id}>
             {(provided) => (
@@ -28,27 +63,34 @@ export default function Task({ task, index, handleTaskStatusChange }) {
                     <Card variant="outlined">
                         <CardContent>
                             <Box display="flex" alignItems="center" justifyContent="space-between">
-                                <Box>
+                                {/* Task information */}
+                                <Box display="flex" flexDirection="column">
                                     <Typography variant="h6" component="div">{task.title}</Typography>
                                     <Typography variant="body2" color="textSecondary">{task.description}</Typography>
-                                    <Chip label={task.status} sx={{ backgroundColor: getStatusColor(task.status), color: 'white' }} />
+                                    <Box display="flex" justifyContent={getChipPosition(task.status)}>
+                                        <Chip label={task.status} sx={{ backgroundColor: getStatusColor(task.status), color: 'white' }} />
+                                    </Box>
                                 </Box>
+                                {/* Status change buttons */}
                                 <Box display="flex" alignItems="center">
-                                    <IconButton onClick={() => handleTaskStatusChange(task._id, 'To Do')}
-                                        color={task.status === 'To Do' ? 'primary' : 'default'}
+                                    <StyledIconButton
+                                        onClick={() => handleTaskStatusChange(task._id, 'To Do')}
+                                        className="to-do"
                                     >
                                         <ArrowUpwardIcon />
-                                    </IconButton>
-                                    <IconButton onClick={() => handleTaskStatusChange(task._id, 'In Progress')}
-                                        color={task.status === 'In Progress' ? 'primary' : 'default'}
+                                    </StyledIconButton>
+                                    <StyledIconButton
+                                        onClick={() => handleTaskStatusChange(task._id, 'In Progress')}
+                                        className="in-progress"
                                     >
                                         <ArrowForwardIcon />
-                                    </IconButton>
-                                    <IconButton onClick={() => handleTaskStatusChange(task._id, 'Done')}
-                                        color={task.status === 'Done' ? 'primary' : 'default'}
+                                    </StyledIconButton>
+                                    <StyledIconButton
+                                        onClick={() => handleTaskStatusChange(task._id, 'Done')}
+                                        className="done"
                                     >
                                         <DoneIcon />
-                                    </IconButton>
+                                    </StyledIconButton>
                                 </Box>
                             </Box>
                         </CardContent>
@@ -57,5 +99,4 @@ export default function Task({ task, index, handleTaskStatusChange }) {
             )}
         </Draggable>
     );
-};
-
+}

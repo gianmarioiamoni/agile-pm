@@ -16,7 +16,7 @@ export default function BacklogItemForm({ projectId, onItemCreated }) {
             setTitle('');
             setDescription('');
         } catch (error) {
-            console.error('Errore durante la creazione dell\'item del backlog:', error);
+            console.error('Error creating backlog item:', error);
         }
     };
 

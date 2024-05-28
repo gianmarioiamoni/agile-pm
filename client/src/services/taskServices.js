@@ -41,14 +41,14 @@ export const updateTaskAssignment = async (taskId, sprintId) => {
 export const createTask = async (backlogItemId, sprintId, data) => {
     data = { ...data, backlogItemId, sprintId };
 
-    console.log('createTask function is being called with data:', data);
     try {
+        if (data.assignee === '') {
+            data.assignee = undefined
+        }
         const response = await axios.post('/server/tasks', data);
-        console.log('Response from server:', response);
         return response.data;
     } catch (error) {
         console.error('Error creating task:', error);
-        console.error('Error creating task stack trace:', error.stack);
     }
 };
 

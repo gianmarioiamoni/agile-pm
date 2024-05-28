@@ -1,25 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-
 import { Typography, Container } from '@mui/material';
 import { DragDropContext } from 'react-beautiful-dnd';
 
 import Header from "../components/Header";
-import { BacklogItem } from '../components/sprint/BacklogItem';
+import BacklogItem from "../components/sprint/BacklogItem";
 
 import { getSprint } from "../services/sprintServices";
 import { updateTaskStatus, getTasksByBacklogItemId, createTask } from "../services/taskServices";
 import { getBacklogItem, updateBacklogItem } from "../services/backlogServices";
+import { getAssignments } from "../services/assignmentServices"; // Import the getAssignments function
 
 export default function SprintTasksStatusPage() {
     const { sprintId } = useParams();
     const [sprint, setSprint] = useState(null);
     const [backlogItems, setBacklogItems] = useState([]);
-    const [newTask, setNewTask] = useState({ title: '', description: '' });
+    const [newTask, setNewTask] = useState({ title: '', description: '', assignee: 'Assignee' });
     const [currentBacklogItemId, setCurrentBacklogItemId] = useState(null);
+    const [assignments, setAssignments] = useState([]);
 
     useEffect(() => {
-        const fetchSprint = async () => {
+        const fetchSprintAndAssignments = async () => {
             try {
                 const sprintData = await getSprint(sprintId);
                 setSprint(sprintData);
@@ -38,13 +39,25 @@ export default function SprintTasksStatusPage() {
                 } else {
                     console.log('SprintTasksPage: fetchSprint: No items found in sprintData');
                 }
+
+                if (sprintData.projectId) {
+                    const assignmentsData = await getAssignments(sprintData.projectId);
+                    setAssignments(assignmentsData);
+                    console.log('assignments:', assignmentsData);
+
+                    setNewTask({ title: '', description: '', assignee: '' });
+                }
+
+                
+
             } catch (error) {
-                console.error('Error fetching sprint:', error);
+                console.error('Error fetching sprint and assignments:', error);
             }
         };
 
-        fetchSprint();
+        fetchSprintAndAssignments();
     }, [sprintId]);
+
 
     const handleDragEnd = async (result) => {
         if (!result.destination) {
@@ -108,8 +121,18 @@ export default function SprintTasksStatusPage() {
         }));
     };
 
+    const handleAssigneeChange = (e) => {
+        console.log('Handle Assignee Change is being called');
+        const { value } = e.target;
+        console.log('Value is', value);
+        setNewTask(prevState => ({
+            ...prevState,
+            assignee: value
+        }));
+    };
+
     const handleAddTask = async (backlogItemId) => {
-        if (newTask.title.trim() === '' || newTask.description.trim() === '') {
+        if (newTask.title.trim() === '' || newTask.description.trim() === '' ) {
             console.log('Task title and description are required.');
             alert('Task title and description are required.');
             return;
@@ -126,12 +149,13 @@ export default function SprintTasksStatusPage() {
             });
 
             setBacklogItems(updatedBacklogItems);
-            setNewTask({ title: '', description: '' });
+            setNewTask({ title: '', description: '', assignee: '' });
             setCurrentBacklogItemId(null);
         } catch (error) {
             console.error('Error creating new task:', error);
         }
     };
+
 
     const handleTaskStatusChange = async (taskId, newStatus) => {
         try {
@@ -165,13 +189,15 @@ export default function SprintTasksStatusPage() {
                 <DragDropContext onDragEnd={handleDragEnd}>
                     {backlogItems?.map(item => (
                         <BacklogItem
-                            key={item._id}
+                            key={item._id} // unique key for list elemnts
                             item={item}
                             handleTaskStatusChange={handleTaskStatusChange}
                             handleNewTaskChange={handleNewTaskChange}
                             handleAddTask={handleAddTask}
                             newTask={newTask}
                             isAddTaskDisabled={isAddTaskDisabled}
+                            assignments={assignments}
+                            handleAssigneeChange={handleAssigneeChange}  
                         />
                     ))}
                 </DragDropContext>
@@ -179,6 +205,5 @@ export default function SprintTasksStatusPage() {
         </>
     );
 }
-
 
 
