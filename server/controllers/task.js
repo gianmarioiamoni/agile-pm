@@ -37,7 +37,8 @@ export const getAvailableTasksAndSprintTasks = async (req, res) => {
 
 export const getAvailableTasks = async (req, res) => {
     try {
-        const tasks = await Task.find({ sprintId: null });
+        const tasks = await Task.find({ sprintId: null }).populate('assignee');
+        // const tasks = await Task.find({ sprintId: null });
         res.json(tasks);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -47,7 +48,8 @@ export const getAvailableTasks = async (req, res) => {
 export const getTasksBySprintId = async (req, res) => {
     const { sprintId } = req.params;
     try {
-        const tasks = await Task.find({ sprintId });
+        const tasks = await Task.find({ sprintId }).populate('assignee');
+        // const tasks = await Task.find({ sprintId });
         res.json(tasks);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -57,7 +59,8 @@ export const getTasksBySprintId = async (req, res) => {
 export const getTasksByBacklogItemId = async (req, res) => {
     const { backlogItemId } = req.params;
     try {
-        const tasks = await Task.find({ backlogItemId });
+        const tasks = await Task.find({ backlogItemId }).populate('assignee');
+        // const tasks = await Task.find({ backlogItemId });
         res.json(tasks);
     } catch (err) {
         res.status(500).json({ message: err.message });

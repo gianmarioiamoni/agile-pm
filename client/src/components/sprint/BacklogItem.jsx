@@ -20,6 +20,19 @@ export default function BacklogItem({
         'Done': 'green'
     };
 
+    const getTaskStatusColor = (status) => {
+        switch (status) {
+            case 'To Do':
+                return 'red';
+            case 'In Progress':
+                return 'orange';
+            case 'Done':
+                return 'green';
+            default:
+                return 'gray';
+        }
+    };
+
     return (
         <Paper elevation={3} style={{ padding: 16, marginBottom: 16, position: 'relative' }}>
             <Typography variant="h6" gutterBottom>{item.title}</Typography>
@@ -39,6 +52,7 @@ export default function BacklogItem({
                 {(provided) => (
                     <div ref={provided.innerRef} {...provided.droppableProps}>
                         {item.tasks.map((task, index) => (
+                            
                             <Draggable key={task._id} draggableId={task._id} index={index}>
                                 {(provided) => (
                                     <Paper
@@ -49,12 +63,13 @@ export default function BacklogItem({
                                     >
                                         <Typography variant="body2" gutterBottom>{task.title}</Typography>
                                         <Typography variant="caption" display="block" gutterBottom>{task.description}</Typography>
+                                        <Typography variant="caption" display="block" gutterBottom color={task && task.assignee ? 'primary' : 'red'}>assignee: {task && task.assignee ? task.assignee.username : 'UNASSIGNED'} </Typography>
                                         <Grid container spacing={1}>
                                             {['To Do', 'In Progress', 'Done'].map((status) => (
                                                 <Grid item key={status}>
                                                     <Chip
                                                         label={status}
-                                                        color={status === task.status ? 'primary' : 'default'}
+                                                        sx={status === task.status ? { backgroundColor: getTaskStatusColor(task.status), color: 'white' } : 'default' }
                                                         onClick={() => handleTaskStatusChange(task._id, status)}
                                                     />
                                                 </Grid>
