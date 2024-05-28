@@ -39,7 +39,7 @@ export default function NewTaskForm({
             <Select
                 labelId="assignee-label"
                 name="assignee"
-                value={newTask ? newTask.assignee : ''}
+                value={newTask && newTask.assignee ? newTask.assignee : ''}
                 onChange={handleAssigneeChange}
                 fullWidth
                 margin="dense"

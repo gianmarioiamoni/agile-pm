@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Typography, Container } from '@mui/material';
+import { Typography, Container, Box } from '@mui/material';
 import { DragDropContext } from 'react-beautiful-dnd';
 
 import Header from "../components/Header";
@@ -15,7 +15,7 @@ export default function SprintTasksStatusPage() {
     const { sprintId } = useParams();
     const [sprint, setSprint] = useState(null);
     const [backlogItems, setBacklogItems] = useState([]);
-    const [newTask, setNewTask] = useState({ title: '', description: '', assignee: 'Assignee' });
+    const [newTask, setNewTask] = useState({ title: '', description: '', assignee: '' });
     const [currentBacklogItemId, setCurrentBacklogItemId] = useState(null);
     const [assignments, setAssignments] = useState([]);
 
@@ -183,7 +183,7 @@ export default function SprintTasksStatusPage() {
 
             <Container style={{ marginTop: 20 }}>
                 <Typography variant="h4" gutterBottom>
-                    Manage Tasks for Sprint {sprint ? sprint.name : ''}
+                    Manage Tasks for Sprint <Box component="span" color="primary.main" fontWeight="fontWeightBold">{sprint ? sprint.name : ''}</Box>
                 </Typography>
 
                 <DragDropContext onDragEnd={handleDragEnd}>

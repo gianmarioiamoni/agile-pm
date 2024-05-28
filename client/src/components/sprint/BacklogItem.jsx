@@ -61,20 +61,37 @@ export default function BacklogItem({
                                         {...provided.dragHandleProps}
                                         style={{ padding: 16, marginBottom: 8, ...provided.draggableProps.style }}
                                     >
-                                        <Typography variant="body2" gutterBottom>{task.title}</Typography>
-                                        <Typography variant="caption" display="block" gutterBottom>{task.description}</Typography>
-                                        <Typography variant="caption" display="block" gutterBottom color={task && task.assignee ? 'primary' : 'red'}>assignee: {task && task.assignee ? task.assignee.username : 'UNASSIGNED'} </Typography>
                                         <Grid container spacing={1}>
-                                            {['To Do', 'In Progress', 'Done'].map((status) => (
-                                                <Grid item key={status}>
-                                                    <Chip
-                                                        label={status}
-                                                        sx={status === task.status ? { backgroundColor: getTaskStatusColor(task.status), color: 'white' } : 'default' }
-                                                        onClick={() => handleTaskStatusChange(task._id, status)}
-                                                    />
+                                            <Grid item xs={8}>
+                                                {/* Task Information */}
+                                                <div>
+                                                    <Typography variant="body2" gutterBottom>{task.title}</Typography>
+                                                    <Typography variant="caption" display="block" gutterBottom>{task.description}</Typography>
+                                                    <Typography variant="caption" display="block" gutterBottom color={task && task.assignee ? 'primary' : 'red'}>assignee: {task && task.assignee ? task.assignee.username : 'UNASSIGNED'} </Typography>
+                                                </div>
+                                            </Grid>
+                                            <Grid item xs={4}>
+                                                {/* Task Status controls */}
+                                                <Grid container spacing={1}>
+                                                    {['To Do', 'In Progress', 'Done'].map((status) => (
+                                                        <Grid item key={status}>
+                                                            <Chip
+                                                                label={status}
+                                                                // sx={status === task.status ? { backgroundColor: getTaskStatusColor(task.status), color: 'white' } : 'default'}
+                                                                sx={{ backgroundColor: status === task.status ? getTaskStatusColor(task.status) : 'default', color: status === task.status ? 'white' : 'default' }}
+                                                                onClick={() => handleTaskStatusChange(task._id, status)}
+                                                            />
+                                                        </Grid>
+                                                    ))}
                                                 </Grid>
-                                            ))}
+                                            </Grid>
+                                            
                                         </Grid>
+                                            
+                                        {/* <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            
+                                            
+                                        </div> */}
                                     </Paper>
                                 )}
                             </Draggable>
