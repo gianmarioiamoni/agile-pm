@@ -8,17 +8,8 @@ export default function AddSprint({ projectId, sprints, setSprints, canCreateSpr
     const [newSprintEndDate, setNewSprintEndDate] = useState('');
     const [selectedItems, setSelectedItems] = useState([]);
 
-    console.log('AddSprint: backlogItems', backlogItems);
-    console.log('AddSprint: sprints', sprints);
 
     const handleCreateSprint = async () => {
-        console.log('handleCreateSprint called with the following values:');
-        console.log('newSprintName:', newSprintName);
-        console.log('projectId:', projectId);
-        console.log('newSprintStartDate:', newSprintStartDate);
-        console.log('newSprintEndDate:', newSprintEndDate);
-        console.log('selectedItems:', selectedItems);
-
         const newSprint = {
             name: newSprintName,
             projectId: projectId,
@@ -28,10 +19,7 @@ export default function AddSprint({ projectId, sprints, setSprints, canCreateSpr
         };
 
         try {
-            console.log('calling addSprint function with the following payload:');
-            console.log(newSprint);
             const createdSprint = await addSprint(newSprint);
-            console.log('createdSprint:', createdSprint);
             setSprints([...sprints, createdSprint]);
             setNewSprintName('');
             setNewSprintStartDate('');
@@ -85,23 +73,31 @@ export default function AddSprint({ projectId, sprints, setSprints, canCreateSpr
                 InputLabelProps={{ shrink: true }}
                 style={{ marginBottom: '10px' }}
             />
-            <Typography variant="h6" gutterBottom>
-                Assign Backlog Items
-            </Typography>
-            <List>
-                {backlogItems.map((item) => (
-                    <ListItem key={item._id} button onClick={() => handleToggleItem(item._id)}>
-                        <ListItemText primary={item.title} secondary={item.description} />
-                        <ListItemSecondaryAction>
-                            <Checkbox
-                                edge="end"
-                                onChange={() => handleToggleItem(item._id)}
-                                checked={selectedItems.indexOf(item._id) !== -1}
-                            />
-                        </ListItemSecondaryAction>
-                    </ListItem>
-                ))}
-            </List>
+            {backlogItems && backlogItems.length > 0 ? (
+                <>
+                    <Typography variant="h6" gutterBottom>
+                        Assign Backlog Items
+                    </Typography>
+                    <List>
+                        {backlogItems.map((item) => (
+                            <ListItem key={item._id} button onClick={() => handleToggleItem(item._id)}>
+                                <ListItemText primary={item.title} secondary={item.description} />
+                                <ListItemSecondaryAction>
+                                    <Checkbox
+                                        edge="end"
+                                        onChange={() => handleToggleItem(item._id)}
+                                        checked={selectedItems.indexOf(item._id) !== -1}
+                                    />
+                                </ListItemSecondaryAction>
+                            </ListItem>
+                        ))}
+                    </List>
+                </>
+            ) : (
+                <Typography variant="body1" gutterBottom>
+                    No unassigned backlog items available for this project
+                </Typography>
+            )}
             {/* <Button variant="contained" color="primary" onClick={handleCreateSprint} disabled={!canCreateSprint}> */}
             <Button variant="contained" color="primary" onClick={handleCreateSprint} >
                 Create Sprint
