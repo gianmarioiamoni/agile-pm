@@ -43,6 +43,8 @@ export default function SprintList({ projectId, sprints, setSprints, canEditSpri
             setSprints((prevSprints) =>
                 prevSprints.map(sprint => (sprint._id === editedSprint._id ? updatedSprint : sprint))
             );
+
+            setEditDialogOpen(false)
         } catch (error) {
             console.error('Error updating sprint:', error);
         }

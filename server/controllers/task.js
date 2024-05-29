@@ -59,8 +59,8 @@ export const getTasksBySprintId = async (req, res) => {
 export const getTasksByBacklogItemId = async (req, res) => {
     const { backlogItemId } = req.params;
     try {
+        // const tasks = await Task.find({ backlogItemId }).populate('assignee');
         const tasks = await Task.find({ backlogItemId }).populate('assignee');
-        // const tasks = await Task.find({ backlogItemId });
         res.json(tasks);
     } catch (err) {
         res.status(500).json({ message: err.message });

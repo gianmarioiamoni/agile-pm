@@ -7,7 +7,7 @@ import Header from "../components/Header";
 import BacklogItem from "../components/sprint/BacklogItem";
 
 import { getSprint } from "../services/sprintServices";
-import { updateTaskStatus, getTasksByBacklogItemId, createTask, deleteTask } from "../services/taskServices";
+import { updateTaskStatus, getTasksByBacklogItemId, createTask, deleteTask, updateTask } from "../services/taskServices";
 import { getBacklogItem, updateBacklogItem } from "../services/backlogServices";
 import { getAssignments } from "../services/assignmentServices"; // Import the getAssignments function
 
@@ -16,6 +16,7 @@ export default function SprintTasksStatusPage() {
     const [sprint, setSprint] = useState(null);
     const [backlogItems, setBacklogItems] = useState([]);
     const [newTask, setNewTask] = useState({ title: '', description: '', assignee: '' });
+    const [editedTask, setEditedTask] = useState(null);
     const [currentBacklogItemId, setCurrentBacklogItemId] = useState(null);
     const [assignments, setAssignments] = useState([]);
 
@@ -113,78 +114,102 @@ export default function SprintTasksStatusPage() {
         }
     };
 
-    const handleNewTaskChange = (e) => {
-        const { name, value } = e.target;
-        setNewTask(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
+    // const handleNewTaskChange = (e) => {
+    //     const { name, value } = e.target;
+    //     setNewTask(prevState => ({
+    //         ...prevState,
+    //         [name]: value
+    //     }));
+    // };
 
-    const handleAssigneeChange = (e) => {
-        const { value } = e.target;
-        setNewTask(prevState => ({
-            ...prevState,
-            assignee: value
-        }));
-    };
+    // const handleAssigneeChange = (e) => {
+    //     const { value } = e.target;
+    //     setNewTask(prevState => ({
+    //         ...prevState,
+    //         assignee: value
+    //     }));
+    // };
 
-    const handleAddTask = async (backlogItemId) => {
-        if (newTask.title.trim() === '' || newTask.description.trim() === '' ) {
-            console.log('Task title and description are required.');
-            alert('Task title and description are required.');
-            return;
-        }
+    // const handleAddTask = async (backlogItemId) => {
+    //     if (newTask.title.trim() === '' || newTask.description.trim() === '' ) {
+    //         console.log('Task title and description are required.');
+    //         alert('Task title and description are required.');
+    //         return;
+    //     }
 
-        try {
-            const createdTask = await createTask(backlogItemId, sprintId, newTask);
+    //     try {
+    //         const createdTask = await createTask(backlogItemId, sprintId, newTask);
 
-            const updatedBacklogItems = backlogItems.map(item => {
-                if (item._id === backlogItemId) {
-                    item.tasks.push(createdTask);
-                }
-                return item;
-            });
+    //         const updatedBacklogItems = backlogItems.map(item => {
+    //             if (item._id === backlogItemId) {
+    //                 item.tasks.push(createdTask);
+    //             }
+    //             return item;
+    //         });
 
-            setBacklogItems(updatedBacklogItems);
-            setNewTask({ title: '', description: '', assignee: '' });
-            setCurrentBacklogItemId(null);
-        } catch (error) {
-            console.error('Error creating new task:', error);
-        }
-    };
+    //         setBacklogItems(updatedBacklogItems);
+    //         setNewTask({ title: '', description: '', assignee: '' });
+    //         setCurrentBacklogItemId(null);
+    //     } catch (error) {
+    //         console.error('Error creating new task:', error);
+    //     }
+    // };
 
-    const handleDeleteTask = async (taskId) => {
-        try {
-            await deleteTask(taskId);
-            const updatedBacklogItems = backlogItems.map(item => {
-                item.tasks = item.tasks.filter(task => task._id !== taskId);
-                return item;
-            });
-            setBacklogItems(updatedBacklogItems);
-        } catch (error) {
-            console.error('Error deleting task:', error);
-        }
-    };
+    // const handleEditTask = async (backlogItemId) => {
+    //     try {
+    //         await updateTask(editedTask._id, editedTask);
+    //         setIsTaskDialogOpen(false);
+
+    //         const updatedBacklogItems = backlogItems.map(item => {
+    //             if (item._id === backlogItemId) {
+    //                 item.tasks = item.tasks.map(task => {
+    //                     if (task._id === editedTask._id) {
+    //                         return editedTask;
+    //                     }
+    //                     return task;
+    //                 })
+    //             }
+    //             return item;
+    //         });
+
+    //         setBacklogItems(updatedBacklogItems);
+
+    //     } catch (error) {
+    //         console.error('Error updating task:', error);
+    //     }
+    // };
+
+    // const handleDeleteTask = async (taskId) => {
+    //     try {
+    //         await deleteTask(taskId);
+    //         const updatedBacklogItems = backlogItems.map(item => {
+    //             item.tasks = item.tasks.filter(task => task._id !== taskId);
+    //             return item;
+    //         });
+    //         setBacklogItems(updatedBacklogItems);
+    //     } catch (error) {
+    //         console.error('Error deleting task:', error);
+    //     }
+    // };
 
 
-    const handleTaskStatusChange = async (taskId, newStatus) => {
-        try {
-            await updateTaskStatus(taskId, newStatus, currentBacklogItemId);
-            const updatedBacklogItems = backlogItems.map(item => {
-                item.tasks = item.tasks.map(task => {
-                    if (task._id === taskId) {
-                        task.status = newStatus;
-                    }
-                    return task;
-                });
-                return item;
-            });
-            setBacklogItems(updatedBacklogItems);
-        } catch (error) {
-            console.error('Error updating task status:', error);
-        }
-    };
+    // const handleTaskStatusChange = async (taskId, newStatus) => {
+    //     try {
+    //         await updateTaskStatus(taskId, newStatus, currentBacklogItemId);
+    //         const updatedBacklogItems = backlogItems.map(item => {
+    //             item.tasks = item.tasks.map(task => {
+    //                 if (task._id === taskId) {
+    //                     task.status = newStatus;
+    //                 }
+    //                 return task;
+    //             });
+    //             return item;
+    //         });
+    //         setBacklogItems(updatedBacklogItems);
+    //     } catch (error) {
+    //         console.error('Error updating task status:', error);
+    //     }
+    // };
 
     const isAddTaskDisabled = newTask.title.trim() === '' || newTask.description.trim() === '';
 
@@ -200,16 +225,13 @@ export default function SprintTasksStatusPage() {
                 <DragDropContext onDragEnd={handleDragEnd}>
                     {backlogItems?.map(item => (
                         <BacklogItem
-                            key={item._id} // unique key for list elemnts
+                            key={item._id} // unique key for list elemnt
                             item={item}
-                            handleTaskStatusChange={handleTaskStatusChange}
-                            handleNewTaskChange={handleNewTaskChange}
-                            handleAddTask={handleAddTask}
-                            handleDeleteTask={handleDeleteTask}
-                            newTask={newTask}
-                            isAddTaskDisabled={isAddTaskDisabled}
+                            backlogItems={backlogItems}
+                            setBacklogItems={setBacklogItems}
                             assignments={assignments}
-                            handleAssigneeChange={handleAssigneeChange}  
+
+
                         />
                     ))}
                 </DragDropContext>

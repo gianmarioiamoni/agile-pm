@@ -10,6 +10,7 @@ export async function getAssignments(projectId) {
         const teamAssignments = assignmentsFromDB.map((a) => ({
             _id: a._id,
             userId: a.userId._id,
+            user: a.userId, // added for edit assignments
             username: a.userId.username,
             roleId: a.roleId._id,
             roleDescription: a.roleId.roleDescription

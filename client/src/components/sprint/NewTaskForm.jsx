@@ -2,20 +2,16 @@ import React from 'react';
 import { Box, TextField, Button, Typography, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 
 export default function NewTaskForm({
-    backlogItemId,
     handleNewTaskChange,
-    handleAddTask,
     newTask,
-    isAddTaskDisabled,
     handleAssigneeChange,
     assignments,
 }) {
-    console.log("NewTaskForm props:", { backlogItemId, handleNewTaskChange, handleAddTask, newTask, isAddTaskDisabled, handleAssigneeChange, assignments });
+    // console.log("NewTaskForm props:", { backlogItemId, handleNewTaskChange, handleAddTask, newTask, isAddTaskDisabled, handleAssigneeChange, assignments });
     
     
     return (
         <Box mt={2}>
-            <Typography variant="h6">Add New Task</Typography>
             <TextField
                 label="Title"
                 name="title"
@@ -39,7 +35,7 @@ export default function NewTaskForm({
             <Select
                 labelId="assignee-label"
                 name="assignee"
-                value={newTask && newTask.assignee ? newTask.assignee : ''}
+                value={newTask && newTask.assignee ? newTask.assignee._id : ''}
                 onChange={handleAssigneeChange}
                 fullWidth
                 margin="dense"
@@ -52,14 +48,6 @@ export default function NewTaskForm({
                 ))}
                 </Select>
             </FormControl>
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={() => handleAddTask(backlogItemId)}
-                disabled={isAddTaskDisabled}
-            >
-                Add Task
-            </Button>
         </Box>
     );
 };

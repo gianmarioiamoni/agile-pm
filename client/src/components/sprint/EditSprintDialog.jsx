@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button } from '@mui/material';
 import { format } from 'date-fns';
 
-export default function EditSprintDialog({ open, onClose, sprint, onSave }) {
+export default function EditSprintDialog({ open, sprint, onSave, onClose}) {
     const [editedSprint, setEditedSprint] = useState({ ...sprint });
 
     useEffect(() => {
@@ -23,10 +23,10 @@ export default function EditSprintDialog({ open, onClose, sprint, onSave }) {
         }));
     };
 
-    const handleSave = () => {
-        onSave(editedSprint);
-        onClose();
-    };
+    // const handleSave = () => {
+    //     onSave(editedSprint);
+    //     onClose();
+    // };
 
     return (
         <Dialog open={open} onClose={onClose}>
@@ -77,7 +77,7 @@ export default function EditSprintDialog({ open, onClose, sprint, onSave }) {
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>Cancel</Button>
-                <Button onClick={handleSave} color="primary">Save</Button>
+                <Button onClick={() => onSave(editedSprint)} color="primary">Save</Button>
             </DialogActions>
         </Dialog>
     );
