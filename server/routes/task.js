@@ -6,7 +6,9 @@ import {
     getAvailableTasksAndSprintTasks,
     getTasksBySprintId,
     getTasksByBacklogItemId, 
+    updateTask,
     updateTaskStatus,
+    deleteTask,
 } from "../controllers/task.js";
 
 const router = express.Router();
@@ -24,9 +26,13 @@ router.post('/', createTask);
 // assign a task to a sprint
 router.post('/assign', assignTask);
 
+// update a task
+router.put('/:taskId', updateTask);
 
 // update the status of a task
 router.put('/:taskId/updateStatus', updateTaskStatus);
+
+router.delete('/:taskId', deleteTask);
 
 export default router;
 

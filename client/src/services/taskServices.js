@@ -52,12 +52,28 @@ export const createTask = async (backlogItemId, sprintId, data) => {
     }
 };
 
-
+export const updateTask = async (taskId, data) => {
+    try {
+        const response = await axios.put(`/server/tasks/${taskId}`, data);
+        return response.data;
+    } catch (error) {
+        console.error('Error updating task:', error);
+    }
+}
 export const updateTaskStatus = async (taskId, status, backlogItemId) => {
     try {
         const response = await axios.put(`/server/tasks/${taskId}/updateStatus`, { status, backlogItemId });
         return response.data;
     } catch (err) {
         console.error('Error updating task status:', err);
+    }
+};
+
+export const deleteTask = async (taskId) => {
+    try {
+        const response = await axios.delete(`/server/tasks/${taskId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting task:', error);
     }
 };

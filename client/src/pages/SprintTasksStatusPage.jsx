@@ -7,7 +7,7 @@ import Header from "../components/Header";
 import BacklogItem from "../components/sprint/BacklogItem";
 
 import { getSprint } from "../services/sprintServices";
-import { updateTaskStatus, getTasksByBacklogItemId, createTask } from "../services/taskServices";
+import { updateTaskStatus, getTasksByBacklogItemId, createTask, deleteTask } from "../services/taskServices";
 import { getBacklogItem, updateBacklogItem } from "../services/backlogServices";
 import { getAssignments } from "../services/assignmentServices"; // Import the getAssignments function
 
@@ -122,9 +122,7 @@ export default function SprintTasksStatusPage() {
     };
 
     const handleAssigneeChange = (e) => {
-        console.log('Handle Assignee Change is being called');
         const { value } = e.target;
-        console.log('Value is', value);
         setNewTask(prevState => ({
             ...prevState,
             assignee: value
@@ -153,6 +151,19 @@ export default function SprintTasksStatusPage() {
             setCurrentBacklogItemId(null);
         } catch (error) {
             console.error('Error creating new task:', error);
+        }
+    };
+
+    const handleDeleteTask = async (taskId) => {
+        try {
+            await deleteTask(taskId);
+            const updatedBacklogItems = backlogItems.map(item => {
+                item.tasks = item.tasks.filter(task => task._id !== taskId);
+                return item;
+            });
+            setBacklogItems(updatedBacklogItems);
+        } catch (error) {
+            console.error('Error deleting task:', error);
         }
     };
 
@@ -194,6 +205,7 @@ export default function SprintTasksStatusPage() {
                             handleTaskStatusChange={handleTaskStatusChange}
                             handleNewTaskChange={handleNewTaskChange}
                             handleAddTask={handleAddTask}
+                            handleDeleteTask={handleDeleteTask}
                             newTask={newTask}
                             isAddTaskDisabled={isAddTaskDisabled}
                             assignments={assignments}

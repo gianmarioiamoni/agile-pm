@@ -115,6 +115,20 @@ export const assignTask = async (req, res) => {
     }
 };
 
+export const updateTask = async (req, res) => {
+    const { taskId } = req.params;
+    const { title, description, assignee } = req.body;
+    try {
+        const task = await Task.findById(taskId);
+        task.title = title || task.title;
+        task.description = description || task.description;
+        task.assignee = assignee || task.assignee;
+        await task.save();
+        res.json(task);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
 export const updateTaskStatus = async (req, res) => {
     const { taskId } = req.params;
     const { status, backlogItemId } = req.body;
@@ -156,6 +170,19 @@ export const updateTaskStatus = async (req, res) => {
     } catch (err) {
         console.log("Error in updateTaskStatus function: ", err);
         res.status(500).json({ error: err.message });
+    }
+};
+
+export const deleteTask = async (req, res) => {
+    const { taskId } = req.params;
+    try {
+        const task = await Task.findByIdAndDelete(taskId);
+        if (!task) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+        res.json({ message: 'Task deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 };
 
