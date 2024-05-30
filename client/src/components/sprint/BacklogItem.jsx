@@ -1,30 +1,27 @@
 import React, { useState } from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 
-import { Typography, Paper, Chip, Grid, IconButton, Tooltip } from '@mui/material';
+import { Typography, Paper, Chip, Grid, IconButton, Tooltip, Button } from '@mui/material';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { deleteTask, updateTask, createTask } from "../../services/taskServices";
+import { deleteTask, updateTask, createTask, updateTaskStatus } from "../../services/taskServices";
 
 import TaskDialog from "./TaskDialog";
-import NewTaskForm from "./NewTaskForm";
 
 export default function BacklogItem({
     item,
     backlogItems,
     setBacklogItems,
     assignments,
-    // handleAssigneeChange,
 }) {
-    console.log("backlogItems", backlogItems);
-    console.log("item", item);
-    console.log("assignments", assignments);
-    const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
-    const [newTask, setNewTask] = useState({ title: '', description: '', assignee: '' });
+    
+    const [isAddTaskDialogOpen, setIsAddTaskDialogOpen] = useState(false);
+    const [isEditTaskDialogOpen, setIsEditTaskDialogOpen] = useState(false);
+    const [isAssigneeDialogOpen, setIsAssigneeDialogOpen] = useState(false);
+    const [addedTask, setAddedTask] = useState({ title: '', description: '', assignee: '' });
     const [editedTask, setEditedTask] = useState({ title: '', description: '', assignee: '' });
-    // const [currentBacklogItemId, setCurrentBacklogItemId] = useState({});
 
     const statusColors = {
         'To Do': 'gray',
@@ -43,14 +40,6 @@ export default function BacklogItem({
             default:
                 return 'gray';
         }
-    };
-
-    // edit task dialog opening
-    const handleEditTaskClick = (task) => {
-        console.log('edit task clicked', task);
-        setEditedTask(task);
-        setIsTaskDialogOpen(true);
-        console.log('is task dialog open set to', isTaskDialogOpen);
     };
 
     const handleTaskStatusChange = async (taskId, newStatus) => {
@@ -73,54 +62,66 @@ export default function BacklogItem({
 
     const handleAssigneeChange = (e) => {
         const { value } = e.target;
-        setNewTask(prevState => ({
-            ...prevState,
+        setEditedTask(prev => ({
+            ...prev,
             assignee: value
         }));
     };
 
-    const handleNewTaskChange = (e) => {
-        const { name, value } = e.target;
-        setNewTask(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
+    const handleAddTaskClick = () => {
+        setAddedTask({ title: '', description: '', assignee: '' });
+        setIsAddTaskDialogOpen(true);
+    };
+
+    const handleEditTaskClick = (task) => {
+        setEditedTask(task);
+        setIsEditTaskDialogOpen(true);
+    };
+
+    const handleAssigneeClick = (task) => {
+        setEditedTask(task);
+        setIsAssigneeDialogOpen(true);
     };
 
     const handleAddTask = async () => {
         const backlogItemId = item._id;
 
-        if (newTask.title.trim() === '' || newTask.description.trim() === '') {
+        if (addedTask.title.trim() === '' || addedTask.description.trim() === '') {
             console.log('Task title and description are required.');
             alert('Task title and description are required.');
             return;
         }
 
         try {
-            const createdTask = await createTask(backlogItemId, sprintId, newTask);
+            const createdTask = await createTask(backlogItemId, addedTask);
+
+            setIsAddTaskDialogOpen(false);
 
             const updatedBacklogItems = backlogItems.map(item => {
                 if (item._id === backlogItemId) {
-                    item.tasks.push(createdTask);
+                    // add _id of the new created task
+                    addedTask._id = createdTask._id;
+                    addedTask.status = 'To Do';
+                    item.tasks.push(addedTask);
                 }
                 return item;
             });
 
             setBacklogItems(updatedBacklogItems);
-            setNewTask({ title: '', description: '', assignee: '' });
-            setCurrentBacklogItemId(null);
+            setAddedTask({ title: '', description: '', assignee: '' });
         } catch (error) {
             console.error('Error creating new task:', error);
         }
     };
 
+    //  edit task handler
     const handleEditTask = async () => {
         const backlogItemId = item._id;
         try {
-            console.log("handleEditTask() - editedTask:", editedTask);
             await updateTask(editedTask._id, editedTask);
         
-            setIsTaskDialogOpen(false);
+            setIsEditTaskDialogOpen(false);
+            setIsAssigneeDialogOpen(false); // in case of assignee dialog
 
             const updatedBacklogItems = backlogItems.map(item => {
                 if (item._id === backlogItemId) {
@@ -141,6 +142,44 @@ export default function BacklogItem({
         }
     };
 
+    // add task dialog change handler
+    const handleAddTaskChange = (e) => {
+        const { name, value } = e.target;
+        setAddedTask((prevTask) => ({
+            ...prevTask,
+            [name]: value,
+        }));
+    };
+
+    // edit task dialog change handler
+    const handleEditTaskChange = (e) => {
+        const { name, value } = e.target;
+        setEditedTask((prevTask) => ({
+            ...prevTask,
+            [name]: value,
+        }));
+    };
+
+    // add task dialog assignee change handler
+    const handleAssigneeChangeInAdd = (e) => {
+        const newAssigneeId = e.target.value;
+        const newAssignedUser = assignments.find(a => a.userId === newAssigneeId).user;
+        setAddedTask((prevTask) => ({
+            ...prevTask,
+            assignee: newAssignedUser,
+        }));
+    }
+    // edit task dialog assignee change handler
+    const handleAssigneeChangeInEdit = (e) => {
+        const newAssigneeId = e.target.value;
+        const newAssignedUser = assignments.find(a => a.userId === newAssigneeId).user;
+        setEditedTask((prevTask) => ({
+            ...prevTask,
+            assignee: newAssignedUser,
+        }));
+    };
+
+    // delete task handler
     const handleDeleteTask = async (taskId) => {
         try {
             await deleteTask(taskId);
@@ -154,34 +193,27 @@ export default function BacklogItem({
         }
     };
 
-    const handleEditTaskChange = (e) => {
-        const { name, value } = e.target;
-        setEditedTask((prevTask) => ({
-            ...prevTask,
-            [name]: value,
-        }));
-    };
-
-
-    const handleAssigneeChangeInEdit = (e) => {
-        const newAssigneeId = e.target.value;
-        const newAssignedUser = assignments.find(a => a.userId === newAssigneeId).user;
-        console.log("newAssignedUser:", newAssignedUser);
-        console.log('handleAssigneeChangeInEdit() - e.target.value:', e.target.value);
-        console.log("handleAssigneeChangeInEdit() - editedTask:", editedTask);
-        setEditedTask((prevTask) => ({
-            ...prevTask,
-            assignee: newAssignedUser,
-        }));
-    };
-
     return (
         <Paper elevation={3} style={{ padding: 16, marginBottom: 16, position: 'relative' }}>
-            <Typography variant="h6" gutterBottom>{item.title}</Typography>
-            <Typography variant="body1">{item.description}</Typography>
+            <div style={{ display: 'flex', alignItems: 'top' }}>
+                {/* Item information */}
+                <div>
+                    <Typography variant="h6" gutterBottom>{item.title}</Typography>
+                    <Typography variant="body1">{item.description}</Typography>
+                </div>
+
+                {/* Add task button  */}
+                <div style={{ marginLeft: '50px' }}>
+                    <Button variant="contained" color="secondary" onClick={() => handleAddTaskClick()} >Add Task</Button>
+                </div>
+            </div>
+
+            {/* Item Status */}
             <Typography
                 variant="caption"
                 style={{
+                    fontSize: 16,
+                    fontWeight: 'bold',
                     position: 'absolute',
                     top: 16,
                     right: 16,
@@ -190,6 +222,8 @@ export default function BacklogItem({
             >
                 {item.status}
             </Typography>
+
+            {/* Droppable tasks area */}
             <Droppable droppableId={item._id}>
                 {(provided) => (
                     <div ref={provided.innerRef} {...provided.droppableProps}>
@@ -203,6 +237,8 @@ export default function BacklogItem({
                                         style={{ padding: 16, marginBottom: 8, ...provided.draggableProps.style }}
                                     >
                                         <Grid container spacing={8}>
+                                            
+                                            {/* Item information and operations */}
                                             <Grid item xs={8} sm={9}>
                                                 <Grid container spacing={2}>
                                                     <Grid item xs={8} sm={6}>
@@ -216,8 +252,7 @@ export default function BacklogItem({
                                                         <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
                                                             <Tooltip title="Responsible assignment" arrow>
                                                                 <div>
-                                                                    {/* <IconButton onClick={() => handleAssignee(task._id, task.assignee)}> */}
-                                                                    <IconButton onClick={() => console.log("change assignee for task: ", task._id, " new assignee: ", task.assignee)}>
+                                                                    <IconButton onClick={() => handleAssigneeClick(task)} color={task && task.assignee ? 'default' : 'secondary'}> 
                                                                         <AssignmentIndIcon fontSize='small' />
                                                                     </IconButton>
                                                                 </div>
@@ -240,6 +275,8 @@ export default function BacklogItem({
                                                     </Grid>
                                                 </Grid>
                                             </Grid>
+                                            
+                                            {/* Item status change management */}
                                             <Grid item xs={4} sm={3} sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start' }}>
                                                 <Grid container spacing={1}>
                                                     {['To Do', 'In Progress', 'Done'].map((status) => (
@@ -263,53 +300,42 @@ export default function BacklogItem({
                 )}
             </Droppable>
 
-            {/* Add a new task */}
-            {/* <NewTaskForm
-                backlogItemId={item._id}
-                handleNewTaskChange={handleNewTaskChange}
-                newTask={newTask}
-                assignments={assignments}
-                handleAssigneeChange={(e) => handleAssigneeChange(e)}
-            /> */}
-
-            {/* Edit Task Dialog */}
-            {/* <Dialog open={isTaskDialogOpen} onClose={() => setIsTaskDialogOpen(false)} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Edit Task</DialogTitle>
-                <DialogContent>
-                    {currentTask && (
-                        <NewTaskForm
-                            backlogItemId={item._id}
-                            handleNewTaskChange={handleEditTaskChange}
-                            handleAddTask={handleEditTaskSave}
-                            newTask={currentTask}
-                            isAddTaskDisabled={true}
-                            assignments={assignments}
-                            handleAssigneeChange={handleAssigneeChangeInEdit}
-                        />
-                    )}
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setIsTaskDialogOpen(false)} color="secondary">
-                        Cancel
-                    </Button>
-                    <Button onClick={handleEditTaskSave} color="primary">
-                        Save
-                    </Button>
-                </DialogActions>
-            </Dialog> */}
-
             {/* Edit Task Dialog */}
             <TaskDialog
-                isEditDialogOpen={isTaskDialogOpen}
+                isTaskDialogOpen={isEditTaskDialogOpen}
                 newTask={editedTask}
                 handleTaskSave={handleEditTask}
-                onClose={() => setIsTaskDialogOpen(false)} 
-                isAddTaskDisabled={true}
+                onClose={() => setIsEditTaskDialogOpen(false)} 
                 assignments={assignments}
                 handleTaskChange={handleEditTaskChange}
                 handleAssigneeChange={handleAssigneeChangeInEdit}
 
-                />
+            />
+            
+            {/* Add Task Dialog */}
+            <TaskDialog
+                isTaskDialogOpen={isAddTaskDialogOpen}
+                newTask={addedTask}
+                handleTaskSave={handleAddTask}
+                onClose={() => setIsAddTaskDialogOpen(false)}
+                isAddTaskDisabled={false}
+                assignments={assignments}
+                handleTaskChange={handleAddTaskChange}
+                handleAssigneeChange={handleAssigneeChangeInAdd}
+
+            />
+
+            {/* Assignee selection Dialog */}
+            <TaskDialog
+                isTaskDialogOpen={isAssigneeDialogOpen}
+                newTask={editedTask}
+                handleTaskSave={handleEditTask}
+                onClose={() => setIsAssigneeDialogOpen(false)}
+                isAssigneeMode={true}
+                assignments={assignments}
+                handleTaskChange={handleEditTaskChange}
+                handleAssigneeChange={handleAssigneeChangeInEdit}
+            />
         </Paper>
     )
 }

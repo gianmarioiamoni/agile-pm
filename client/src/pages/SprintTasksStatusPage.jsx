@@ -44,8 +44,6 @@ export default function SprintTasksStatusPage() {
                 if (sprintData.projectId) {
                     const assignmentsData = await getAssignments(sprintData.projectId);
                     setAssignments(assignmentsData);
-                    console.log('assignments:', assignmentsData);
-
                     setNewTask({ title: '', description: '', assignee: '' });
                 }
 
@@ -114,104 +112,8 @@ export default function SprintTasksStatusPage() {
         }
     };
 
-    // const handleNewTaskChange = (e) => {
-    //     const { name, value } = e.target;
-    //     setNewTask(prevState => ({
-    //         ...prevState,
-    //         [name]: value
-    //     }));
-    // };
-
-    // const handleAssigneeChange = (e) => {
-    //     const { value } = e.target;
-    //     setNewTask(prevState => ({
-    //         ...prevState,
-    //         assignee: value
-    //     }));
-    // };
-
-    // const handleAddTask = async (backlogItemId) => {
-    //     if (newTask.title.trim() === '' || newTask.description.trim() === '' ) {
-    //         console.log('Task title and description are required.');
-    //         alert('Task title and description are required.');
-    //         return;
-    //     }
-
-    //     try {
-    //         const createdTask = await createTask(backlogItemId, sprintId, newTask);
-
-    //         const updatedBacklogItems = backlogItems.map(item => {
-    //             if (item._id === backlogItemId) {
-    //                 item.tasks.push(createdTask);
-    //             }
-    //             return item;
-    //         });
-
-    //         setBacklogItems(updatedBacklogItems);
-    //         setNewTask({ title: '', description: '', assignee: '' });
-    //         setCurrentBacklogItemId(null);
-    //     } catch (error) {
-    //         console.error('Error creating new task:', error);
-    //     }
-    // };
-
-    // const handleEditTask = async (backlogItemId) => {
-    //     try {
-    //         await updateTask(editedTask._id, editedTask);
-    //         setIsTaskDialogOpen(false);
-
-    //         const updatedBacklogItems = backlogItems.map(item => {
-    //             if (item._id === backlogItemId) {
-    //                 item.tasks = item.tasks.map(task => {
-    //                     if (task._id === editedTask._id) {
-    //                         return editedTask;
-    //                     }
-    //                     return task;
-    //                 })
-    //             }
-    //             return item;
-    //         });
-
-    //         setBacklogItems(updatedBacklogItems);
-
-    //     } catch (error) {
-    //         console.error('Error updating task:', error);
-    //     }
-    // };
-
-    // const handleDeleteTask = async (taskId) => {
-    //     try {
-    //         await deleteTask(taskId);
-    //         const updatedBacklogItems = backlogItems.map(item => {
-    //             item.tasks = item.tasks.filter(task => task._id !== taskId);
-    //             return item;
-    //         });
-    //         setBacklogItems(updatedBacklogItems);
-    //     } catch (error) {
-    //         console.error('Error deleting task:', error);
-    //     }
-    // };
-
-
-    // const handleTaskStatusChange = async (taskId, newStatus) => {
-    //     try {
-    //         await updateTaskStatus(taskId, newStatus, currentBacklogItemId);
-    //         const updatedBacklogItems = backlogItems.map(item => {
-    //             item.tasks = item.tasks.map(task => {
-    //                 if (task._id === taskId) {
-    //                     task.status = newStatus;
-    //                 }
-    //                 return task;
-    //             });
-    //             return item;
-    //         });
-    //         setBacklogItems(updatedBacklogItems);
-    //     } catch (error) {
-    //         console.error('Error updating task status:', error);
-    //     }
-    // };
-
     const isAddTaskDisabled = newTask.title.trim() === '' || newTask.description.trim() === '';
+    
 
     return (
         <>

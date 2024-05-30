@@ -12,7 +12,6 @@ import AdminPage from "./pages/AdminPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import TeamAssignmentsPage from "./pages/TeamAssignmentsPage";
 import SprintsManagementPage from "./pages/SprintsManagementPage";
-import SprintTasksAssignmentPage from "./pages/SprintTasksAssignmentPage";
 import SprintTasksStatusPage from "./pages/SprintTasksStatusPage";
 import BacklogPage from "./pages/BacklogPage";
 import ProjectDashboardPage from "./pages/ProjectDashboardPage";
@@ -112,7 +111,6 @@ export default function App() {
         <Route path="/admin" element={currentUser && currentUser.role.roleKey == 0 ? <AdminPage users={users} setUsers={setUsers} currentRolesMap={currentRolesMap} setCurrentRolesMap={setCurrentRolesMap} /> : <SignIn />} > </Route>
         <Route path="/team-assignments/:projectId" element={<TeamAssignmentsPage projects={projects} users={users} currentRolesMap={currentRolesMap} />} > </Route>
         <Route path="/sprints-management/:projectId" element={<SprintsManagementPage getProjectName={getProjectName} canEditSprint={canSprints.edit} canCreateSprint={canSprints.create} canDeleteSprint={canSprints.delete}/>} > </Route> 
-        <Route path="/sprint-assignment/:sprintId" element={<SprintTasksAssignmentPage />} > </Route> 
         <Route path="/sprint-tasks-status/:sprintId" element={<SprintTasksStatusPage />} > </Route>
         <Route path="/project/:projectId/backlog" element={<BacklogPage />} > </Route>
         <Route path="/project-dashboard/:projectId" element={<ProjectDashboardPage  />} > </Route> 

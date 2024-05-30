@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'; 
+
 import { Typography, Grid, Paper, Button, TextField, IconButton } from '@mui/material';
 import { ArrowUpward as ArrowUpwardIcon, ArrowDownward as ArrowDownwardIcon } from '@mui/icons-material';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'; // Importa i componenti necessari
 
 import { getBacklogItems, deleteBacklogItem, updateBacklogItem, updatePriorities } from "../services/backlogServices";
 import { getProject } from "../services/projectServices";
+
 import Header from "../components/Header";
 import BacklogItemForm from "../components/backlog/BacklogItemForm";
 
@@ -108,49 +110,19 @@ export default function BacklogPage() {
         setBacklogItems(reorderedItems);
 
         updateBackendPriorities(reorderedItems);
-
-        // // Create an array of objects for the updated priorities
-        // const updatedPriorities = reorderedItems.map((item, index) => ({ id: item._id, priority: index }));
-
-        // // Send request to backend to update priorities
-        // // updatedPriorities array contains the new priority values
-        // try {
-        //     await updatePriorities(projectId, updatedPriorities);
-        // } catch (error) {
-        //     console.error('Error updating backlog priorities:', error);
-        //     // implement rollback here in case of failure
-        // }
     };
 
     const handleMoveDown = async (itemId) => {
-        console.log('handleMoveDown called with item id:', itemId);
-        console.log('backlogItems:', backlogItems);
         const currentItemIndex = backlogItems.findIndex(item => item._id === itemId);
-        console.log('currentItemIndex:', currentItemIndex);
         if (currentItemIndex !== backlogItems.length - 1) {
             const nextItem = backlogItems[currentItemIndex + 1];
             const currentItem = backlogItems[currentItemIndex];
-            console.log('nextItem:', nextItem);
-            console.log('currentItem:', currentItem);
             const updatedItems = [...backlogItems];
             updatedItems[currentItemIndex] = nextItem;
             updatedItems[currentItemIndex + 1] = currentItem;
-            console.log('updatedItems:', updatedItems);
             setBacklogItems(updatedItems);
 
             updateBackendPriorities(updatedItems);
-
-            // // Create an array of objects for the updated priorities
-            // const updatedPriorities = updatedItems.map((item, index) => ({ id: item._id, priority: index }));
-
-            // // Send request to backend to update priorities
-            // // updatedPriorities array contains the new priority values
-            // try {
-            //     await updatePriorities(projectId, updatedPriorities);
-            // } catch (error) {
-            //     console.error('Error updating backlog priorities:', error);
-            //     // implement rollback here in case of failure
-            // }
         }
     };
 

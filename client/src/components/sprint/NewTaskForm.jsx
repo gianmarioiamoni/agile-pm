@@ -1,13 +1,13 @@
 import React from 'react';
-import { Box, TextField, Button, Typography, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
+import { Box, TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 
 export default function NewTaskForm({
     handleNewTaskChange,
     newTask,
+    isAssigneeMode = false,
     handleAssigneeChange,
     assignments,
 }) {
-    // console.log("NewTaskForm props:", { backlogItemId, handleNewTaskChange, handleAddTask, newTask, isAddTaskDisabled, handleAssigneeChange, assignments });
     
     
     return (
@@ -20,6 +20,8 @@ export default function NewTaskForm({
                 fullWidth
                 margin="dense"
                 required
+                autoFocus
+                disabled={isAssigneeMode}
             />
             <TextField
                 label="Description"
@@ -29,6 +31,9 @@ export default function NewTaskForm({
                 fullWidth
                 margin="dense"
                 required
+                multiline
+                rows={4}
+                disabled={isAssigneeMode}
             />
             <FormControl fullWidth>
             <InputLabel id="assignee-label">Assignee</InputLabel>

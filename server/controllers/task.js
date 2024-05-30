@@ -4,17 +4,8 @@ import BacklogItem from "../models/backlogItem.js";
 
 export const getAvailableTasksAndSprintTasks = async (req, res) => {
     try {
-        console.log('Getting available tasks and sprint tasks...');
         const tasks = await Task.find({ sprintId: null });
-        console.log('Found tasks:', tasks);
-        console.log(`Found ${tasks.length} tasks`);
-
         const sprints = await Sprint.find().populate('items');
-        console.log(`Found ${sprints.length} sprints`);
-        console.log('Populating sprints with tasks...');
-        sprints.forEach(sprint => {
-            console.log(`${sprint.name} has ${sprint.items.length} items`);
-        });
         // populating sprints items with tasks
         sprints.forEach(sprint => {
             sprint.items.forEach(item => {
@@ -38,7 +29,6 @@ export const getAvailableTasksAndSprintTasks = async (req, res) => {
 export const getAvailableTasks = async (req, res) => {
     try {
         const tasks = await Task.find({ sprintId: null }).populate('assignee');
-        // const tasks = await Task.find({ sprintId: null });
         res.json(tasks);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -49,7 +39,6 @@ export const getTasksBySprintId = async (req, res) => {
     const { sprintId } = req.params;
     try {
         const tasks = await Task.find({ sprintId }).populate('assignee');
-        // const tasks = await Task.find({ sprintId });
         res.json(tasks);
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -59,7 +48,6 @@ export const getTasksBySprintId = async (req, res) => {
 export const getTasksByBacklogItemId = async (req, res) => {
     const { backlogItemId } = req.params;
     try {
-        // const tasks = await Task.find({ backlogItemId }).populate('assignee');
         const tasks = await Task.find({ backlogItemId }).populate('assignee');
         res.json(tasks);
     } catch (err) {
@@ -68,15 +56,11 @@ export const getTasksByBacklogItemId = async (req, res) => {
 };
 
 export const createTask = async (req, res) => {
-    console.log("createTask function is being called");
-    const { title, description, sprintId, backlogItemId, assignee } = req.body;
-    console.log("req.body is: ", req.body);
+    const { title, description, backlogItemId, assignee } = req.body;
+
     try {
-        console.log("req.body is: ", req.body);
-        const newTask = new Task({ title, description, sprintId, backlogItemId, assignee });
-        console.log("newTask is: ", newTask);
+        const newTask = new Task({ title, description, backlogItemId, assignee: assignee ? assignee._id : null });
         const savedTask = await newTask.save();
-        console.log("savedTask is: ", savedTask);
         res.status(201).json(savedTask);
     } catch (error) {
         console.log("Error in createTask function: ", error);
@@ -93,8 +77,6 @@ export const assignTask = async (req, res) => {
         if (!task) {
             return res.status(404).json({ message: 'Task not found' });
         }
-
-        console.log('Task found');
 
         if (task.sprintId) {
             // remove task from previous sprint
@@ -134,22 +116,14 @@ export const updateTaskStatus = async (req, res) => {
     const { status, backlogItemId } = req.body;
 
     try {
-        console.log("Getting task by id: ", taskId);
         const task = await Task.findById(taskId);
-        console.log("Found task: ", task);
         task.status = status || task.status;
-        console.log("Updating task status to: ", task.status);
         await task.save();
 
         if (backlogItemId) {
-            console.log("Getting backlogItem by id: ", backlogItemId);
             const backlogItem = await BacklogItem.findById(backlogItemId);
-            console.log("Found backlogItem: ", backlogItem);
-
             const totalTasks = backlogItem.tasks.length;
             const doneTasks = backlogItem.tasks.filter(t => t.status === 'Done').length;
-            console.log("Total tasks: ", totalTasks);
-            console.log("Done tasks: ", doneTasks);
 
             let newStatus = 'To Do';
             if (doneTasks === totalTasks) {
@@ -157,15 +131,12 @@ export const updateTaskStatus = async (req, res) => {
             } else if (doneTasks > 0) {
                 newStatus = 'In Progress';
             }
-            console.log("New status: ", newStatus);
 
             if (backlogItem.status !== newStatus) {
                 backlogItem.status = newStatus;
-                console.log("Updating backlogItem status to: ", newStatus);
                 await backlogItem.save();
             }
         }
-        console.log("Returning task: ", task);
         res.status(200).json(task);
     } catch (err) {
         console.log("Error in updateTaskStatus function: ", err);

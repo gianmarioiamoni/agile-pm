@@ -5,14 +5,9 @@ const serverUrl = "http://localhost:3000";
 
 export const addSprint = async (sprint) => {
     try {
-        console.log("About to send request to add a sprint");
-        console.log(sprint);
         const response = await axios.post("/server/sprints", sprint);
-        console.log("Response received from server");
-        console.log(response.data);
         return response.data;
     } catch (err) {
-        console.log("Error while adding sprint");
         console.log(err);
         return null;
     }

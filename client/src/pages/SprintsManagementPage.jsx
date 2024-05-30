@@ -26,11 +26,9 @@ export default function SprintsManagementPage({ getProjectName, canCreateSprint 
 
     useEffect(() => {
         const fetchSprints = async () => {
-            console.log('SprintsManagementPage: fetchSprints called with projectId:', projectId);
 
             try {
                 const sprintsData = await getSprintsByProjectId(projectId);
-                console.log('SprintsManagementPage: fetchSprints: sprintsData:', sprintsData);
                 setSprints(sprintsData);
             } catch (error) {
                 console.error('SprintsManagementPage: fetchSprints: Error fetching sprints:', error);

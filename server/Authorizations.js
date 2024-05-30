@@ -114,15 +114,6 @@ export const initDB = async () => {
 
 // GETTERS
 
-// export const getCurrentRoles = async () => {
-//     try {
-//         const roles = await Role.find({});
-//         return roles;
-//     } catch (error) {
-//         console.log(error)
-//     }
-// };
-
 export const getDefaultRoles = () => {
     return defaultRolesMap;
 }

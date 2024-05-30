@@ -51,7 +51,6 @@ function sendUserEmail(email, subject, body) {
         body
     })
         .then(response => {
-            console.log(response);
             alert('Email sent successfully!');
         })
         .catch(error => {

@@ -36,10 +36,8 @@ export default function SprintList({ projectId, sprints, setSprints, canEditSpri
     };
 
     const handleSave = async (editedSprint) => {
-        console.log("handleSave: editedSprint", editedSprint);
         try {
             const updatedSprint = await updateSprint(editedSprint);
-            console.log("handleSave: updatedSprint", updatedSprint);
             setSprints((prevSprints) =>
                 prevSprints.map(sprint => (sprint._id === editedSprint._id ? updatedSprint : sprint))
             );
@@ -59,9 +57,6 @@ export default function SprintList({ projectId, sprints, setSprints, canEditSpri
         }
     };
 
-    const handleAssignTasks = async (sprintId) => {
-        console.log("assign tasks to sprint: ", sprintId);
-    };
 
     return (
         <Box sx={{ mt: 2 }}>

@@ -38,8 +38,10 @@ export const updateTaskAssignment = async (taskId, sprintId) => {
     }
 };
 
-export const createTask = async (backlogItemId, sprintId, data) => {
-    data = { ...data, backlogItemId, sprintId };
+export const createTask = async (backlogItemId, data) => {
+    data = { ...data, backlogItemId };
+
+    console.log("create task data is: ", data);
 
     try {
         if (data.assignee === '') {
