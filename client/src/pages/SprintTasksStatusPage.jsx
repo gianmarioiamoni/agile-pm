@@ -7,17 +7,16 @@ import Header from "../components/Header";
 import BacklogItem from "../components/sprint/BacklogItem";
 
 import { getSprint } from "../services/sprintServices";
-import { updateTaskStatus, getTasksByBacklogItemId, createTask, deleteTask, updateTask } from "../services/taskServices";
+import { updateTaskStatus, getTasksByBacklogItemId } from "../services/taskServices";
 import { getBacklogItem, updateBacklogItem } from "../services/backlogServices";
-import { getAssignments } from "../services/assignmentServices"; // Import the getAssignments function
+import { getAssignments } from "../services/assignmentServices"; 
 
 export default function SprintTasksStatusPage() {
     const { sprintId } = useParams();
+
     const [sprint, setSprint] = useState(null);
     const [backlogItems, setBacklogItems] = useState([]);
     const [newTask, setNewTask] = useState({ title: '', description: '', assignee: '' });
-    const [editedTask, setEditedTask] = useState(null);
-    const [currentBacklogItemId, setCurrentBacklogItemId] = useState(null);
     const [assignments, setAssignments] = useState([]);
 
     useEffect(() => {
@@ -46,8 +45,6 @@ export default function SprintTasksStatusPage() {
                     setAssignments(assignmentsData);
                     setNewTask({ title: '', description: '', assignee: '' });
                 }
-
-                
 
             } catch (error) {
                 console.error('Error fetching sprint and assignments:', error);
@@ -89,31 +86,10 @@ export default function SprintTasksStatusPage() {
         setBacklogItems(updatedBacklogItems);
 
         await updateTaskStatus(movedTask._id, sourceItem, destinationDroppableId);
-        await updateBacklogItemState(sourceItem);
-        if (sourceItemIndex !== destinationItemIndex) {
-            await updateBacklogItemState(updatedBacklogItems[destinationItemIndex]);
-        }
-    };
-
-    const updateBacklogItemState = async (backlogItem) => {
-        const totalTasks = backlogItem.tasks.length;
-        const doneTasks = backlogItem.tasks.filter(task => task.status === 'Done').length;
-
-        let newStatus = 'To Do';
-        if (doneTasks === totalTasks) {
-            newStatus = 'Done';
-        } else if (doneTasks > 0) {
-            newStatus = 'In Progress';
-        }
-
-        if (backlogItem.status !== newStatus) {
-            backlogItem.status = newStatus;
-            await updateBacklogItem(backlogItem._id, { status: newStatus });
-        }
     };
 
     const isAddTaskDisabled = newTask.title.trim() === '' || newTask.description.trim() === '';
-    
+
 
     return (
         <>
@@ -127,13 +103,11 @@ export default function SprintTasksStatusPage() {
                 <DragDropContext onDragEnd={handleDragEnd}>
                     {backlogItems?.map(item => (
                         <BacklogItem
-                            key={item._id} // unique key for list elemnt
+                            key={item._id} // unique key for list element
                             item={item}
                             backlogItems={backlogItems}
                             setBacklogItems={setBacklogItems}
                             assignments={assignments}
-
-
                         />
                     ))}
                 </DragDropContext>

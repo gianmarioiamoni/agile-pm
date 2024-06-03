@@ -32,7 +32,10 @@ export const getBacklogItems = async (projectId) => {
 
 export const updateBacklogItem = async (id, data) => {
     try {
+        console.log('Updating backlog item with id:', id);
+        console.log('Data:', data);
         const response = await axios.put(`/server/backlog-items/update/${id}`, data);
+        console.log('Response:', response.data);
         return response.data;
     } catch (err) {
         console.error('Error updating backlog item:', err);

@@ -7,6 +7,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { deleteTask, updateTask, createTask, updateTaskStatus } from "../../services/taskServices";
+import { updateBacklogItem } from '../../services/backlogServices';
 
 import TaskDialog from "./TaskDialog";
 
@@ -23,9 +24,9 @@ export default function BacklogItem({
     const [addedTask, setAddedTask] = useState({ title: '', description: '', assignee: '' });
     const [editedTask, setEditedTask] = useState({ title: '', description: '', assignee: '' });
 
-    const statusColors = {
-        'To Do': 'gray',
-        'In Progress': 'blue',
+    const itemStatusColors = {
+        'To Do': 'red',
+        'In Progress': 'orange',
         'Done': 'green'
     };
 
@@ -44,6 +45,7 @@ export default function BacklogItem({
 
     const handleTaskStatusChange = async (taskId, newStatus) => {
         try {
+            // update task status in the database
             await updateTaskStatus(taskId, newStatus, item._id);
             const updatedBacklogItems = backlogItems.map(item => {
                 item.tasks = item.tasks.map(task => {
@@ -55,17 +57,13 @@ export default function BacklogItem({
                 return item;
             });
             setBacklogItems(updatedBacklogItems);
+
+            // calculate the new backlog item status and update it in the database
+            await updateBacklogItemStatus();
+
         } catch (error) {
             console.error('Error updating task status:', error);
         }
-    };
-
-    const handleAssigneeChange = (e) => {
-        const { value } = e.target;
-        setEditedTask(prev => ({
-            ...prev,
-            assignee: value
-        }));
     };
 
     const handleAddTaskClick = () => {
@@ -193,9 +191,32 @@ export default function BacklogItem({
         }
     };
 
+
+    const updateBacklogItemStatus = async () => {
+        
+        const totalTasks = item.tasks.length;
+        const doneTasks = item.tasks.filter(task => task.status === 'Done').length;
+        const inProgressTasks = item.tasks.filter(task => task.status === 'In Progress').length;
+
+        let newStatus = 'To Do';
+        
+        if (doneTasks === totalTasks) {
+            newStatus = 'Done';
+        } else  if (inProgressTasks > 0) {
+            newStatus = 'In Progress';
+        }
+
+        
+        if (item.status !== newStatus) {
+            item.status = newStatus;
+            await updateBacklogItem(item._id, { status: newStatus });
+        }
+    };
+
+
     return (
         <Paper elevation={3} style={{ padding: 16, marginBottom: 16, position: 'relative' }}>
-            <div style={{ display: 'flex', alignItems: 'top' }}>
+            <div style={{ display: 'flex', alignItems: 'top', backgroundColor: itemStatusColors[item.status], padding: '8px 16px', borderRadius: 4 }}>
                 {/* Item information */}
                 <div>
                     <Typography variant="h6" gutterBottom>{item.title}</Typography>
@@ -217,7 +238,8 @@ export default function BacklogItem({
                     position: 'absolute',
                     top: 16,
                     right: 16,
-                    color: statusColors[item.status]
+                    color: 'white',
+                    padding: '4px 8px',
                 }}
             >
                 {item.status}
@@ -283,7 +305,21 @@ export default function BacklogItem({
                                                         <Grid item key={status}>
                                                             <Chip
                                                                 label={status}
-                                                                sx={{ backgroundColor: status === task.status ? getTaskStatusColor(task.status) : 'default', color: status === task.status ? 'white' : 'default' }}
+                                                                variant="outlined"
+                                                                sx={{
+                                                                    backgroundColor: status === task.status ? getTaskStatusColor(task.status) : 'default',
+                                                                    color: status === task.status ? 'white' : getTaskStatusColor(status),
+                                                                    cursor: status === task.status ? 'default' : 'pointer',
+                                                                    '&:hover': status !== task.status ?  {
+                                                                        backgroundColor: getTaskStatusColor(status),
+                                                                        color: getTaskStatusColor(status),
+                                                                        borderColor: getTaskStatusColor(status),
+                                                                        transition: 'background-color 0.3s ease',
+                                                                        transition: 'color 0.3s ease',
+                                                                    } : {
+                                                                        backgroundColor: getTaskStatusColor(status),
+                                                                    },
+                                                                }}
                                                                 onClick={() => handleTaskStatusChange(task._id, status)}
                                                             />
                                                         </Grid>
