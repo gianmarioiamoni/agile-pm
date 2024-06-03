@@ -1,4 +1,4 @@
-// routes/projectRoutes.js
+// routes/project.js
 import express from 'express';
 
 import { verifyUser } from "../utils/verifyUser.js";

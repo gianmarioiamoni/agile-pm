@@ -1,3 +1,4 @@
+// routes/user.js
 import express from 'express';
 
 import { getUsers, updateUser, addUser, deleteUser, sendEmail } from "../controllers/user.js";

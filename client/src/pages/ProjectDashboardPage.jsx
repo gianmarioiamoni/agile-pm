@@ -1,96 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Typography, Paper, List, ListItem, ListItemText } from '@mui/material';
 
-import { getProject } from "../services/projectServices";
-import { getAssignments } from "../services/assignmentServices";
-import { getBacklogItems } from "../services/backlogServices";
-import { getSprintsByProjectId } from "../services/sprintServices";
+import { Container, Typography, Grid } from '@mui/material';
 
+import ProjectInfo from "../components/ProjectDashboard/ProjectInfo";
+import ProjectBacklog from "../components/ProjectDashboard/ProjectBacklog";
+import SprintBacklog from "../components/ProjectDashboard/SprintBacklog";
+import ScrumBoard from "../components/ProjectDashboard/ScrumBoard";
+
+import { fetchProjectData } from "../services/projectDashboardServices";
 
 export default function ProjectDashboardPage() {
+
     const { projectId } = useParams();
-    const [project, setProject] = useState({});
-    const [resources, setResources] = useState([]);
-    const [backlogItems, setBacklogItems] = useState([]);
-    const [sprints, setSprints] = useState([]);
+    const [projectData, setProjectData] = useState(null);
 
     useEffect(() => {
-        const fetchProjectData = async () => {
-            const projectDetails = await getProject(projectId);
-            const projectResources = await getAssignments(projectId);
-            const projectBacklog = await getBacklogItems(projectId);
-            const projectSprints = await getSprintsByProjectId(projectId);
-
-            setProject(projectDetails);
-            setResources(projectResources);
-            setBacklogItems(projectBacklog);
-            setSprints(projectSprints);
+        const getProjectData = async () => {
+            try {
+                const data = await fetchProjectData(projectId);
+                console.log("getProjectData() - data: ", data);
+                setProjectData(data);
+            } catch (error) {
+                console.error('Failed to fetch project data:', error);
+            }
         };
 
-        fetchProjectData();
+        getProjectData();
     }, [projectId]);
+
+    if (!projectData) {
+        return <Typography>Loading...</Typography>;
+    }
 
     return (
         <Container>
-            <Typography variant="h3" gutterBottom>Project Dashboard</Typography>
-
-            {/* Project Information */}
-            <Paper style={{ padding: '20px', marginBottom: '20px' }}>
-                <Typography variant="h5">Project Information</Typography>
-                <Typography variant="subtitle1">{project.name}</Typography>
-                <Typography variant="body1">{project.description}</Typography>
-            </Paper>
-
-            {/* Resources */}
-            <Paper style={{ padding: '20px', marginBottom: '20px' }}>
-                <Typography variant="h5">Resources</Typography>
-                <List>
-                    {resources.map(resource => (
-                        <ListItem key={resource._id}>
-                            <ListItemText primary={`${resource.username}`} secondary={`${resource.role.roleDescription}`} />
-                        </ListItem>
-                    ))}
-                </List>
-            </Paper>
-
-            {/* Backlog */}
-            <Paper style={{ padding: '20px', marginBottom: '20px' }}>
-                <Typography variant="h5">Backlog</Typography>
-                <List>
-                    {backlogItems.map(item => (
-                        <ListItem key={item._id}>
-                            <ListItemText primary={item.title} secondary={item.description} />
-                            <Typography variant="body2">{item.status}</Typography>
-                        </ListItem>
-                    ))}
-                </List>
-            </Paper>
-
-            {/* Sprint Log */}
-            <Paper style={{ padding: '20px', marginBottom: '20px' }}>
-                <Typography variant="h5">Sprint Log</Typography>
-                <List>
-                    {sprints.map(sprint => (
-                        <ListItem key={sprint._id}>
-                            <ListItemText primary={`Sprint ${sprint.name}: ${sprint.startDate} - ${sprint.endDate}`} secondary={`goal: ${sprint.goal}`} />
-                            <List>
-                                {sprint.tasks.map(task => (
-                                    <ListItem key={task._id}>
-                                        <ListItemText primary={task.title} secondary={task.status} />
-                                    </ListItem>
-                                ))}
-                            </List>
-                        </ListItem>
-                    ))}
-                </List>
-            </Paper>
-
-            {/* Statistics */}
-            <Paper style={{ padding: '20px', marginBottom: '20px' }}>
-                <Typography variant="h5">Statistics</Typography>
-                {/* Add charts and statistics here */}
-            </Paper>
+            <Typography variant="h4" gutterBottom>Project Dashboard</Typography>
+            <Grid container spacing={3}>
+                <Grid item xs={12}>
+                    <ProjectInfo project={projectData.project} />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <ProjectBacklog backlog={projectData.backlog} />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <SprintBacklog sprints={projectData.sprints} />
+                </Grid>
+                <Grid item xs={12}>
+                    <ScrumBoard sprints={projectData.sprints} />
+                </Grid>
+            </Grid>
         </Container>
     );
-}
+};
