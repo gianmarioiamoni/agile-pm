@@ -2,6 +2,7 @@ import React from 'react';
 import { Paper, Typography, Grid, Card, CardContent, CardHeader, Chip } from '@mui/material';
 
 export default function ScrumBoard({ sprints }) {
+    console.log("sprints: ", sprints);
 
     if (!sprints) {
         return null;
@@ -75,5 +76,4 @@ export default function ScrumBoard({ sprints }) {
             ))}
         </Paper>
     );
-
 };
