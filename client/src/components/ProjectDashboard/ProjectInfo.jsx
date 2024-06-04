@@ -9,7 +9,7 @@ export default function ProjectInfo({ project }) {
 
     return (
         <Paper elevation={3} style={{ padding: 16 }}>
-            <Typography variant="h6">{project.title}</Typography>
+            <Typography variant="h6">{project.name}</Typography>
             <Typography variant="body1">{project.description}</Typography>
             <Typography variant="subtitle1" gutterBottom>Assigned Resources:</Typography>
             <List>

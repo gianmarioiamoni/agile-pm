@@ -1,5 +1,6 @@
 import React from 'react';
-import { Paper, Typography, List, ListItem, ListItemText } from '@mui/material';
+
+import { Paper, Typography, List, ListItem, ListItemText, Box } from '@mui/material';
 
 export default function ProjectBacklog({ backlog }) {
 
@@ -15,7 +16,16 @@ export default function ProjectBacklog({ backlog }) {
                     <ListItem key={item._id}>
                         <ListItemText
                             primary={item.title}
-                            secondary={`${item.description} - Goal: ${item.goal}`}
+                            secondary={
+                                <Box component="span" width={'auto'}>
+                                    <Box component="span" display="block" variant="body2" fontWeight="fontWeightMedium">
+                                        {item.description}
+                                    </Box>
+                                    <Box component="span" display="block" variant="caption" minWidth="250px">
+                                        Goal: {item.goal}
+                                    </Box>
+                                </Box>
+                            }
                         />
                     </ListItem>
                 ))}
