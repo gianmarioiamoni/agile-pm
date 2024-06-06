@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-
 import { Container, Typography, Grid, Tabs, Tab, Box } from '@mui/material';
 
 import ProjectInfo from "../components/ProjectDashboard/ProjectInfo";
 import ProjectBacklog from "../components/ProjectDashboard/ProjectBacklog";
 import SprintBacklog from "../components/ProjectDashboard/SprintBacklog";
 import ScrumBoard from "../components/ProjectDashboard/ScrumBoard";
+import BurndownChart from "../components/ProjectDashboard/BurndownChart";
 
 import { fetchProjectData } from "../services/projectDashboardServices";
 
@@ -54,6 +54,14 @@ export default function ProjectDashboardPage() {
         return <Typography>Loading...</Typography>;
     }
 
+    const formattedBurndownData = projectData.burndownData.map(sprint => ({
+        ...sprint,
+        dailyPoints: sprint.dailyPoints.map(point => ({
+            ...point,
+            date: new Date(point.date).toISOString() // Ensure date is in correct format
+        }))
+    }));
+
     return (
         <Container>
             <Typography variant="h4" gutterBottom marginTop={2}>Project Dashboard</Typography>
@@ -62,12 +70,13 @@ export default function ProjectDashboardPage() {
                 <Grid item xs={12} md={3}>
                     <ProjectInfo project={projectData.project} />
                 </Grid>
-                {/* Tabs for Backlog, Sprint Backlog, Scrum Board */}
+                {/* Tabs for Backlog, Sprint Backlog, Scrum Board, Burndown Chart */}
                 <Grid item xs={12} md={9}>
                     <Tabs value={tabValue} onChange={handleChange} aria-label="project dashboard tabs">
                         <Tab label="Backlog" />
                         <Tab label="Sprint Backlog" />
                         <Tab label="Scrum Board" />
+                        <Tab label="Burndown Chart" />
                     </Tabs>
                     <TabPanel value={tabValue} index={0}>
                         <ProjectBacklog backlog={projectData.backlog} />
@@ -77,6 +86,9 @@ export default function ProjectDashboardPage() {
                     </TabPanel>
                     <TabPanel value={tabValue} index={2}>
                         <ScrumBoard sprints={projectData.sprints} />
+                    </TabPanel>
+                    <TabPanel value={tabValue} index={3}>
+                        <BurndownChart data={formattedBurndownData} />
                     </TabPanel>
                 </Grid>
             </Grid>

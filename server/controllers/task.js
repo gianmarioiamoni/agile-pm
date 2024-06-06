@@ -117,11 +117,45 @@ export const updateTaskStatus = async (req, res) => {
 
     try {
         const task = await Task.findById(taskId);
+        const calculateTaskPoints = (task, oldStatus) => {
+            switch (oldStatus) {
+                case 'Done':
+                    if (status === 'In Progress') {
+                        return task.points - 1;
+                    } else if (status === 'To Do') {
+                        return task.points - 2;
+                    } else {
+                        return task.points;
+                    }
+                case 'In Progress':
+                    if (status === 'Done') {
+                        return task.points + 1;
+                    } else if (status === 'To Do') {
+                        return task.points - 1;
+                    } else {
+                        return task.points;
+                    }
+                case 'To Do':
+                    if (status === 'Done') {
+                        return task.points + 2;
+                    } else if (status === 'In Progress') {
+                        return task.points + 1;
+                    } else {
+                        return task.points;
+                    }
+                default:
+                    return task.points;
+            }
+        };
+
+        const oldTaskStatus = task.status;
         task.status = status || task.status;
+        // calculate updated task points
+        task.points = calculateTaskPoints(task, oldTaskStatus);
         await task.save();
 
         if (backlogItemId) {
-            const backlogItem = await BacklogItem.findById(backlogItemId);
+            const backlogItem = await BacklogItem.findById(backlogItemId).populate('tasks');
             const totalTasks = backlogItem.tasks.length;
             const doneTasks = backlogItem.tasks.filter(t => t.status === 'Done').length;
 
@@ -132,8 +166,15 @@ export const updateTaskStatus = async (req, res) => {
                 newStatus = 'In Progress';
             }
 
-            if (backlogItem.status !== newStatus) {
+
+            // calculate updated backlog item points
+            const newBacklogItemPoints = calculateBacklogItemPoints(backlogItem.tasks);
+
+            // check if status or points have changed and update if necessary
+            if (backlogItem.status !== newStatus || backlogItem.points !== newBacklogItemPoints) {
                 backlogItem.status = newStatus;
+                backlogItem.points = newBacklogItemPoints;
+
                 await backlogItem.save();
             }
         }
@@ -143,6 +184,24 @@ export const updateTaskStatus = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+
+const calculateBacklogItemPoints = (tasks) => {
+    // logic: 1 point for To Do, 2 points for In Progress, 3 points for Done
+    return tasks.reduce((total, task) => {
+        switch (task.status) {
+            case 'To Do':
+                return total + 1;
+            case 'In Progress':
+                return total + 2;
+            case 'Done':
+                return total + 3;
+            default:
+                return total;
+        }
+    }, 0);
+};
+
 
 export const deleteTask = async (req, res) => {
     const { taskId } = req.params;

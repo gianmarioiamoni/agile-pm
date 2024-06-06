@@ -178,9 +178,9 @@ export default function BacklogItem({
     };
 
     // delete task handler
-    const handleDeleteTask = async (taskId) => {
+    const handleDeleteTask = async (taskId, backlogItemId) => {
         try {
-            await deleteTask(taskId);
+            await deleteTask(taskId, backlogItemId);
             const updatedBacklogItems = backlogItems.map(item => {
                 item.tasks = item.tasks.filter(task => task._id !== taskId);
                 return item;
@@ -281,7 +281,7 @@ export default function BacklogItem({
                                                             </Tooltip>
                                                             <Tooltip title="Delete task" arrow>
                                                                 <div>
-                                                                    <IconButton onClick={() => handleDeleteTask(task._id)}>
+                                                                    <IconButton onClick={() => handleDeleteTask(task._id, item._id)}>
                                                                         <DeleteIcon fontSize='small' />
                                                                     </IconButton>
                                                                 </div>

@@ -13,6 +13,7 @@ import assignmentsRoutes from "./routes/assignment.js";
 import sprintsRoutes from "./routes/sprint.js";
 import taskRoutes from "./routes/task.js";
 import backlogRoutes from "./routes/backlogItem.js";
+import burndownRoutes from "./routes/burndown.js";
 
 import Role from './models/role.js';
 import User from './models/user.js';
@@ -105,6 +106,7 @@ app.use("/server/assignments", assignmentsRoutes);
 app.use("/server/sprints", sprintsRoutes);
 app.use("/server/tasks", taskRoutes);
 app.use("/server/backlog-items", backlogRoutes);
+app.use("/server/burndown", burndownRoutes);
 
 // middleware to manage errors
 app.use((err, req, res, next) => {

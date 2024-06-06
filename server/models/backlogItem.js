@@ -19,6 +19,11 @@ const backlogItemSchema = new Schema({
         type: Number,
         default: 1
     },
+    points: {
+        type: Number,
+        default: 0,
+        required: true
+    },
     sprint: {
         type: Schema.Types.ObjectId,
         ref: 'Sprint',

@@ -42,6 +42,32 @@ export const updateBacklogItem = async (req, res) => {
     }
 };
 
+export const addTaskToBacklogItem = async (req, res) => {
+    const { id } = req.params;
+    const { taskId } = req.body;
+    try {
+        const item = await BacklogItem.findById(id);
+        item.tasks.push(taskId);
+        await item.save();
+        res.status(200).json(item);
+    } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+};
+
+export const deleteTaskFromBacklogItem = async (req, res) => {
+    const { id } = req.params;
+    const { taskId } = req.body;
+    try {
+        const item = await BacklogItem.findById(id);
+        item.tasks.pull(taskId);
+        await item.save();
+        res.status(200).json(item);
+    } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+};
+
 export const deleteBacklogItem = async (req, res) => {
     const { id } = req.params;
     try {

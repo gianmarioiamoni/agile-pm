@@ -50,6 +50,10 @@ export const createTask = async (backlogItemId, data) => {
             data.assignee = undefined
         }
         const response = await axios.post('/server/tasks', data);
+
+        // add task to backlog item
+        await axios.put(`/server/backlog-items/addTask/${backlogItemId}`, { taskId: response.data._id });
+
         return response.data;
     } catch (error) {
         console.error('Error creating task:', error);
@@ -73,9 +77,13 @@ export const updateTaskStatus = async (taskId, status, backlogItemId) => {
     }
 };
 
-export const deleteTask = async (taskId) => {
+export const deleteTask = async (taskId, backlogItemId) => {
     try {
         const response = await axios.delete(`/server/tasks/${taskId}`);
+
+        // delete task from backlog item
+        await axios.put(`/server/backlog-items/deleteTask/${backlogItemId}`, { taskId });
+
         return response.data;
     } catch (error) {
         console.error('Error deleting task:', error);
