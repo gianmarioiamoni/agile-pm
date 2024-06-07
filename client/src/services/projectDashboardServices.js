@@ -10,27 +10,21 @@ import axios from 'axios';
  */
 export const fetchProjectData = async (projectId) => {
     try {
-        console.log('Fetching project data for project ID:', projectId);
-
         // Fetch project info
         const projectResponse = await axios.get(`/server/projects/${projectId}`);
         const project = projectResponse.data;
-        console.log('Fetched project data:', project);
 
         // Fetch assignments for the project
         const assignmentsResponse = await axios.get(`/server/assignments/project/${projectId}`);
         const assignments = assignmentsResponse.data;
-        console.log('Fetched assignments:', assignments);
 
         // Fetch backlog items for the project
         const backlogResponse = await axios.get(`/server/backlog-items/project/${projectId}`);
         const backlog = backlogResponse.data;
-        console.log('Fetched backlog items:', backlog);
 
         // Fetch sprints for the project
         const sprintsResponse = await axios.get(`/server/sprints/project/${projectId}`);
         const sprints = sprintsResponse.data;
-        console.log('Fetched sprints:', sprints);
 
         // Fetch tasks for each item of the sprint
         for (let sprint of sprints) {
@@ -41,7 +35,6 @@ export const fetchProjectData = async (projectId) => {
                     const tasksResponse = await axios.get(`/server/tasks/backlogItems/${item._id}`);
                     const itemWithTasks = { ...item, tasks: tasksResponse.data };
                     sprint.items[i] = itemWithTasks;
-                    console.log('Fetched tasks for backlog item:', itemWithTasks);
                 }
             }
         }
@@ -49,7 +42,6 @@ export const fetchProjectData = async (projectId) => {
         // Fetch burndown chart data
         const burndownResponse = await axios.get(`/server/burndown/project/${projectId}`);
         const burndownData = burndownResponse.data;
-        console.log('Fetched burndown data:', burndownData);
 
         return {
             project, // Project information

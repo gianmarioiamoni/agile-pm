@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Typography, Grid, Box } from '@mui/material';
+import { Container, Typography, Grid, Tabs, Tab, Box } from '@mui/material';
 
 import ProjectInfo from "../components/ProjectDashboard/ProjectInfo";
 import ProjectBacklog from "../components/ProjectDashboard/ProjectBacklog";
@@ -10,9 +10,6 @@ import BurndownChart from "../components/ProjectDashboard/BurndownChart";
 import SprintVelocityChart from "../components/ProjectDashboard/SprintVelocityChart";
 
 import { fetchProjectData } from "../services/projectDashboardServices";
-import { StyledTabs, StyledTab, BurndownTab, SprintVelocityTab } from "../components/CustomTabs";
-
-import { burndownBaseColor, sprintVelocityBaseColor, defaultBaseColor } from '../utils/colors';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -36,7 +33,6 @@ export default function ProjectDashboardPage() {
     const { projectId } = useParams();
     const [projectData, setProjectData] = useState(null);
     const [tabValue, setTabValue] = useState(0);
-    const [indicatorColor, setIndicatorColor] = useState(defaultBaseColor); // Default color
 
     useEffect(() => {
         const getProjectData = async () => {
@@ -53,14 +49,6 @@ export default function ProjectDashboardPage() {
 
     const handleChange = (event, newValue) => {
         setTabValue(newValue);
-        // Set the indicator color based on the selected tab
-        if (newValue === 3) {
-            setIndicatorColor(burndownBaseColor);
-        } else if (newValue === 4) {
-            setIndicatorColor(sprintVelocityBaseColor);
-        } else {
-            setIndicatorColor(defaultBaseColor);
-        }
     };
 
     if (!projectData) {
@@ -90,22 +78,13 @@ export default function ProjectDashboardPage() {
                 </Grid>
                 {/* Tabs for Backlog, Sprint Backlog, Scrum Board, Burndown Chart, and Sprint Velocity */}
                 <Grid item xs={12} md={9}>
-                    <StyledTabs
-                        value={tabValue}
-                        onChange={handleChange}
-                        aria-label="project dashboard tabs"
-                        sx={{
-                            '& .MuiTabs-indicator': {
-                                backgroundColor: indicatorColor,
-                            },
-                        }}
-                    >
-                        <StyledTab label="Backlog" />
-                        <StyledTab label="Sprint Backlog" />
-                        <StyledTab label="Scrum Board" />
-                        <BurndownTab label="Burndown Chart" />
-                        <SprintVelocityTab label="Sprint Velocity" />
-                    </StyledTabs>
+                    <Tabs value={tabValue} onChange={handleChange} aria-label="project dashboard tabs">
+                        <Tab label="Backlog" />
+                        <Tab label="Sprint Backlog" />
+                        <Tab label="Scrum Board" />
+                        <Tab label="Burndown Chart" />
+                        <Tab label="Sprint Velocity" />
+                    </Tabs>
                     <TabPanel value={tabValue} index={0}>
                         <ProjectBacklog backlog={projectData.backlog} />
                     </TabPanel>
