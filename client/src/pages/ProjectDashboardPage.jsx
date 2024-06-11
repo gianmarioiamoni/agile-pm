@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Typography, Grid, Box } from '@mui/material';
+import { Container, Typography, Grid, Box, Tabs, Tab } from '@mui/material';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 import ProjectInfo from "../components/ProjectDashboard/ProjectInfo";
 import ProjectBacklog from "../components/ProjectDashboard/ProjectBacklog";
@@ -8,11 +10,13 @@ import SprintBacklog from "../components/ProjectDashboard/SprintBacklog";
 import ScrumBoard from "../components/ProjectDashboard/ScrumBoard";
 import BurndownChart from "../components/ProjectDashboard/BurndownChart";
 import SprintVelocityChart from "../components/ProjectDashboard/SprintVelocityChart";
+import ProjectProgressReport from '../components/ProjectDashboard/ProjectProgressReport';
+import TeamPerformanceReport from '../components/ProjectDashboard/TeamPerformanceReport';
 
 import { fetchProjectData } from "../services/projectDashboardServices";
-import { StyledTabs, StyledTab, BurndownTab, SprintVelocityTab } from "../components/CustomTabs";
+import { StyledTabs, StyledTab, MetricTab, ReportTab } from "../components/CustomTabs";
 
-import { burndownBaseColor, sprintVelocityBaseColor, defaultBaseColor } from '../utils/colors';
+import { defaultBaseColor, metricBaseColor, reportBaseColor } from '../utils/colors';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -21,6 +25,9 @@ function TabPanel(props) {
         <div
             role="tabpanel"
             hidden={value !== index}
+            id={`vertical-tabpanel-${index}`}
+            aria-labelledby={`vertical-tab-${index}`}
+        
             {...other}
         >
             {value === index && (
@@ -55,9 +62,11 @@ export default function ProjectDashboardPage() {
         console.log('Tab value changed to:', newValue);
         setTabValue(newValue);
         if (newValue === 3) {
-            setIndicatorColor(burndownBaseColor);
+            setIndicatorColor(metricBaseColor);
         } else if (newValue === 4) {
-            setIndicatorColor(sprintVelocityBaseColor);
+            setIndicatorColor(metricBaseColor);
+        } else if (newValue === 5 || newValue === 6) {
+            setIndicatorColor(reportBaseColor);
         } else {
             setIndicatorColor(defaultBaseColor);
         }
@@ -76,31 +85,37 @@ export default function ProjectDashboardPage() {
         }))
     }));
 
-
     return (
-        <Container>
+        <Container sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'stretch' }}>
             <Typography variant="h4" gutterBottom marginTop={2}>Project Dashboard</Typography>
             <Grid container spacing={3} flex={2} flexDirection={'column'} justifyContent={'space-between'} alignItems={'stretch'}>
                 <Grid item xs={12} md={3}>
                     <ProjectInfo project={projectData.project} />
                 </Grid>
                 <Grid item xs={12} md={9}>
-                    <StyledTabs
+                    <Tabs
                         value={tabValue}
                         onChange={handleChange}
                         aria-label="project dashboard tabs"
+                        variant="scrollable"
+                        scrollButtons="auto"
                         sx={{
                             '& .MuiTabs-indicator': {
                                 backgroundColor: indicatorColor,
+                            },
+                            '& .MuiTabs-scrollButtons': {
+                                '&.Mui-disabled': { opacity: 0.3 },
                             },
                         }}
                     >
                         <StyledTab label="Backlog" />
                         <StyledTab label="Sprint Backlog" />
                         <StyledTab label="Scrum Board" />
-                        <BurndownTab label="Burndown Chart" />
-                        <SprintVelocityTab label="Sprint Velocity" />
-                    </StyledTabs>
+                        <MetricTab label="Burndown Chart" />
+                        <MetricTab label="Sprint Velocity" />
+                        <ReportTab label="Project Progress Report" />
+                        <ReportTab label="Team Performance Report" />
+                    </Tabs>
                     <TabPanel value={tabValue} index={0}>
                         <ProjectBacklog backlog={projectData.backlog} />
                     </TabPanel>
@@ -115,6 +130,12 @@ export default function ProjectDashboardPage() {
                     </TabPanel>
                     <TabPanel value={tabValue} index={4}>
                         {projectData.sprintVelocityData && <SprintVelocityChart data={projectData.sprintVelocityData} />}
+                    </TabPanel>
+                    <TabPanel value={tabValue} index={5}>
+                        <ProjectProgressReport data={projectData} />
+                    </TabPanel>
+                    <TabPanel value={tabValue} index={6}>
+                        <TeamPerformanceReport data={projectData} />
                     </TabPanel>
                 </Grid>
             </Grid>

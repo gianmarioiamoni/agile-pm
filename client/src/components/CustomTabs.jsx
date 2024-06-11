@@ -2,9 +2,7 @@
 import { styled } from '@mui/system';
 import { Tabs, Tab } from '@mui/material';
 
-// const burndownBaseColor = '#d32f2f';
-// const sprintVelocityBaseColor = '#fbc02d';
-import { burndownBaseColor, sprintVelocityBaseColor } from '../utils/colors';
+import { defaultBaseColor, reportBaseColor, metricBaseColor } from '../utils/colors';
 
 export const StyledTabs = styled(Tabs)({
     borderBottom: '1px solid #e8e8e8',
@@ -18,39 +16,7 @@ export const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
         textTransform: 'none',
         minWidth: 72,
         fontWeight: 'regular',
-        marginRight: theme.spacing(4),
-        fontFamily: [
-            '-apple-system',
-            'BlinkMacSystemFont',
-            '"Segoe UI"',
-            'Roboto',
-            '"Helvetica Neue"',
-            'Arial',
-            'sans-serif',
-            '"Apple Color Emoji"',
-            '"Segoe UI Emoji"',
-            '"Segoe UI Symbol"',
-        ].join(','),
-        '&:hover': {
-            color: '#40a9ff',
-            opacity: 1,
-        },
-        '&.Mui-selected': {
-            color: '#1890ff',
-            fontWeight: 'medium',
-        },
-        '&:focus': {
-            color: '#40a9ff',
-        },
-    }),
-);
-
-export const BurndownTab = styled((props) => <Tab disableRipple {...props} />)(
-    ({ theme }) => ({
-        textTransform: 'none',
-        minWidth: 72,
-        fontWeight: 'regular',
-        color: burndownBaseColor,
+        color: defaultBaseColor,
         opacity: 0.7,
         marginRight: theme.spacing(4),
         fontFamily: [
@@ -66,26 +32,29 @@ export const BurndownTab = styled((props) => <Tab disableRipple {...props} />)(
             '"Segoe UI Symbol"',
         ].join(','),
         '&:hover': {
-            color: burndownBaseColor,
+            // color: '#40a9ff',
+            color: defaultBaseColor,
             opacity: 1,
         },
         '&.Mui-selected': {
-            color: burndownBaseColor,
+            // color: '#1890ff',
+            color: defaultBaseColor,
             fontWeight: 'medium',
-            opacity: 1,
         },
         '&:focus': {
-            color: burndownBaseColor,
+            // color: '#40a9ff',
+            color: defaultBaseColor,
         },
     }),
 );
 
-export const SprintVelocityTab = styled((props) => <Tab disableRipple {...props} />)(
+
+export const MetricTab = styled((props) => <Tab disableRipple {...props} />)(
     ({ theme }) => ({
         textTransform: 'none',
         minWidth: 72,
         fontWeight: 'regular',
-        color: sprintVelocityBaseColor,
+        color: metricBaseColor,
         opacity: 0.7,
         marginRight: theme.spacing(4),
         fontFamily: [
@@ -101,16 +70,51 @@ export const SprintVelocityTab = styled((props) => <Tab disableRipple {...props}
             '"Segoe UI Symbol"',
         ].join(','),
         '&:hover': {
-            color: sprintVelocityBaseColor,
+            color: metricBaseColor,
             opacity: 1,
         },
         '&.Mui-selected': {
-            color: sprintVelocityBaseColor,
+            color: metricBaseColor,
             fontWeight: 'medium',
             opacity: 1,
         },
         '&:focus': {
-            color: sprintVelocityBaseColor,
+            color: metricBaseColor,
+        },
+    }),
+);
+
+export const ReportTab = styled((props) => <Tab disableRipple {...props} />)(
+    ({ theme }) => ({
+        textTransform: 'none',
+        minWidth: 72,
+        fontWeight: 'regular',
+        color: reportBaseColor,
+        opacity: 0.7,
+        marginRight: theme.spacing(4),
+        fontFamily: [
+            '-apple-system',
+            'BlinkMacSystemFont',
+            '"Segoe UI"',
+            'Roboto',
+            '"Helvetica Neue"',
+            'Arial',
+            'sans-serif',
+            '"Apple Color Emoji"',
+            '"Segoe UI Emoji"',
+            '"Segoe UI Symbol"',
+        ].join(','),
+        '&:hover': {
+            color: reportBaseColor,
+            opacity: 1,
+        },
+        '&.Mui-selected': {
+            color: reportBaseColor,
+            fontWeight: 'medium',
+            opacity: 1,
+        },
+        '&:focus': {
+            color: reportBaseColor,
         },
     }),
 );
