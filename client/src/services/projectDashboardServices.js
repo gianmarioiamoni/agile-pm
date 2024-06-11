@@ -1,3 +1,4 @@
+// src/services/projectDashboardServices.js
 import axios from 'axios';
 
 /**
@@ -10,6 +11,8 @@ import axios from 'axios';
  */
 export const fetchProjectData = async (projectId) => {
     try {
+        console.log('Fetching project data...');
+
         // Fetch project info
         const projectResponse = await axios.get(`/server/projects/${projectId}`);
         const project = projectResponse.data;
@@ -24,7 +27,7 @@ export const fetchProjectData = async (projectId) => {
 
         // Fetch sprints for the project
         const sprintsResponse = await axios.get(`/server/sprints/project/${projectId}`);
-        const sprints = sprintsResponse.data;
+        const sprints = sprintsResponse.data.sprints;
 
         // Fetch tasks for each item of the sprint
         for (let sprint of sprints) {
@@ -43,12 +46,15 @@ export const fetchProjectData = async (projectId) => {
         const burndownResponse = await axios.get(`/server/burndown/project/${projectId}`);
         const burndownData = burndownResponse.data;
 
+        const sprintVelocityData = sprintsResponse.data.sprintVelocityData;
+
         return {
             project, // Project information
             assignments, // Assignments for the project
             backlog, // Backlog items for the project
             sprints, // Sprints for the project
-            burndownData // Burndown chart data for the project
+            burndownData, // Burndown chart data for the project
+            sprintVelocityData // Sprint velocity data for the project
         };
     } catch (error) {
         console.error('Error fetching project data:', error);

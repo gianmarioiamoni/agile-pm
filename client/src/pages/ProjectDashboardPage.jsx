@@ -36,24 +36,24 @@ export default function ProjectDashboardPage() {
     const { projectId } = useParams();
     const [projectData, setProjectData] = useState(null);
     const [tabValue, setTabValue] = useState(0);
-    const [indicatorColor, setIndicatorColor] = useState(defaultBaseColor); // Default color
+    const [indicatorColor, setIndicatorColor] = useState(defaultBaseColor);
 
     useEffect(() => {
-        const getProjectData = async () => {
+        const fetchProjectData = async () => {
             try {
-                const data = await fetchProjectData(projectId);
+                const data = await fetchProjectDashboardData(projectId);
                 setProjectData(data);
             } catch (error) {
                 console.error('Failed to fetch project data:', error);
             }
         };
 
-        getProjectData();
+        fetchProjectData();
     }, [projectId]);
 
     const handleChange = (event, newValue) => {
+        console.log('Tab value changed to:', newValue);
         setTabValue(newValue);
-        // Set the indicator color based on the selected tab
         if (newValue === 3) {
             setIndicatorColor(burndownBaseColor);
         } else if (newValue === 4) {
@@ -64,6 +64,7 @@ export default function ProjectDashboardPage() {
     };
 
     if (!projectData) {
+        console.log('Project data is not yet available');
         return <Typography>Loading...</Typography>;
     }
 
@@ -71,24 +72,18 @@ export default function ProjectDashboardPage() {
         ...sprint,
         dailyPoints: sprint.dailyPoints.map(point => ({
             ...point,
-            date: new Date(point.date).toISOString() // Ensure date is in correct format
+            date: new Date(point.date).toISOString()
         }))
     }));
 
-    const sprintVelocityData = projectData.sprints.map(sprint => ({
-        sprint: sprint.name,
-        velocity: sprint.completedPoints
-    }));
 
     return (
         <Container>
             <Typography variant="h4" gutterBottom marginTop={2}>Project Dashboard</Typography>
             <Grid container spacing={3} flex={2} flexDirection={'column'} justifyContent={'space-between'} alignItems={'stretch'}>
-                {/* Project information */}
                 <Grid item xs={12} md={3}>
                     <ProjectInfo project={projectData.project} />
                 </Grid>
-                {/* Tabs for Backlog, Sprint Backlog, Scrum Board, Burndown Chart, and Sprint Velocity */}
                 <Grid item xs={12} md={9}>
                     <StyledTabs
                         value={tabValue}
@@ -116,13 +111,21 @@ export default function ProjectDashboardPage() {
                         <ScrumBoard sprints={projectData.sprints} />
                     </TabPanel>
                     <TabPanel value={tabValue} index={3}>
-                        <BurndownChart data={formattedBurndownData} />
+                        {formattedBurndownData && <BurndownChart data={formattedBurndownData} />}
                     </TabPanel>
                     <TabPanel value={tabValue} index={4}>
-                        <SprintVelocityChart data={sprintVelocityData} />
+                        {projectData.sprintVelocityData && <SprintVelocityChart data={projectData.sprintVelocityData} />}
                     </TabPanel>
                 </Grid>
             </Grid>
         </Container>
     );
 };
+
+function fetchProjectDashboardData(projectId) {
+    if (!projectId) {
+        throw new Error('Project ID is required');
+    }
+
+    return fetchProjectData(projectId);
+}

@@ -10,7 +10,8 @@ const sprintSchema = new Schema({
     endDate: { type: Date, required: true },
     goal: { type: String },
     items: [{ type: mongoose.Schema.Types.ObjectId, ref: 'BacklogItem', default: [] }],
-    status: { type: String, enum: ['Planned', 'Active', 'Completed'], default: 'Planned' }
+    status: { type: String, enum: ['Planned', 'Active', 'Completed'], default: 'Planned' },
+    completedPoints: { type: Number, default: 0 }
 });
 
 const Sprint = mongoose.model('Sprint', sprintSchema);

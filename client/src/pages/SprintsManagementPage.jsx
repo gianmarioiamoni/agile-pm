@@ -26,7 +26,6 @@ export default function SprintsManagementPage({ getProjectName, canCreateSprint 
 
     useEffect(() => {
         const fetchSprints = async () => {
-
             try {
                 const sprintsData = await getSprintsByProjectId(projectId);
                 setSprints(sprintsData);
@@ -38,7 +37,7 @@ export default function SprintsManagementPage({ getProjectName, canCreateSprint 
         const fetchBacklogItems = async () => {
             try {
                 const items = await getBacklogItems(projectId);
-                setBacklogItems(items.filter(item => !item.sprint)); // Filtra solo gli item non assegnati
+                setBacklogItems(items.filter(item => !item.sprint)); // filter not assigned items only
             } catch (error) {
                 console.error('Error fetching backlog items:', error);
             }
