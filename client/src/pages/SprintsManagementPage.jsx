@@ -28,7 +28,7 @@ export default function SprintsManagementPage({ getProjectName, canCreateSprint 
         const fetchSprints = async () => {
             try {
                 const sprintsData = await getSprintsByProjectId(projectId);
-                setSprints(sprintsData);
+                setSprints(sprintsData.sprints);
             } catch (error) {
                 console.error('SprintsManagementPage: fetchSprints: Error fetching sprints:', error);
             }
@@ -39,7 +39,7 @@ export default function SprintsManagementPage({ getProjectName, canCreateSprint 
                 const items = await getBacklogItems(projectId);
                 setBacklogItems(items.filter(item => !item.sprint)); // filter not assigned items only
             } catch (error) {
-                console.error('Error fetching backlog items:', error);
+                console.error('SprintsManagementPage: fetchBacklogItems: Error fetching backlog items:', error);
             }
         };
 
@@ -49,7 +49,7 @@ export default function SprintsManagementPage({ getProjectName, canCreateSprint 
 
     return (
         <>
-            <Header isShowProfile={true} isShowHome={true} isShowDashboard={true} />
+            <Header isShowProfile={true} isShowHome={true} isShowDashboard={true} isShowBack={true}/>
 
             <Container style={{ marginTop: 20 }}>
                 <Typography variant="h4" gutterBottom>

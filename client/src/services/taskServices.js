@@ -31,17 +31,17 @@ export const getTasksByBacklogItemId = async (itemId) => {
 };
 
 
-export const updateTaskAssignment = async (taskId, sprintId) => {
+export const updateTaskAssignment = async (taskId, sprintId, projectId) => {
     try {
-        const response = await axios.post('/server/tasks/assign', { taskId, sprintId });
+        const response = await axios.post('/server/tasks/assign', { taskId, sprintId, projectId });
         return response.data;
     } catch (error) {
         console.error('Error assigning task:', error);
     }
 };
 
-export const createTask = async (backlogItemId, data) => {
-    data = { ...data, backlogItemId };
+export const createTask = async (backlogItemId, projectId, data) => {
+    data = { ...data, backlogItemId, projectId };
 
     try {
         if (data.assignee === '') {

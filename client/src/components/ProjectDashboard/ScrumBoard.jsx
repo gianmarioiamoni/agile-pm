@@ -1,5 +1,7 @@
 import React from 'react';
-import { Paper, Typography, Grid, Card, CardContent, CardHeader, Chip } from '@mui/material';
+import { Link } from 'react-router-dom';
+
+import { Paper, Typography, Grid, Card, CardContent, CardHeader, Button, Box } from '@mui/material';
 
 export default function ScrumBoard({ sprints }) {
 
@@ -11,6 +13,13 @@ export default function ScrumBoard({ sprints }) {
     return (
         <Paper elevation={3} style={{ padding: 16 }}>
             {/* <Typography variant="h6">Scrum Board</Typography> */}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h6">Scrum Board</Typography>
+                {/* Button to navigate to Backlog page */}
+                <Button component={Link} to={`/sprint-tasks-status/${sprints[0]._id}`} variant="contained" color="secondary" size="small">
+                    Go to Tasks Management
+                </Button>
+            </Box>
             {sprints.map((sprint) => (
                 <div key={sprint._id} style={{ marginTop: 16 }}>
                     <Typography variant="subtitle1" gutterBottom fontWeight={'fontWeightBold'}>{sprint.name}</Typography>

@@ -91,7 +91,7 @@ export default function BacklogItem({
         }
 
         try {
-            const createdTask = await createTask(backlogItemId, addedTask);
+            const createdTask = await createTask(backlogItemId, item.projectId, addedTask);
 
             setIsAddTaskDialogOpen(false);
 

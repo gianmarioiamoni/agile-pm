@@ -36,3 +36,12 @@ export async function saveAssignments(projectId, assignments) {
         console.log(error);
     }
 }
+
+export async function getTeamPerformanceReport(projectId) {
+    try {
+        const response = await axios.get(`/server/team-performance-report/${projectId}`);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+    }
+}

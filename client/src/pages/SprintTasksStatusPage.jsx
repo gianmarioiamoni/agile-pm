@@ -93,7 +93,7 @@ export default function SprintTasksStatusPage() {
 
     return (
         <>
-            <Header isShowProfile={true} isShowHome={true} isShowDashboard={true} />
+            <Header isShowProfile={true} isShowHome={true} isShowDashboard={true} isShowBack={true}/>
 
             <Container style={{ marginTop: 20 }}>
                 <Typography variant="h4" gutterBottom>

@@ -11,8 +11,8 @@ import { Box, Typography, Card, CardContent, Grid, CircularProgress } from '@mui
  * @param {Array} props.data.backlog - Array of backlog item objects
  * @returns {ReactElement} - Rendered component
  */
-export default function ProjectProgressReport({ data }) {
-    const { project, sprints, backlog } = data;
+export default function ProjectProgressReport({ projectData }) {
+    const { project, sprints, backlog } = projectData;
 
     // Calculate completed sprints and total tasks
     const completedSprints = sprints.filter(sprint => sprint.completed);

@@ -1,7 +1,8 @@
 import React from 'react';
-import { Paper, Typography, List, ListItem, ListItemText, Box } from '@mui/material';
+import { Link } from 'react-router-dom';
 
-import { toDate } from 'date-fns';
+import { Paper, Typography, List, ListItem, ListItemText, Box, Button } from '@mui/material';
+
 
 export default function SprintBacklog({ sprints }) {
 
@@ -12,7 +13,14 @@ export default function SprintBacklog({ sprints }) {
 
     return (
         <Paper elevation={3} style={{ padding: 16 }}>
-            <Typography variant="h6">Sprint Backlog</Typography>
+            {/* <Typography variant="h6">Sprint Backlog</Typography> */}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Typography variant="h6">Sprint Backlog</Typography>
+                {/* Button to navigate to Sprint Management page */}
+                <Button component={Link} to={`/sprints-management/${sprints[0].projectId}`} variant="contained" color="secondary" size="small">
+                    Go to Sprints Management
+                </Button>
+            </Box>
             {sprints.map((sprint) => (
                 <div key={sprint._id}>
                     <Typography variant="subtitle1">{sprint.name}</Typography>
