@@ -1,5 +1,7 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
+
 import { useSelector } from 'react-redux';
+
 import { Button } from '@mui/material';
 
 // Application Header
@@ -24,24 +26,23 @@ export default function Header({
         return state.user;
     });
 
+
     return (
         <div className='bg-primary text-secondary'>
             <div className="flex justify-between items-center max-w-6xl p-3 mx-auto">
                 <Link to="/">
-                    <h1 className="font-bold">Agile Project Manager</h1>
+                    <h1 className="font-bold ">Agile Project Manager</h1>
                 </Link>
-                <ul className='flex gap-4 items-center'>
+                <ul className='flex gap-4'>
                     {isShowHome &&
                         <Link to="/">
                             <li>Home</li>
                         </Link>
                     }
                     {isShowBack &&
-                        <li>
-                            <Button onClick={() => navigate(-1)} color="inherit" >
-                                Back
-                            </Button>
-                        </li>
+                        <Button onClick={() => navigate(-1)} color="inherit" >
+                            Back
+                        </Button>
                     }
                     {isShowAdmin &&
                         <Link to="/admin">
@@ -51,8 +52,8 @@ export default function Header({
                     {isShowAbout &&
                         <Link to="/about">
                             <li>About</li>
-                        </Link>
-                    }
+                        </Link>}
+
                     {/* Links for authenticated users */}
                     {currentUser && isShowDashboard &&
                         <Link to="/dashboard">
@@ -61,9 +62,7 @@ export default function Header({
                     }
                     {currentUser && isShowProfile &&
                         <Link to="/profile">
-                            <li>
-                                <img src={currentUser.profilePicture} className="h-7 w-7 rounded-full object-cover" alt="Profile picture" />
-                            </li>
+                            <img src={currentUser.profilePicture} className="h-7 w-7 rounded-full object-cover" alt="Profile picture" />
                         </Link>
                     }
                     {/* Links for unauthenticated users */}
@@ -77,8 +76,10 @@ export default function Header({
                             <li>Sign Up</li>
                         </Link>
                     }
+
                 </ul>
             </div>
         </div>
+
     )
 }

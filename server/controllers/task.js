@@ -1,6 +1,7 @@
 import Task from "../models/task.js";
 import Sprint from "../models/sprint.js";
 import BacklogItem from "../models/backlogItem.js";
+import Assignment from "../models/assignment.js";
 
 export const getAvailableTasksAndSprintTasks = async (req, res) => {
     try {
@@ -125,6 +126,7 @@ export const updateTask = async (req, res) => {
 
         res.json(task);
     } catch (err) {
+        console.log("Error updating task: ", err);
         res.status(500).json({ message: err.message });
     }
 };

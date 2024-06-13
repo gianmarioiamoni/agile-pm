@@ -67,11 +67,13 @@ export const updateTask = async (taskId, data) => {
     }
 }
 export const updateTaskStatus = async (taskId, status, backlogItemId) => {
+
     try {
         const response = await axios.put(`/server/tasks/${taskId}/updateStatus`, { status, backlogItemId });
         return response.data;
     } catch (err) {
         console.error('Error updating task status:', err);
+        console.error('Error message:', err.message);
     }
 };
 
