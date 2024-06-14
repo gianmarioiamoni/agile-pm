@@ -1,109 +1,109 @@
 # Agile Project Manager
 
-**Agile Project Manager** is a comprehensive web application designed to streamline and enhance the management of agile projects. It provides a suite of tools to facilitate project planning, task management, and team collaboration, ensuring projects are delivered on time and within scope.
+**<span style="color: #2d3748;">Agile Project Manager</span>** is a comprehensive web application designed to streamline and enhance the management of agile projects. It provides a suite of tools to facilitate project planning, task management, and team collaboration, ensuring projects are delivered on time and within scope.
 
 ## Technologies Used
 
 ### Frontend:
-- **React**: for building the user interface
-- **Redux**: for state management
-- **Tailwind CSS**: for styling and layout
-- **Material-UI**: for UI components and design
+- **<span style="color: #3182ce;">React</span>**: for building the user interface
+- **<span style="color: #3182ce;">Redux</span>**: for state management
+- **<span style="color: #3182ce;">Tailwind CSS</span>**: for styling and layout
+- **<span style="color: #3182ce;">Material-UI</span>**: for UI components and design
 
 ### Backend:
-- **Node.js**: for the server-side runtime environment
-- **Express.js**: for building the web application framework
-- **MongoDB**: for the database, providing a flexible and scalable data storage solution
-- **JWT (JSON Web Tokens)**: for secure authentication
-- **Mongoose**: for MongoDB object modeling
+- **<span style="color: #38a169;">Node.js</span>**: for the server-side runtime environment
+- **<span style="color: #38a169;">Express.js</span>**: for building the web application framework
+- **<span style="color: #38a169;">MongoDB</span>**: for the database, providing a flexible and scalable data storage solution
+- **<span style="color: #38a169;">JWT (JSON Web Tokens)</span>**: for secure authentication
+- **<span style="color: #38a169;">Mongoose</span>**: for MongoDB object modeling
 
 ## Features
 
-- **Authentication and Authorization**
-- **Project Management**
-- **Project Backlog**
-- **Sprint Planning**
-- **Dashboard and Reports**
-- **User and Role Management**
+- **<span style="color: #805ad5;">Authentication and Authorization</span>**
+- **<span style="color: #805ad5;">Project Management</span>**
+- **<span style="color: #805ad5;">Project Backlog</span>**
+- **<span style="color: #805ad5;">Sprint Planning</span>**
+- **<span style="color: #805ad5;">Dashboard and Reports</span>**
+- **<span style="color: #805ad5;">User and Role Management</span>**
 
 ## Detailed Feature Description
 
 ### Authentication and Authorization
 
-- **User Registration and Login**: 
-  - Secure registration and login processes for users.
-  - Passwords are hashed for security.
-  - JWT tokens are used to maintain sessions.
+- **<span style="color: #805ad5;">User Registration and Login</span>**: 
+  - secure registration and login processes for users
+  - passwords are hashed for security
+  - JWT tokens are used to maintain sessions
 
-- **Role Management for Users**: 
-  - Admins can assign roles to users.
-  - Different roles have different permissions, such as accessing admin functions or managing projects.
+- **<span style="color: #805ad5;">Role Management for Users</span>**: 
+  - admins can assign roles to users
+  - different roles have different permissions, such as accessing admin functions or managing projects
 
 ### Project Management
 
-- **Creation, Modification, and Deletion of Projects**: 
-  - Admins and authorized users can create new projects.
-  - Projects can be updated with new information or requirements.
-  - Projects can be deleted if they are no longer needed.
+- **<span style="color: #805ad5;">Creation, Modification, and Deletion of Projects</span>**: 
+  - admins and authorized users can create new projects
+  - projects can be updated with new information or requirements
+  - projects can be deleted if they are no longer needed
 
-- **Assignment of Team Members to Projects**: 
-  - Admins can assign team members to specific projects based on their roles and responsibilities.
-  - Team members receive notifications about their assignments.
+- **<span style="color: #805ad5;">Assignment of Team Members to Projects</span>**: 
+  - admins can assign team members to specific projects based on their roles and responsibilities
+  - team members receive notifications about their assignments
 
-- **Viewing Project Details**: 
-  - Users can view comprehensive details about each project, including the list of tasks, deadlines, and sprint plans.
+- **<span style="color: #805ad5;">Viewing Project Details</span>**: 
+  - users can view comprehensive details about each project, including the list of tasks, deadlines, and sprint plans
 
 ### Project Backlog
 
-- **Creation and Management of Project Backlogs**: 
-  - Users can create backlog items for tasks that need to be completed.
-  - Backlog items can be edited or deleted as required.
+- **<span style="color: #805ad5;">Creation and Management of Project Backlogs</span>**: 
+  - users can create backlog items for tasks that need to be completed
+  - backlog items can be edited or deleted as required
 
-- **Prioritization of Backlog Items**: 
-  - Users can set priorities for each backlog item to ensure important tasks are addressed first.
-  - High-priority items are highlighted for better visibility.
+- **<span style="color: #805ad5;">Prioritization of Backlog Items</span>**: 
+  - users can set priorities for each backlog item to ensure important tasks are addressed first
+  - high-priority items are highlighted for better visibility
 
-- **Drag-and-Drop Functionality**: 
-  - Intuitive drag-and-drop interface for managing backlog items.
-  - Users can easily rearrange items to reflect changing priorities.
+- **<span style="color: #805ad5;">Drag-and-Drop Functionality</span>**: 
+  - intuitive drag-and-drop interface for managing backlog items
+  - users can easily rearrange items to reflect changing priorities
 
 ### Sprint Planning
 
-- **Creation of Sprints for Projects**: 
-  - Users can create sprints, defining the duration and goals for each sprint.
-  - Sprints help in organizing work into manageable chunks.
+- **<span style="color: #805ad5;">Creation of Sprints for Projects</span>**: 
+  - users can create sprints, defining the duration and goals for each sprint
+  - sprints help in organizing work into manageable chunks
 
-- **Assignment of Tasks to Sprints**: 
-  - Tasks from the backlog can be assigned to specific sprints.
-  - This ensures that work is planned and executed in a structured manner.
+- **<span style="color: #805ad5;">Assignment of Tasks to Sprints</span>**: 
+  - tasks from the backlog can be assigned to specific sprints
+  - this ensures that work is planned and executed in a structured manner
 
-- **Monitoring Task Status**: 
-  - Users can track the status of tasks within each sprint.
-  - Tasks can be marked as **To Do**, **In Progress**, or **Done**.
+- **<span style="color: #805ad5;">Monitoring Task Status</span>**: 
+  - users can track the status of tasks within each sprint
+  - tasks can be marked as **To Do**, **In Progress**, or **Done**
 
 ### Dashboard and Reports
 
-- **Dashboard with Key Metrics**: 
-  - The dashboard provides an overview of project metrics such as sprint velocity, task completion rate, and burndown charts.
-  - Users can quickly assess the health and progress of their projects.
+- **<span style="color: #805ad5;">Dashboard with Key Metrics</span>**: 
+  - the dashboard provides an overview of project metrics such as sprint velocity, task completion rate, and burndown charts
+  - users can quickly assess the health and progress of their projects
 
-- **Generation of Reports**: 
-  - Detailed reports on project progress and team performance can be generated.
-  - Reports include metrics like task completion times, sprint success rates, and individual performance assessments.
+- **<span style="color: #805ad5;">Generation of Reports</span>**: 
+  - detailed reports on project progress and team performance can be generated
+  - reports include metrics like task completion times, sprint success rates, and individual performance assessments
 
 ### User and Role Management
 
-- **User Account Creation and Management**: 
-  - Admins can create and manage user accounts.
-  - Users can update their profiles and change passwords.
+- **<span style="color: #805ad5;">User Account Creation and Management</span>**: 
+  - admins can create and manage user accounts
+  - users can update their profiles and change passwords
 
-- **Modification of User Privileges**: 
-  - Admins can modify user privileges to grant or restrict access to certain features.
-  - Privileges can be customized based on the user's role and responsibilities.
+- **<span style="color: #805ad5;">Modification of User Privileges</span>**: 
+  - admins can modify user privileges to grant or restrict access to certain features
+  - privileges can be customized based on the user's role and responsibilities
 
-- **Management of Access Permissions**: 
-  - Admins can manage access permissions for various parts of the application.
-  - Ensures that sensitive information is accessible only to authorized users.
+- **<span style="color: #805ad5;">Management of Access Permissions</span>**: 
+  - admins can manage access permissions for various parts of the application
+  - ensures that sensitive information is accessible only to authorized users
 
 ## Getting Started
 
