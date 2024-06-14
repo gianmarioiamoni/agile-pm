@@ -1,6 +1,6 @@
 # Agile Project Manager
 
-Agile Project Manager is a comprehensive web application designed to streamline and enhance the management of agile projects. It provides a suite of tools to facilitate project planning, task management, and team collaboration, ensuring projects are delivered on time and within scope.
+**Agile Project Manager** is a comprehensive web application designed to streamline and enhance the management of agile projects. It provides a suite of tools to facilitate project planning, task management, and team collaboration, ensuring projects are delivered on time and within scope.
 
 ## Technologies Used
 
@@ -79,7 +79,7 @@ Agile Project Manager is a comprehensive web application designed to streamline 
 
 - **Monitoring Task Status**: 
   - Users can track the status of tasks within each sprint.
-  - Tasks can be marked as 'To Do', 'In Progress', or 'Done'.
+  - Tasks can be marked as **To Do**, **In Progress**, or **Done**.
 
 ### Dashboard and Reports
 
@@ -119,3 +119,4 @@ To get a local copy up and running follow these simple steps.
 1. Clone the repo
    ```sh
    git clone https://github.com/your_username/agile-project-manager.git
+
