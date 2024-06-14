@@ -13,7 +13,7 @@ import Header from "../components/Header.jsx";
 // import { RolesContext } from '../utils/RolesProvider.jsx';
 import { getCurrentRoles } from '../services/roleServices.js';
 
-const registerImage = "/backgrounds/signup-1.jpg"
+const registerImage = "/backgrounds/signup-01.jpg"
 
 
 export default function SignUp() {
@@ -69,7 +69,7 @@ export default function SignUp() {
       <div p-3="+true" className='text-text max-w-xl mx-auto'>
         <div className="flex flex-col">
           <h1 className="text-3xl text-title text-center font-semibold my-7">Sign Up</h1>
-          <img className="self-center" src={registerImage} alt="Register Image" style={{ maxWidth: '70%', height: 'auto' }} />
+          <img className="self-center" src={registerImage} alt="Register Image" style={{ maxWidth: '60%', height: 'auto' }} />
         </div>
         {/* Role selection */}
         <h3 className='text-title font-bold mt-3'>Role</h3>
