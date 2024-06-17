@@ -1,5 +1,7 @@
 import express from 'express';
 
+import { verifyUser } from "../utils/verifyUser.js";
+
 import {
     createTask,
     assignTask,
@@ -14,28 +16,28 @@ import {
 const router = express.Router();
 
 // get all available tasks and existing sprints
-router.get('/', getAvailableTasksAndSprintTasks);
+router.get('/', verifyUser, getAvailableTasksAndSprintTasks);
 
 // get tasks by sprint id
-router.get('/sprint/:sprintId', getTasksBySprintId);
+router.get('/sprint/:sprintId', verifyUser, getTasksBySprintId);
 
 // get tasks by backlog item id
-router.get('/backlogItems/:backlogItemId', getTasksByBacklogItemId);
+router.get('/backlogItems/:backlogItemId', verifyUser, getTasksByBacklogItemId);
 
 // create a new task
-router.post('/', createTask);
+router.post('/', verifyUser, createTask);
 
 // assign a task to a sprint
-router.post('/assign', assignTask);
+router.post('/assign', verifyUser, assignTask);
 
 // update a task
-router.put('/:taskId', updateTask);
+router.put('/:taskId', verifyUser, updateTask);
 
 // update the status of a task
-router.put('/:taskId/updateStatus', updateTaskStatus);
+router.put('/:taskId/updateStatus', verifyUser, updateTaskStatus);
 
 // delete a task
-router.delete('/:taskId', deleteTask);
+router.delete('/:taskId', verifyUser, deleteTask);
 
 export default router;
 

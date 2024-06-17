@@ -19,7 +19,7 @@ export default function ProjectProgressReport({ projectData }) {
     const totalTasks = backlog.length;
 
     // Calculate completed tasks and progress percentage
-    const completedTasks = backlog.filter(task => task.status === 'completed').length;
+    const completedTasks = backlog.filter(task => task.status === 'Done').length;
     const progressPercentage = (completedTasks / totalTasks) * 100;
 
     return (

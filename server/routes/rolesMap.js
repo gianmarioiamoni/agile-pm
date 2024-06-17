@@ -1,5 +1,7 @@
 import express from 'express';
 
+import { verifyUser } from "../utils/verifyUser.js";
+
 import {
     getRolePermissionsMap, createRolesMap, updateRolePermissionsMap, getPermissionsLabelValues,
     checkCreateProject, checkViewProject, checkEditProject, checkDeleteProject, checkAllocateProject,
@@ -10,7 +12,8 @@ const router = express.Router();
 
 router.get('/permissions-label-values', getPermissionsLabelValues);
 router.get('/:name', getRolePermissionsMap);
-router.post('/', createRolesMap);
+
+router.post('/', verifyUser, createRolesMap);
 
 router.put('/check/can-create-project/', checkCreateProject);
 router.put('/check/can-view-project/', checkViewProject);
@@ -25,6 +28,6 @@ router.put('/check/can-delete-sprint/', checkDeleteSprint);
 router.put('/check/can-participate-sprint/', checkParticipateSprint);
 
 // must be at the end of the PUT routes
-router.put('/:name', updateRolePermissionsMap);
+router.put('/:name', verifyUser, updateRolePermissionsMap);
 
 export default router;

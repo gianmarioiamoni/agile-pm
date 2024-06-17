@@ -7,11 +7,11 @@ import { getProjects, getProject, createProject, updateProject, deleteProject } 
 const router = express.Router();
 
 // API routes for projects
-router.get("/", getProjects);
-router.get('/:id', getProject);
-router.post('/', createProject);
-router.patch('/:id', updateProject);
-router.delete('/:id', deleteProject);
+router.get("/", verifyUser, getProjects);
+router.get('/:id', verifyUser, getProject);
+router.post('/', verifyUser, createProject);
+router.patch('/:id', verifyUser, updateProject);
+router.delete('/:id', verifyUser, deleteProject);
 
 export default router;
 
