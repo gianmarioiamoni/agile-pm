@@ -1,6 +1,17 @@
 import React from 'react';
 import { Box, TextField, Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 
+/**
+ * Component to render a form for creating a new task.
+ *
+ * @param {Object} props - Component props
+ * @param {Function} props.handleNewTaskChange - Function to handle task form field change
+ * @param {Object} props.newTask - Object containing new task data
+ * @param {boolean} [props.isAssigneeMode=false] - Flag indicating if the form is in assignee mode
+ * @param {Function} props.handleAssigneeChange - Function to handle assignee select change
+ * @param {Array} props.assignments - Array of assignments
+ * @returns {JSX.Element} - Rendered form component
+ */
 export default function NewTaskForm({
     handleNewTaskChange,
     newTask,

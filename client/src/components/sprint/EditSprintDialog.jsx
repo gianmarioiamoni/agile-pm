@@ -2,7 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button } from '@mui/material';
 import { format } from 'date-fns';
 
-export default function EditSprintDialog({ open, sprint, onSave, onClose}) {
+/**
+ * Dialog component for editing a sprint.
+ *
+ * @param {Object} props - Component props.
+ * @param {boolean} props.open - Whether the dialog is open or not.
+ * @param {Object} props.sprint - The sprint to edit.
+ * @param {Function} props.onSave - Callback function for saving the edited sprint.
+ * @param {Function} props.onClose - Callback function for closing the dialog.
+ * @returns {JSX.Element} The EditSprintDialog component.
+ */
+export default function EditSprintDialog({ open, sprint, onSave, onClose }) {
     const [editedSprint, setEditedSprint] = useState({ ...sprint });
 
     useEffect(() => {
@@ -23,10 +33,6 @@ export default function EditSprintDialog({ open, sprint, onSave, onClose}) {
         }));
     };
 
-    // const handleSave = () => {
-    //     onSave(editedSprint);
-    //     onClose();
-    // };
 
     return (
         <Dialog open={open} onClose={onClose}>

@@ -15,7 +15,11 @@ import { editUser, deleteUser, sendResetPwdEmail } from "../../services/userServ
 import { generateRandomPassword } from "../../utils/utilities";
 
 
-export default function UserManagement({ users, setUsers, currentRolesMap, currentUser }) {
+export default function UserManagement({
+    users,
+    setUsers,
+    currentRolesMap,
+    currentUser }) {
 
     const [openDialog, setOpenDialog] = useState(false);
     const [editFormData, setEditFormData] = useState({

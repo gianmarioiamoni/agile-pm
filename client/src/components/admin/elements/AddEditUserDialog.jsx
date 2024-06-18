@@ -6,6 +6,22 @@ import { addUser, editUser, sendNewUserEmail } from "../../../services/userServi
 
 import { generateRandomPassword } from "../../../utils/utilities";
 
+/**
+ * Component for adding or editing a user.
+ *
+ * @param {Object} props - The component props.
+ * @param {boolean} props.openDialog - Whether the dialog is open or not.
+ * @param {function} props.handleCloseDialog - Function to close the dialog.
+ * @param {boolean} props.isEditMode - Whether we are editing an existing user or adding a new one.
+ * @param {Object} props.editFormData - The form data for editing a user.
+ * @param {function} props.setEditFormData - Function to set the form data for editing a user.
+ * @param {Object} props.editedUser - The user object being edited.
+ * @param {function} props.setEditedUser - Function to set the user object being edited.
+ * @param {Array} props.currentRolesMap - The current roles map.
+ * @param {function} props.setUsers - Function to set the users array.
+ * @param {Array} props.users - The users array.
+ * @return {JSX.Element} The rendered component.
+ */
 export default function AddEditUserDialog({
     openDialog,
     handleCloseDialog,
@@ -18,11 +34,21 @@ export default function AddEditUserDialog({
     setUsers,
     users
 }) {
+    /**
+     * Handles form changes.
+     *
+     * @param {Object} e - The event object.
+     */
     const handleFormChange = (e) => {
         const { id, value } = e.target;
         setEditFormData((prevFormData) => ({ ...prevFormData, [id]: value }));
     };
 
+    /**
+     * Saves changes for adding a new user.
+     *
+     * @return {Promise<void>} - A promise that resolves when the changes are saved.
+     */
     const saveAddUserChanges = async () => {
         try {
             const newPassword = generateRandomPassword();
@@ -37,8 +63,13 @@ export default function AddEditUserDialog({
             console.error('saveAddUserChanges() error: ', error);
             alert('Error creating new user. Please try again.');
         }
-    }
+    };
 
+    /**
+     * Saves changes for editing an existing user.
+     *
+     * @return {Promise<void>} - A promise that resolves when the changes are saved.
+     */
     const saveEditUserChanges = async () => {
         try {
             const editedUserIndex = users.findIndex((user) => user._id === editedUser._id);
@@ -49,14 +80,13 @@ export default function AddEditUserDialog({
                     username: editFormData.username,
                     email: editFormData.email,
                     role: editedUser.role,
-                }
+                };
                 updatedUsers[editedUserIndex] = edUser;
 
                 setUsers(updatedUsers);
 
                 // save changes to DB
                 await editUser(edUser);
-
                 handleCloseDialog();
                 alert('User details updated successfully!');
             } else {
@@ -69,6 +99,11 @@ export default function AddEditUserDialog({
         }
     };
 
+    /**
+     * Handles saving changes for either adding or editing a user.
+     *
+     * @return {Promise<void>} - A promise that resolves when the changes are saved.
+     */
     const handleSaveChanges = async () => {
         if (isEditMode) {
             saveEditUserChanges();

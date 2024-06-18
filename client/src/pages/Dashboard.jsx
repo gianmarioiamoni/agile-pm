@@ -15,11 +15,26 @@ import {
     canMonitorSprint, canEditSprint, canDeleteSprint, canCreateSprint, canParticipateSprint
  } from "../services/rolesMapServices";
 
+/**
+ * Dashboard component displays projects list and allows user to add new project.
+ * User can edit and delete projects if they have necessary permissions.
+ * 
+ * @param {Object} props - Props passed to the component
+ * @param {Array} props.projects - Array of projects
+ * @param {Function} props.setProjects - Function to update projects
+ * @param {Array} props.users - Array of users
+ * @param {Object} props.canSprints - Object with permissions for sprints management
+ * @param {Function} props.setCanSprints - Function to update sprints permissions
+ * @returns {ReactElement} The Dashboard component
+ */
 export default function Dashboard({projects, setProjects, users, canSprints, setCanSprints}) {
+    // Get current user from Redux store
     const { currentUser } = useSelector(state => state.user);
+    // State for project to be edited and deleted
     const [editProject, setEditProject] = useState(null);
     const [deleteProject, setDeleteProject] = useState(null);
 
+    // State for project permissions
     const [canProjects, setCanProjects] = useState({
         create: false,
         edit: false,
@@ -27,9 +42,8 @@ export default function Dashboard({projects, setProjects, users, canSprints, set
         view: false
     });
 
-    // useEffects
+    // Fetch project permissions on component mount
     useEffect(() => {
-
         const checkPermissions = async () => {
             // get Projects permissions
             const createProject = await canCreateProject(currentUser);
@@ -74,12 +88,15 @@ export default function Dashboard({projects, setProjects, users, canSprints, set
         
     }, []);
 
-    // callbacks for event handling
+    // Callbacks for event handling
+
+    // Create new project
     const handleCreateProject = (newProject) => {
         const createdProject = createProject(newProject)
         setProjects([...projects, { ...newProject }]);
     };
 
+    // Edit existing project
     const handleEditProject = (editedProject) => {
         updateProject(editedProject);
 
@@ -91,6 +108,7 @@ export default function Dashboard({projects, setProjects, users, canSprints, set
         setEditProject(null);
     };
 
+    // Delete project
     const handleDeleteProject = () => {
         const updatedProjects = projects.filter(project =>
             project.id !== deleteProject.id
@@ -103,6 +121,7 @@ export default function Dashboard({projects, setProjects, users, canSprints, set
 
     return (
         <>
+            {/* Render Header component */}
             <Header isShowAbout={true} isShowProfile={true} isShowHome={true} isShowAdmin={currentUser.role.roleKey == 0} />
             <div style={{ padding: '24px' }}>
                 <Typography variant="h3" gutterBottom>Dashboard</Typography>
@@ -111,8 +130,10 @@ export default function Dashboard({projects, setProjects, users, canSprints, set
 
                     {/* New Projects form */}
                     <Grid item xs={12} md={6}>
+                        {/* Display 'Add New Project' title with gray color if user has no permission */}
                         <Typography variant="h5" sx={!canProjects.create ? { color: "gray" } : {}}>Add New Project</Typography>
                         <Divider />
+                        {/* Render NewProjectForm component */}
                         <NewProjectForm
                             onCreateProject={handleCreateProject}
                             canCreateProject={canProjects.create} />
@@ -122,6 +143,7 @@ export default function Dashboard({projects, setProjects, users, canSprints, set
                     <Grid item xs={12} md={6}>
                         <Typography variant="h5">Projects List</Typography>
                         <Divider />
+                        {/* Render ProjectsList component and pass necessary props */}
                         <div style={{ maxHeight: '70vh', overflowY: 'auto', border: '1px solid #ccc', borderRadius: '4px', padding: '8px' }}>
                             <ProjectsList
                                 projects={projects}
@@ -136,9 +158,6 @@ export default function Dashboard({projects, setProjects, users, canSprints, set
                         </div>
                     </Grid> 
         
-
-                    {/* Other additional components */}
-                    {/* (Ometti i componenti non accessibili per utenti non autorizzati) */}
                 </Grid>
 
                 {/* Edit Project Dialog */}
@@ -153,12 +172,14 @@ export default function Dashboard({projects, setProjects, users, canSprints, set
                 <Dialog open={!!deleteProject} onClose={() => setDeleteProject(null)}>
                     <DialogTitle>Delete Project</DialogTitle>
                     <DialogContent>
+                        {/* Display message with project name about to be deleted */}
                         <Typography variant="body1">
                             Are you sure you want to delete the project: {deleteProject && deleteProject.name}?
                         </Typography>
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={() => setDeleteProject(null)} color="primary">Cancel</Button>
+                        {/* Display Delete button with delete icon */}
                         <Button onClick={handleDeleteProject} color="error" startIcon={<Delete />}>Delete</Button>
                     </DialogActions>
                 </Dialog>

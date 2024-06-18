@@ -2,13 +2,27 @@ import React, { useState } from 'react';
 import { Button, TextField, Typography, List, ListItem, ListItemText, Checkbox, ListItemSecondaryAction } from '@mui/material';
 import { addSprint } from '../../services/sprintServices';
 
+/**
+ * Component to create a new sprint and assign backlog items to it.
+ *
+ * @param {Object} props - Component props
+ * @param {string} props.projectId - The ID of the project
+ * @param {Array} props.sprints - The list of existing sprints
+ * @param {Function} props.setSprints - A function to update the list of sprints
+ * @param {boolean} props.canCreateSprint - Flag indicating if the user can create a sprint
+ * @param {Array} props.backlogItems - The list of backlog items
+ */
 export default function AddSprint({ projectId, sprints, setSprints, canCreateSprint, backlogItems }) {
+    // State variables to store the new sprint and selected items
     const [newSprintName, setNewSprintName] = useState('');
     const [newSprintStartDate, setNewSprintStartDate] = useState('');
     const [newSprintEndDate, setNewSprintEndDate] = useState('');
     const [selectedItems, setSelectedItems] = useState([]);
 
-
+    /**
+     * Handler function to create a new sprint.
+     * Calls the addSprint service function and updates the list of sprints.
+     */
     const handleCreateSprint = async () => {
         const newSprint = {
             name: newSprintName,
@@ -30,6 +44,10 @@ export default function AddSprint({ projectId, sprints, setSprints, canCreateSpr
         }
     };
 
+    /**
+     * Handler function to toggle the selection of a backlog item.
+     * @param {string} itemId - The ID of the backlog item
+     */
     const handleToggleItem = (itemId) => {
         const currentIndex = selectedItems.indexOf(itemId);
         const newSelectedItems = [...selectedItems];
@@ -98,10 +116,11 @@ export default function AddSprint({ projectId, sprints, setSprints, canCreateSpr
                     No unassigned backlog items available for this project
                 </Typography>
             )}
-            {/* <Button variant="contained" color="primary" onClick={handleCreateSprint} disabled={!canCreateSprint}> */}
-            <Button variant="contained" color="primary" onClick={handleCreateSprint} >
-                Create Sprint
-            </Button>
+            {canCreateSprint && ( // Only show the create button if the user can create a sprint
+                <Button variant="contained" color="primary" onClick={handleCreateSprint} >
+                    Create Sprint
+                </Button>
+            )}
         </div>
     );
 }

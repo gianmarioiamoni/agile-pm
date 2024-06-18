@@ -11,6 +11,18 @@ import { updateBacklogItem } from '../../services/backlogServices';
 
 import TaskDialog from "./TaskDialog";
 
+
+/**
+ * Component for displaying a backlog item with its tasks.
+ * Allows creating, editing, and deleting tasks.
+ * Also allows changing the status of tasks and the status of the backlog item.
+ *
+ * @param {Object} props - The properties passed to the component.
+ * @param {Object} props.item - The backlog item to display.
+ * @param {Array} props.backlogItems - The array of backlog items.
+ * @param {Function} props.setBacklogItems - The function to update the backlog items array.
+ * @param {Array} props.assignments - The array of assignments.
+ */
 export default function BacklogItem({
     item,
     backlogItems,

@@ -16,7 +16,13 @@ import { addRole, editRole, deleteRole, getDefaultRoles } from "../../services/r
 import { getRolePermissionsMap, updateRolePermissionsMap } from "../../services/rolesMapServices";
 
 
-export default function RoleManagement({ currentRolesMap, setCurrentRolesMap, rolePermissionsMap, refreshPermissions, users, setUsers }) {
+export default function RoleManagement({
+    currentRolesMap,
+    setCurrentRolesMap,
+    rolePermissionsMap,
+    refreshPermissions,
+    users,
+    setUsers }) {
 
     const [openRoleEditDialog, setOpenRoleEditDialog] = useState(false);
     const [roleEditFormData, setRoleEditFormData] = useState({

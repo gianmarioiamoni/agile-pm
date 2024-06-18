@@ -24,8 +24,6 @@ import MemberListItem from "../components/assignment/MemberListItem";
 
 import { getAssignments, saveAssignments } from "../services/assignmentServices";
 
-// import { getTeamAssignments, addTeamMember, updateTeamMember, removeTeamMember } from "../services/teamAssignmentsServices";
-
 
 export default function TeamAssignmentsPage({ projects, users, currentRolesMap }) {
     const { currentUser } = useSelector(state => state.user);
@@ -178,9 +176,7 @@ export default function TeamAssignmentsPage({ projects, users, currentRolesMap }
                                     <MemberListItem
                                         key={uuidv4()}
                                         member={member}
-                                        handleAddMember={handleAddMember}
                                         handleRemoveMember={handleRemoveMember}
-                                        handleSaveChanges={handleSaveChanges}
                                     />
                                 ))}
                             </List>

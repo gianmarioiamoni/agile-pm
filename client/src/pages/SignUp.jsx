@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { MenuItem, Select } from '@mui/material';
 
 import { resetState, signInStart, signInSuccess, signInFailure } from "../redux/user/userSlice.js";
 
@@ -10,7 +8,6 @@ import OAuth from "../components/OAuth";
 
 import Header from "../components/Header.jsx";
 
-// import { RolesContext } from '../utils/RolesProvider.jsx';
 import { getCurrentRoles } from '../services/roleServices.js';
 
 const registerImage = "/backgrounds/signup-01.jpg"

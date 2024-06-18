@@ -1,34 +1,43 @@
 import { useId } from 'react';
 
-import { useDrop } from "react-dnd";
 
 import { ListItem, ListItemText, ListItemSecondaryAction, IconButton } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material'; 
 
-import { UserType } from "../../utils/types";
 
 
-export default function MemberListItem ({ member, handleAddMember, handleRemoveMember }) {
-    // const [{ isOver }, drop] = useDrop({
-    //     accept: UserType,
-    //     drop: (item) => handleAddMember(item.user),
-    //     collect: (monitor) => ({
-    //         isOver: !!monitor.isOver(),
-    //     }),
-    // });
+/**
+ * Component for displaying a single team member in a list.
+ * @param {Object} props - The component props.
+ * @param {Object} props.member - The team member object.
+ * @param {Function} props.handleRemoveMember - The function to handle removing a team member.
+ * @returns {JSX.Element} - The rendered component.
+ */
+export default function MemberListItem ({ member, handleRemoveMember }) {
+    
+    /**
+     * Handles the event of removing a team member.
+     * Calls the handleRemoveMember prop function with the member object.
+     */
+    const handleRemove = () => {
+        handleRemoveMember(member);
+    };
 
     return (
-        // <div ref={drop} style={{ backgroundColor: isOver ? 'lightblue' : 'transparent', padding: '8px', borderRadius: '4px' }}>
+        // Wrap the list item in a div with a unique id
         <div>
+            {/* Render the list item */}
             <ListItem key={useId()}>
+                {/* Render the primary and secondary text for the list item */}
                 <ListItemText primary={member.username} secondary={member.roleDescription} />
+                {/* Render the secondary action for the list item */}
                 <ListItemSecondaryAction>
-                    <IconButton edge="end" onClick={() => handleRemoveMember(member)}>
+                    {/* Render the delete icon button */}
+                    <IconButton edge="end" onClick={handleRemove}>
                         <DeleteIcon />
                     </IconButton>
                 </ListItemSecondaryAction>
             </ListItem>
-            
         </div>
     );
 };

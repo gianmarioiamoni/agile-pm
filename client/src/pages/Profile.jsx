@@ -16,7 +16,6 @@ import {
 import Header from "../components/Header";
 
 import { getCurrentRoles } from "../services/roleServices";
-// import { getRoleId } from '../../../server/Authorizations';
 
 
 export default function Profile({currentRolesMap}) {
@@ -105,7 +104,6 @@ export default function Profile({currentRolesMap}) {
         {
           'Content-Type': 'application/json'
         },
-        // body: JSON.stringify(editedUser)
         body: JSON.stringify(userWithRoleObj)
       });
 

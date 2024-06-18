@@ -8,13 +8,35 @@ import { v4 as uuidv4 } from 'uuid';
 import PermissionsBox from "./elements/PermissionsBox";
 import { getPermissionsLabelValues, getRolePermissionsMap, updateRolePermissionsMap } from '../../services/rolesMapServices';
 
+/**
+ * PermissionManagement component displays and manages the permissions of a role.
+ * It provides tabs for each role and allows the user to edit and save the permissions.
+ * The component also provides a button to restore the default permissions.
+ *
+ * @param {Object} props - The props object containing rolePermissionsMap, setRolePermissionsMap and refreshCount.
+ * @param {Array} props.rolePermissionsMap - The array of role permissions.
+ * @param {Function} props.setRolePermissionsMap - The function to update the role permissions.
+ * @param {number} props.refreshCount - The count to refresh the component.
+ * @returns {JSX.Element} The rendered PermissionManagement component.
+ */
 export default function PermissionManagement({rolePermissionsMap, setRolePermissionsMap, refreshCount}) {
+    // State to keep track of the selected tab
     const [selectedTab, setSelectedTab] = useState(0);
 
+    /**
+     * Handler function to handle tab change.
+     *
+     * @param {Object} event - The event object.
+     * @param {number} newValue - The new value of the tab.
+     */
     const handleChangeTab = (event, newValue) => {
         setSelectedTab(newValue);
     };
 
+    /**
+     * Handler function to handle save changes.
+     * It updates the role permissions map in the database.
+     */
     const handleSaveChanges = async () => {
         try {
             await updateRolePermissionsMap("current", [...rolePermissionsMap]);
@@ -23,6 +45,10 @@ export default function PermissionManagement({rolePermissionsMap, setRolePermiss
         }
     };
 
+    /**
+     * Handler function to handle restore default.
+     * It updates the role permissions map with the default values from the database.
+     */
     const handleRestoreDefault = async () => {
         const defaultRolePermissionsMap = await getRolePermissionsMap("default");
         await updateRolePermissionsMap("current", defaultRolePermissionsMap);
@@ -30,10 +56,11 @@ export default function PermissionManagement({rolePermissionsMap, setRolePermiss
     };
 
 
+    // Effect hook to initialize the role permissions map
     useEffect(() => {
         const initStates = async () => {
 
-            // init rolePermissionsMap
+            // Fetch the role permissions map from the database
             const rpm = await getRolePermissionsMap("current");
             setRolePermissionsMap([...rpm]);
         };
@@ -44,11 +71,13 @@ export default function PermissionManagement({rolePermissionsMap, setRolePermiss
     return (
         <>
             <Container component={Paper} >
+                {/* Tabs for each role */}
                 <Tabs value={selectedTab} onChange={handleChangeTab} aria-label="Role Tabs">
                     {rolePermissionsMap && rolePermissionsMap.map((role, roleIndex) => (
                         <Tab label={role.role} key={roleIndex} />
                     ))}
                 </Tabs>
+                {/* Render the PermissionsBoxContainer for each role */}
                 {rolePermissionsMap.map((role, roleIndex) => (
                     <TabPanel value={selectedTab} index={roleIndex} key={uuidv4()}>
                         <PermissionsBoxContainer
@@ -61,7 +90,7 @@ export default function PermissionManagement({rolePermissionsMap, setRolePermiss
                 ))}
             </Container>
             <Box display="flex" alignItems="flex-start"  >
-                {/* button to save roles */}
+                {/* Button to save roles */}
                 <Grid item xs={3}>
                     <Button
                         variant="contained"
@@ -72,7 +101,7 @@ export default function PermissionManagement({rolePermissionsMap, setRolePermiss
                         Save Permissions
                     </Button>
                 </Grid>
-                {/* button to restore default role */}
+                {/* Button to restore default role */}
                 <Grid item xs={3} sx={{ marginLeft: 2 }}>
                     <Button
                         variant="contained"

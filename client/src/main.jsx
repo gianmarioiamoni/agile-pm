@@ -10,17 +10,14 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-// import { RolesProvider } from './utils/RolesProvider.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   // <Provider> makes store available in the whole application
   <Provider store={store}>
     <PersistGate persistor={persistor} loading={null}>
-      {/* <RolesProvider> */}
       <DndProvider backend={HTML5Backend}>
         <App />
         </DndProvider>
-      {/* </RolesProvider> */}
     </PersistGate>
   </Provider>
 )

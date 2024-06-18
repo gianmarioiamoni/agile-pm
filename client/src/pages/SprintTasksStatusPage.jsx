@@ -8,23 +8,34 @@ import BacklogItem from "../components/sprint/BacklogItem";
 
 import { getSprint } from "../services/sprintServices";
 import { updateTaskStatus, getTasksByBacklogItemId } from "../services/taskServices";
-import { getBacklogItem, updateBacklogItem } from "../services/backlogServices";
+import { getBacklogItem } from "../services/backlogServices";
 import { getAssignments } from "../services/assignmentServices"; 
 
+/**
+ * Component for managing tasks for a specific sprint.
+ * Displays all tasks associated with a sprint and allows users to drag and drop tasks to a different backlog item.
+ */
 export default function SprintTasksStatusPage() {
+    // Get sprintId from URL parameters
     const { sprintId } = useParams();
 
-    const [sprint, setSprint] = useState(null);
-    const [backlogItems, setBacklogItems] = useState([]);
-    const [newTask, setNewTask] = useState({ title: '', description: '', assignee: '' });
-    const [assignments, setAssignments] = useState([]);
+    // State variables
+    const [sprint, setSprint] = useState(null); // Sprint data
+    const [backlogItems, setBacklogItems] = useState([]); // Backlog items for the sprint
+    const [newTask, setNewTask] = useState({ title: '', description: '', assignee: '' }); // New task to be added
+    const [assignments, setAssignments] = useState([]); // Assignments for the sprint's project
 
+    /**
+     * Fetch sprint and assignments data when component mounts.
+     */
     useEffect(() => {
         const fetchSprintAndAssignments = async () => {
             try {
+                // Fetch sprint data
                 const sprintData = await getSprint(sprintId);
                 setSprint(sprintData);
 
+                // Fetch backlog items for the sprint
                 if (sprintData.items && sprintData.items.length > 0) {
                     const itemPromises = sprintData.items.map(async (item) => {
                         const itemId = item._id || item;
@@ -40,6 +51,7 @@ export default function SprintTasksStatusPage() {
                     console.log('SprintTasksPage: fetchSprint: No items found in sprintData');
                 }
 
+                // Fetch assignments for the sprint's project
                 if (sprintData.projectId) {
                     const assignmentsData = await getAssignments(sprintData.projectId);
                     setAssignments(assignmentsData);
@@ -54,7 +66,11 @@ export default function SprintTasksStatusPage() {
         fetchSprintAndAssignments();
     }, [sprintId]);
 
-
+    /**
+     * Handle drag end event for reordering tasks.
+     * Updates the task status and state variables.
+     * @param {Object} result - Result of the drag end event
+     */
     const handleDragEnd = async (result) => {
         if (!result.destination) {
             return;
@@ -88,6 +104,10 @@ export default function SprintTasksStatusPage() {
         await updateTaskStatus(movedTask._id, sourceItem, destinationDroppableId);
     };
 
+    /**
+     * Check if the "Add Task" button should be disabled based on the input values.
+     * @returns {boolean} - True if the "Add Task" button should be disabled, false otherwise.
+     */
     const isAddTaskDisabled = newTask.title.trim() === '' || newTask.description.trim() === '';
 
 
@@ -96,10 +116,12 @@ export default function SprintTasksStatusPage() {
             <Header isShowProfile={true} isShowHome={true} isShowDashboard={true} isShowBack={true}/>
 
             <Container style={{ marginTop: 20 }}>
+                {/* Display sprint name */}
                 <Typography variant="h4" gutterBottom>
                     Manage Tasks for Sprint <Box component="span" color="primary.main" fontWeight="fontWeightBold">{sprint ? sprint.name : ''}</Box>
                 </Typography>
 
+                {/* Display backlog items with draggable tasks */}
                 <DragDropContext onDragEnd={handleDragEnd}>
                     {backlogItems?.map(item => (
                         <BacklogItem

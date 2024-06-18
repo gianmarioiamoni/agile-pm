@@ -2,9 +2,19 @@
 
 import { TextField } from '@mui/material';
 
-export default function EditProjectForm ({ project, onInputChange }) {
+/**
+ * Project edit form component.
+ *
+ * @param {Object} props - The component props.
+ * @param {Object} props.project - The project object.
+ * @param {Function} props.onInputChange - The input change handler.
+ * @returns {JSX.Element} - The rendered component.
+ */
+export default function EditProjectForm({ project, onInputChange }) {
+    // Render the project edit form.
     return (
         <>
+            {/* Project name input */}
             <TextField
                 fullWidth
                 label="Name"
@@ -14,6 +24,7 @@ export default function EditProjectForm ({ project, onInputChange }) {
                 onChange={onInputChange}
                 margin="normal"
             />
+            {/* Project description input */}
             <TextField
                 fullWidth
                 label="Description"

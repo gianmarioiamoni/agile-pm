@@ -13,23 +13,47 @@ import { getCurrentRoles } from '../services/roleServices.js';
 const loginImage = "/backgrounds/login-01.jpg"
 
 
+/**
+ * SignIn component
+ * 
+ * This component handles the sign in functionality of the application.
+ * It uses React hooks such as useState, useEffect, and useDispatch to manage state and side effects.
+ * It also uses Redux for state management by dispatching actions and using the useSelector hook to retrieve state from the Redux store.
+ * 
+ * @returns {JSX.Element} The SignIn component
+ */
 export default function SignIn() {
+    // State hook to manage form data
     const [formData, setFormData] = useState({});
 
+    // State hook to manage loading and error states
     const { isLoading, isError } = useSelector((state) => state.user); // Slice name is "user" in userSlice.js
 
+    // Navigation hook
     const navigate = useNavigate();
 
+    // Dispatch hook to dispatch Redux actions
     const dispatch = useDispatch();
 
+    // Effect hook to reset Redux state on component mount
     useEffect(() => {
         dispatch(resetState());
     }, []);
 
+    /**
+     * Handles input change event
+     * 
+     * @param {Object} e - The event object
+     */
     const handleChange = (e) => {
         setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
     }
 
+    /**
+     * Handles form submission
+     * 
+     * @param {Object} e - The event object
+     */
     const handleSubmit = async (e) => {
         // It prevents refreshing the page when we submit the form
         e.preventDefault();
@@ -49,16 +73,19 @@ export default function SignIn() {
 
             if (!data.success) {
                 // error message is inside data
-                // intead of setIsError(true)
+                // instead of setIsError(true)
                 dispatch(signInFailure(data));
                 return;
             }
 
+            // Retrieve roles from the server
             const roles = await getCurrentRoles();
+            // Find the role object that matches the role id in the response data
             const role = roles.find((r) => r._id === data.role)
+            // Create a new object that includes the role object from the response data
             const dataFilledWithRole = {...data, role}
             
-            // intead of setIsLoading(false) we change the state of redux
+            // instead of setIsLoading(false) we change the state of redux
             dispatch(signInSuccess(dataFilledWithRole));
             // user is authenticated; navigate to /
             navigate("/");
