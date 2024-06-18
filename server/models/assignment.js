@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+// assigns resources to a project
+
 const assignmentSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,

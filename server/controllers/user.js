@@ -29,11 +29,16 @@ export const getUsers = async (req, res, next) => {
 
 // next() allows to use the middleware to handle errors
 export const updateUser = async (req, res, next) => {
+    console.log("updateUser(): req.params.id: ", req.params.id);
+    console.log("updateUser(): req.body: ", req.body);
+
     // check if the user is trying to updated his own account
     // or if is an Admin
     // req.user comes from validateUser middleware
     const currentUser = await User.findById(req.user.id).populate('role');
+    console.log("updateUser(): currentUser: ", currentUser);
     if (req.user.id !== req.params.id && currentUser.role.roleKey !== 0) {
+        console.log("updateUser(): You can update your account only or you must be an Admin to do that");
         return next(errorHandler(401, "You can update your account only or you must be an Admin to do that"));
     }
 
@@ -42,6 +47,7 @@ export const updateUser = async (req, res, next) => {
         // if there is a new password, we want encrypt it
         if (req.body.password) {
             req.body.password = bcryptjs.hashSync(req.body.password, 10);
+            console.log("updateUser(): new password generated and added to req.body: ", req.body.password);
         }
 
         // update the user
@@ -55,13 +61,16 @@ export const updateUser = async (req, res, next) => {
             },
             { new: true } // we get back the updated user
         );
+        console.log("updateUser(): updatedUser: ", updatedUser);
 
         // remove the password from the response to be send to the client
         const { password, ...rest } = updatedUser._doc;
+        console.log("updateUser(): rest: ", rest);
 
         // send back the updated user to the client, without the password
         res.status(200).json({ ...rest, success: true });
     } catch (error) {
+        console.log("updateUser(): error: ", error);
         next(error);
     }
 }

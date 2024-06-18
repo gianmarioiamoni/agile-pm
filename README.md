@@ -2,6 +2,9 @@
 
 **<span style="color: #2d3748;">Agile Project Manager</span>** is a comprehensive web application designed to streamline and enhance the management of agile projects. It provides a suite of tools to facilitate project planning, task management, and team collaboration, ensuring projects are delivered on time and within scope.
 
+![alt text](<01 - Home page.png>)
+
+
 ## Technologies Used
 
 ### Frontend:
