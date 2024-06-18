@@ -91,30 +91,37 @@ export default function Dashboard({projects, setProjects, users, canSprints, set
     // Callbacks for event handling
 
     // Create new project
-    const handleCreateProject = (newProject) => {
-        const createdProject = createProject(newProject)
-        setProjects([...projects, { ...newProject }]);
+    const handleCreateProject = async (newProject) => {
+        try {
+            const newProjectFromDB = await createProject(newProject);
+            setProjects([...projects, { ...newProjectFromDB }]);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     // Edit existing project
-    const handleEditProject = (editedProject) => {
-        updateProject(editedProject);
-
-        const updatedProjects = projects.map(project =>
-            project.id === editedProject.id ? editedProject : project
-        );
-
-        setProjects(updatedProjects);
-        setEditProject(null);
+    const handleEditProject = async (editedProject) => {
+        try {
+            const editedProjectFromDB = await updateProject(editedProject);
+            setProjects(projects.map(project => project.id === editedProject.id ? editedProjectFromDB : project));
+            setEditProject(null);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     // Delete project
-    const handleDeleteProject = () => {
+    const handleDeleteProject = async () => {
         const updatedProjects = projects.filter(project =>
             project.id !== deleteProject.id
         );
         setProjects(updatedProjects);
-        removeProject(deleteProject.id);
+        try {
+            await removeProject(deleteProject.id);
+        } catch (error) {
+            console.log(error);
+        } 
         setDeleteProject(null);
     };
 
@@ -123,7 +130,7 @@ export default function Dashboard({projects, setProjects, users, canSprints, set
         <>
             {/* Render Header component */}
             <Header isShowAbout={true} isShowProfile={true} isShowHome={true} isShowAdmin={currentUser.role.roleKey == 0} />
-            <div style={{ padding: '24px' }}>
+            <div style={{ padding: '72px' }}>
                 <Typography variant="h3" gutterBottom>Dashboard</Typography>
 
                 <Grid container spacing={3} alignItems="flex-start">

@@ -48,6 +48,7 @@ export async function getProject(id) {
 
 export async function removeProject(id) {
     try {
+        console.log(id);
         const res = await axios.delete(`/server/projects/${id}`);
         return res;
     } catch (err) { console.log(err) }

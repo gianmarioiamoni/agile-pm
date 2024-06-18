@@ -34,13 +34,20 @@
 ### Authentication and Authorization
 
 - **<span style="color: #805ad5;">User Registration and Login</span>**: 
-  - secure registration and login processes for users
+  - secure registration request via email and login processes for users
   - passwords are hashed for security
   - JWT tokens are used to maintain sessions
+
+  ![alt text](<02 - signup.png>)
+
+  ![alt text](<03 - signin.png>)
+
 
 - **<span style="color: #805ad5;">Role Management for Users</span>**: 
   - admins can assign roles to users
   - different roles have different permissions, such as accessing admin functions or managing projects
+
+
 
 ### Project Management
 
@@ -48,6 +55,13 @@
   - admins and authorized users can create new projects
   - projects can be updated with new information or requirements
   - projects can be deleted if they are no longer needed
+
+  ![alt text](<04 - create project.png>)
+
+  ![alt text](<05 - edit project.png>)
+
+  ![alt text](<06 - delete project.png>)
+
 
 - **<span style="color: #805ad5;">Assignment of Team Members to Projects</span>**: 
   - admins can assign team members to specific projects based on their roles and responsibilities

@@ -39,6 +39,7 @@ export default function ProjectsList({ projects, onEdit, onDelete,
             setProjectAssignments(assignments);
         };
         fetchProjectAssignments();
+        console.log(projects)
     }, [projects]);
 
     return (

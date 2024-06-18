@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+import bcryptjs from 'bcryptjs';
+
 import User from "../server/models/user.js";
 import Role from '../server/models/role.js';
 import Project from '../server/models/project.js';
@@ -8,22 +10,28 @@ import BacklogItem from '../server/models/backlogItem.js';
 import Task from '../server/models/task.js';
 import Assignment from '../server/models/assignment.js';
 
+// default roles
+const defaultRolesMap = [
+    { roleKey: 0, roleDescription: 'Admin' },
+    { roleKey: 1, roleDescription: 'Product Owner' },
+    { roleKey: 2, roleDescription: 'Scrum Master' },
+    { roleKey: 3, roleDescription: 'Scrum Team Member' },
+    { roleKey: 4, roleDescription: 'Project Manager' }
+];
+
+const defaultUsersMap = [
+    { username: 'admin', email: 'admin@mail.com', password: 'password', roleKey: 0 },
+    { username: 'john', email: 'john@mail.com', password: 'password', roleKey: 1 },
+    { username: 'kate', email: 'kate@mail.com', password: 'password', roleKey: 2 },
+    { username: 'peter', email: 'peter@mail.com', password: 'password', roleKey: 3 },
+    { username: 'jane', email: 'jane@mail.com', password: 'password', roleKey: 4 }
+];
+
+const defaultPassword = 'password';
+
 
 // Connect to MongoDB
 mongoose.connect('mongodb+srv://gianmarioiamoni:GiaMongoDB21__@agile-pm.6debvvl.mongodb.net/agile-pm?retryWrites=true&w=majority&appName=agile-pm', { useNewUrlParser: true, useUnifiedTopology: true });
-
-// try {
-//     await mongoose.connect(process.env.MONGO_DB);
-//     console.log("CONNECTED TO DATABASE");
-
-//     // initializeDatabase();
-
-// } catch (error) {
-//     console.log(error)
-// }
-// app.listen(3000, () => {
-//     console.log("SERVER LISTENING ON PORT 3000");
-// });
 
 const seedDatabase = async () => {
     // Clear existing data
@@ -36,18 +44,26 @@ const seedDatabase = async () => {
     await Assignment.deleteMany({});
 
     // Create Roles
-    const adminRole = new Role({ roleKey: 0, roleDescription: 'Admin', isDefault: false });
-    const memberRole = new Role({ roleKey: 1, roleDescription: 'Member', isDefault: true });
-    await adminRole.save();
-    await memberRole.save();
+    const roles = defaultRolesMap.map(role => new Role({ ...role, isDefault: true }));
+    console.log(roles);
+    // const memberRole = new Role({ roleKey: 1, roleDescription: 'Member', isDefault: true });
+    for (let role of roles) {
+        await role.save();
+    }
+    // const adminRole = new Role({ roleKey: 0, roleDescription: 'Admin', isDefault: false });
+    // const memberRole = new Role({ roleKey: 1, roleDescription: 'Member', isDefault: false });
+    // await adminRole.save();
+    // await memberRole.save();
 
     // Create Users
-    const users = [
-        new User({ username: 'admin', email: 'admin@example.com', password: 'password', role: adminRole._id }),
-        new User({ username: 'john', email: 'john@example.com', password: 'password', role: memberRole._id }),
-        new User({ username: 'jane', email: 'jane@example.com', password: 'password', role: memberRole._id }),
-        new User({ username: 'jim', email: 'jim@example.com', password: 'password', role: memberRole._id })
-    ];
+    // const users = [
+    //     new User({ username: 'john', email: 'john@example.com', password: bcryptjs.hashSync(defaultPassword, 10)', role: memberRole._id }),
+    //     new User({ username: 'jane', email: 'jane@example.com', password: 'password', role: memberRole._id }),
+    //     new User({ username: 'jim', email: 'jim@example.com', password: 'password', role: memberRole._id })
+    // ];
+
+    // create users
+    const users = defaultUsersMap.map(user => new User({ ...user, password: bcryptjs.hashSync(defaultPassword, 10), role: roles.find(role => role.roleKey === user.roleKey)._id }));
     for (let user of users) {
         await user.save();
     }

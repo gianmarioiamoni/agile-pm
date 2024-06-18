@@ -29,6 +29,7 @@ export default function SignUp() {
 
     const getRoles = async () => {
       const r = await getCurrentRoles()
+      console.log(r)
       setRoles(r);
     };
     getRoles();
@@ -77,7 +78,7 @@ export default function SignUp() {
           className='bg-input-bg border-border border-2 p-2 rounded-lg'>
           <option value="" disabled>Select Role</option>
           {roles.map((role, index) => (
-            <option key={index} value={role.id}>{role.description}</option>
+            <option key={index} value={role._id}>{role.roleDescription}</option>
           ))}
         </select>
         {/* Sign up section  */}
