@@ -13,7 +13,6 @@ import { Paper, Typography, List, ListItem, ListItemText, Box, Grid } from '@mui
  * @returns {JSX.Element|null} - Rendered component
  */
 export default function ProjectInfo({ project }) {
-    console.log("project: ", project);
 
     // If project data is not available, return null
     if (!project) {

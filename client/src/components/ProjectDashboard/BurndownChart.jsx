@@ -9,7 +9,6 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
  * @return {JSX.Element} Burndown chart component
  */
 export default function BurndownChart({ data }) {
-    console.log("BurndownChart() - data: ", data);
 
     // Flat the dailyPoints array
     const chartData = data.flatMap(sprint => {

@@ -29,7 +29,6 @@ export default function SignUp() {
 
     const getRoles = async () => {
       const r = await getCurrentRoles()
-      console.log(r)
       setRoles(r);
     };
     getRoles();

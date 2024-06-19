@@ -29,8 +29,6 @@ export default function SprintList({
     canDeleteSprint = true,
     canAssignSprint = true }) {
     
-    console.log("sprints", sprints)
-    
     // State to control the edit dialog
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     

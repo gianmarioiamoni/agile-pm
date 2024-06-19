@@ -70,8 +70,6 @@ export default function ProjectDashboardPage() {
         return <Typography>Loading...</Typography>;
     }
 
-    console.log("projectData", projectData);
-
     // Format the burndown data for the chart component
     const formattedBurndownData = projectData.burndownData.map(sprint => ({
         ...sprint,

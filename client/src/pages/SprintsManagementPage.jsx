@@ -40,7 +40,6 @@ export default function SprintsManagementPage({
         const fetchSprints = async () => {
             try {
                 const sprintsData = await getSprintsByProjectId(projectId);
-                console.log('Sprints:', sprintsData.sprints);
                 setSprints(sprintsData.sprints);
             } catch (error) {
                 console.error('SprintsManagementPage: fetchSprints: Error fetching sprints:', error);
@@ -51,7 +50,6 @@ export default function SprintsManagementPage({
         const fetchBacklogItems = async () => {
             try {
                 const items = await getBacklogItems(projectId);
-                console.log('Backlog items:', items);
                 setBacklogItems(items.filter(item => !item.sprint)); // filter not assigned items
             } catch (error) {
                 console.error('SprintsManagementPage: fetchBacklogItems: Error fetching backlog items:', error);
