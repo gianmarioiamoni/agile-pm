@@ -81,11 +81,11 @@
 
 ### Project Backlog
 
+ ![alt text](<08 - Backlog.png>)
+
 - **<span style="color: #805ad5;">Creation and Management of Project Backlogs</span>**: 
   - users can create backlog items for tasks that need to be completed
   - backlog items can be edited or deleted as required
-
-  ![alt text](<08 - Backlog.png>)
 
   ![alt text](<10 - Backlog - edit item.png>)
 
@@ -103,11 +103,16 @@
 
 ### Sprint Planning
 
+![alt text](<12 - Sprint management.png>)
+
 - **<span style="color: #805ad5;">Creation of Sprints for Projects</span>**: 
   - users can create sprints, defining the duration and goals for each sprint
   - sprints help in organizing work into manageable chunks
 
-  
+![alt text](<13 . Sprint Management - create sprint.png>)
+
+![alt text](<14 - Sprint Management - create sprint 2.png>)
+
 
 - **<span style="color: #805ad5;">Assignment of Tasks to Sprints</span>**: 
   - tasks from the backlog can be assigned to specific sprints
@@ -117,15 +122,41 @@
   - users can track the status of tasks within each sprint
   - tasks can be marked as **To Do**, **In Progress**, or **Done**
 
-### Dashboard and Reports
+  ![alt text](<15 - Tasks management.png>)
+
+  - **<span style="color: #805ad5;">Assignment of Resources to Tasks</span>**: 
+  - resources can be assigned to specific tasks
+
+  ![alt text](<16 - Tasks management - resources.png>)
+
+
+### Project Dashboard and Reports
+
+![alt text](<17 - Project Dashboard.png>)
+
+- **<span style="color: #805ad5;">Project Details and status</span>**: 
+  - the dashboard provides an overview of project information and status of sprints and tasks
+
+![alt text](<17a - Project Dashboard - Backlog.png>)
+
+![alt text](<18 - Dashboard - sprints backlog.png>)
+
+![alt text](<19 - Scrum Board-1.png>)
+
 
 - **<span style="color: #805ad5;">Dashboard with Key Metrics</span>**: 
   - the dashboard provides an overview of project metrics such as sprint velocity, task completion rate, and burndown charts
   - users can quickly assess the health and progress of their projects
 
+  ![alt text](<21 - Project Dashboard - sprint velocity.png>)
+
+
 - **<span style="color: #805ad5;">Generation of Reports</span>**: 
   - detailed reports on project progress and team performance can be generated
   - reports include metrics like task completion times, sprint success rates, and individual performance assessments
+
+  ![alt text](<23 - Project Dashboard - team performance.png>)
+  
 
 ### User and Role Management
 
