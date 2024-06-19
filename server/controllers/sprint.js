@@ -49,6 +49,7 @@ export const getSprintsByProjectId = async (req, res) => {
     const { projectId } = req.params;
     try {
         const sprints = await Sprint.find({ projectId }).populate('items');
+        console.log('sprints', sprints);
 
         // Calculate completed points for each sprint
         const sprintVelocityData = await Promise.all(sprints.map(async (sprint) => {

@@ -77,7 +77,7 @@
 - **<span style="color: #805ad5;">Viewing Project Details</span>**: 
   - users can view comprehensive details about each project, including the list of tasks, deadlines, and sprint plans
 
-  
+
 
 ### Project Backlog
 
@@ -85,9 +85,17 @@
   - users can create backlog items for tasks that need to be completed
   - backlog items can be edited or deleted as required
 
+  ![alt text](<08 - Backlog.png>)
+
+  ![alt text](<10 - Backlog - edit item.png>)
+
+
 - **<span style="color: #805ad5;">Prioritization of Backlog Items</span>**: 
   - users can set priorities for each backlog item to ensure important tasks are addressed first
   - high-priority items are highlighted for better visibility
+
+  ![alt text](<11 - Backlog - change item priority.png>)
+
 
 - **<span style="color: #805ad5;">Drag-and-Drop Functionality</span>**: 
   - intuitive drag-and-drop interface for managing backlog items
@@ -98,6 +106,8 @@
 - **<span style="color: #805ad5;">Creation of Sprints for Projects</span>**: 
   - users can create sprints, defining the duration and goals for each sprint
   - sprints help in organizing work into manageable chunks
+
+  
 
 - **<span style="color: #805ad5;">Assignment of Tasks to Sprints</span>**: 
   - tasks from the backlog can be assigned to specific sprints

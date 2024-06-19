@@ -50,17 +50,6 @@ const seedDatabase = async () => {
     for (let role of roles) {
         await role.save();
     }
-    // const adminRole = new Role({ roleKey: 0, roleDescription: 'Admin', isDefault: false });
-    // const memberRole = new Role({ roleKey: 1, roleDescription: 'Member', isDefault: false });
-    // await adminRole.save();
-    // await memberRole.save();
-
-    // Create Users
-    // const users = [
-    //     new User({ username: 'john', email: 'john@example.com', password: bcryptjs.hashSync(defaultPassword, 10)', role: memberRole._id }),
-    //     new User({ username: 'jane', email: 'jane@example.com', password: 'password', role: memberRole._id }),
-    //     new User({ username: 'jim', email: 'jim@example.com', password: 'password', role: memberRole._id })
-    // ];
 
     // create users
     const users = defaultUsersMap.map(user => new User({ ...user, password: bcryptjs.hashSync(defaultPassword, 10), role: roles.find(role => role.roleKey === user.roleKey)._id }));
@@ -90,23 +79,29 @@ const seedDatabase = async () => {
         await sprint.save();
     }
 
-    // Create Backlog Items and Tasks
-    for (let sprint of sprints) {
-        const backlogItems = [
-            new BacklogItem({ projectId: project._id, title: 'Setup Project', description: 'Setup initial project structure', priority: 1, points: 5, sprint: sprint._id }),
-            new BacklogItem({ projectId: project._id, title: 'Develop Login', description: 'Develop user login functionality', priority: 2, points: 8, sprint: sprint._id }),
-            new BacklogItem({ projectId: project._id, title: 'Create Dashboard', description: 'Create project dashboard', priority: 3, points: 13, sprint: sprint._id })
+    // Create Backlog Items
+    const backlogItems = [
+        new BacklogItem({ projectId: project._id, title: 'Setup Project', description: 'Setup initial project structure', priority: 1, points: 5, sprint: sprints[0]._id }),
+        new BacklogItem({ projectId: project._id, title: 'Develop Login', description: 'Develop user login functionality', priority: 2, points: 8, sprint: sprints[1]._id }),
+        new BacklogItem({ projectId: project._id, title: 'Create Dashboard', description: 'Create project dashboard', priority: 3, points: 13, sprint: sprints[2]._id })
+    ];
+
+    // assign items to sprints
+    for (let i = 0; i < sprints.length; i++) {
+        sprints[i].items = [backlogItems[i]._id];
+        sprints[i].save();
+    }
+
+    // create tasks    
+    for (let backlogItem of backlogItems) {
+        await backlogItem.save();
+        const tasks = [
+            new Task({ title: 'Task 1', description: 'Initial task setup', backlogItemId: backlogItem._id, projectId: project._id, status: 'To Do', points: 2, assignee: users[1]._id }),
+            new Task({ title: 'Task 2', description: 'Continue development', backlogItemId: backlogItem._id, projectId: project._id, status: 'In Progress', points: 3, assignee: users[2]._id }),
+            new Task({ title: 'Task 3', description: 'Complete development', backlogItemId: backlogItem._id, projectId: project._id, status: 'Done', points: 4, assignee: users[3]._id })
         ];
-        for (let backlogItem of backlogItems) {
-            await backlogItem.save();
-            const tasks = [
-                new Task({ title: 'Task 1', description: 'Initial task setup', backlogItemId: backlogItem._id, projectId: project._id, status: 'To Do', points: 2, assignee: users[1]._id }),
-                new Task({ title: 'Task 2', description: 'Continue development', backlogItemId: backlogItem._id, projectId: project._id, status: 'In Progress', points: 3, assignee: users[2]._id }),
-                new Task({ title: 'Task 3', description: 'Complete development', backlogItemId: backlogItem._id, projectId: project._id, status: 'Done', points: 4, assignee: users[3]._id })
-            ];
-            for (let task of tasks) {
-                await task.save();
-            }
+        for (let task of tasks) {
+            await task.save();
         }
     }
 

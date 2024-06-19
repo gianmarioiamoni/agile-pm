@@ -17,9 +17,24 @@ import { updateSprint, removeSprint } from "../../services/sprintServices";
  * @param {string} props.projectId - The id of the project
  * @param {Array} props.sprints - The sprints for the project
  * @param {Function} props.setSprints - A function to update the state with new sprints
+ * @param {boolean} [props.canEditSprint=true] - Flag indicating if the user can edit sprints
+ * @param {boolean} [props.canDeleteSprint=true] - Flag indicating if the user can delete sprints
+ * @param {boolean} [props.canAssignSprint=true] - Flag indicating if the user can assign sprints
  */
-export default function SprintList({ projectId, sprints, setSprints, canEditSprint = true, canDeleteSprint = true, canAssignSprint = true }) {
+export default function SprintList({
+    projectId,
+    sprints,
+    setSprints,
+    canEditSprint = true,
+    canDeleteSprint = true,
+    canAssignSprint = true }) {
+    
+    console.log("sprints", sprints)
+    
+    // State to control the edit dialog
     const [editDialogOpen, setEditDialogOpen] = useState(false);
+    
+    // State to hold the current sprint being edited
     const [currentSprint, setCurrentSprint] = useState({
         name: '',
         projectId,
@@ -30,11 +45,19 @@ export default function SprintList({ projectId, sprints, setSprints, canEditSpri
         status: 'Planned'
     });
 
+    /**
+     * Handler function to open the edit dialog for a sprint.
+     * @param {Object} sprint - The sprint to edit
+     */
     const handleEdit = (sprint) => {
         setCurrentSprint(sprint);
         setEditDialogOpen(true);
     };
 
+    /**
+     * Handler function to save the edits to a sprint.
+     * @param {Object} editedSprint - The edited sprint
+     */
     const handleSave = async (editedSprint) => {
         try {
             const updatedSprint = await updateSprint(editedSprint);
@@ -48,6 +71,10 @@ export default function SprintList({ projectId, sprints, setSprints, canEditSpri
         }
     };
 
+    /**
+     * Handler function to delete a sprint.
+     * @param {string} sprintId - The id of the sprint to delete
+     */
     const handleDelete = async (sprintId) => {
         try {
             await removeSprint(sprintId);
@@ -77,9 +104,7 @@ export default function SprintList({ projectId, sprints, setSprints, canEditSpri
                                     <Box component="span" display="block" color="textSecondary" minWidth="250px">
                                         Start: {new Date(sprint.startDate).toLocaleDateString()} - End: {new Date(sprint.endDate).toLocaleDateString()}
                                     </Box>
-                                    {/* <Box component="span" display="block" color={sprint.tasks?.length > 0 ? "green" : "red"}> */}
                                     <Box component="span" display="block" color={sprint.items?.length > 0 ? "green" : "red"}>
-                                        {/* Tasks: {sprint.tasks?.length || 0} */}
                                         Items: {sprint.items?.length || 0}
                                     </Box>
                                 </Box>
@@ -115,6 +140,7 @@ export default function SprintList({ projectId, sprints, setSprints, canEditSpri
                 ))}
             </List>
 
+            {/* Edit Sprint Dialog */}
             <EditSprintDialog
                 open={editDialogOpen}
                 onClose={() => setEditDialogOpen(false)}
