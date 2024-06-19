@@ -67,8 +67,17 @@
   - admins can assign team members to specific projects based on their roles and responsibilities
   - team members receive notifications about their assignments
 
+  ![alt text](<07 - Resources assignment.png>)
+
+  ![alt text](<06 - Resources assignment.png>)
+
+  ![alt text](<05 - Resorces assignment.png>)
+
+
 - **<span style="color: #805ad5;">Viewing Project Details</span>**: 
   - users can view comprehensive details about each project, including the list of tasks, deadlines, and sprint plans
+
+  
 
 ### Project Backlog
 

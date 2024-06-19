@@ -17,7 +17,6 @@ import { StyledTab, MetricTab, ReportTab } from "../components/CustomTabs";
 
 import { defaultBaseColor, metricBaseColor, reportBaseColor } from '../utils/colors';
 
-
 /**
  * The ProjectDashboardPage component renders the project dashboard page.
  * It fetches project data and renders different tabs for different metrics and reports.
@@ -71,6 +70,8 @@ export default function ProjectDashboardPage() {
         return <Typography>Loading...</Typography>;
     }
 
+    console.log("projectData", projectData);
+
     // Format the burndown data for the chart component
     const formattedBurndownData = projectData.burndownData.map(sprint => ({
         ...sprint,
@@ -85,13 +86,13 @@ export default function ProjectDashboardPage() {
             <Header isShowHome={true} isShowDashboard={true} isShowProfile={true} />
             {/* Project dashboard container */}
             <Container sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'stretch' }}>
-                <Typography variant="h4" gutterBottom marginTop={2}>Project Dashboard</Typography>
+                <Typography variant="h4" gutterBottom marginTop={2}>{projectData.project.name} - Dashboard</Typography>
                 {/* Render the tabs and tab panels */}
                 <Grid container spacing={3} flex={2} flexDirection={'column'} justifyContent={'space-between'} alignItems={'stretch'}>
-                    <Grid item xs={12} md={3}>
-                        <ProjectInfo project={projectData.project} />
+                    <Grid item xs={12}>
+                        <ProjectInfo project={projectData} />
                     </Grid>
-                    <Grid item xs={12} md={9}>
+                    <Grid item xs={12}>
                         <Tabs
                             value={tabValue}
                             onChange={handleChange}
@@ -141,8 +142,7 @@ export default function ProjectDashboardPage() {
             </Container>
         </>
     );
-};
-
+}
 
 // UTILITY FUNCTIONS
 
