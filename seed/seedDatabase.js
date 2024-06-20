@@ -24,7 +24,8 @@ const defaultUsersMap = [
     { username: 'john', email: 'john@mail.com', password: 'password', roleKey: 1 },
     { username: 'kate', email: 'kate@mail.com', password: 'password', roleKey: 2 },
     { username: 'peter', email: 'peter@mail.com', password: 'password', roleKey: 3 },
-    { username: 'jane', email: 'jane@mail.com', password: 'password', roleKey: 4 }
+    { username: 'jane', email: 'jane@mail.com', password: 'password', roleKey: 4 },
+    { username: 'Caterine', email: 'caterine@mail.com', password: 'password', roleKey: 3 }
 ];
 
 const defaultPassword = 'password';
@@ -73,7 +74,8 @@ const seedDatabase = async () => {
     const sprints = [
         new Sprint({ name: 'Sprint 1', projectId: project._id, startDate: new Date(), endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), goal: 'Complete initial setup' }),
         new Sprint({ name: 'Sprint 2', projectId: project._id, startDate: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000), endDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), goal: 'Develop core features' }),
-        new Sprint({ name: 'Sprint 3', projectId: project._id, startDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), endDate: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000), goal: 'Polish and refine' })
+        new Sprint({ name: 'Sprint 3', projectId: project._id, startDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), endDate: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000), goal: 'Polish and refine' }),
+        new Sprint({ name: 'Sprint 4', projectId: project._id, startDate: new Date(Date.now() + 22 * 24 * 60 * 60 * 1000), endDate: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000), goal: 'Deploy to production' })
     ];
     for (let sprint of sprints) {
         await sprint.save();
@@ -81,9 +83,10 @@ const seedDatabase = async () => {
 
     // Create Backlog Items
     const backlogItems = [
-        new BacklogItem({ projectId: project._id, title: 'Setup Project', description: 'Setup initial project structure', priority: 1, points: 5, sprint: sprints[0]._id }),
-        new BacklogItem({ projectId: project._id, title: 'Develop Login', description: 'Develop user login functionality', priority: 2, points: 8, sprint: sprints[1]._id }),
-        new BacklogItem({ projectId: project._id, title: 'Create Dashboard', description: 'Create project dashboard', priority: 3, points: 13, sprint: sprints[2]._id })
+        new BacklogItem({ projectId: project._id, title: 'Setup Project', description: 'Setup initial project structure', priority: 1, points: 6, sprint: sprints[0]._id }),
+        new BacklogItem({ projectId: project._id, title: 'Develop Login', description: 'Develop user login functionality', priority: 2, points: 6, sprint: sprints[1]._id }),
+        new BacklogItem({ projectId: project._id, title: 'Create Dashboard', description: 'Create project dashboard', priority: 3, points: 6, sprint: sprints[2]._id }),
+        new BacklogItem({ projectId: project._id, title: 'Deployment Configuration', description: 'Prepare for deployment', priority: 4, points: 6, sprint: sprints[3]._id })
     ];
 
     // assign items to sprints
@@ -96,9 +99,9 @@ const seedDatabase = async () => {
     for (let backlogItem of backlogItems) {
         await backlogItem.save();
         const tasks = [
-            new Task({ title: 'Task 1', description: 'Initial task setup', backlogItemId: backlogItem._id, projectId: project._id, status: 'To Do', points: 2, assignee: users[1]._id }),
-            new Task({ title: 'Task 2', description: 'Continue development', backlogItemId: backlogItem._id, projectId: project._id, status: 'In Progress', points: 3, assignee: users[2]._id }),
-            new Task({ title: 'Task 3', description: 'Complete development', backlogItemId: backlogItem._id, projectId: project._id, status: 'Done', points: 4, assignee: users[3]._id })
+            new Task({ title: 'Task 1', description: 'Initial task setup', backlogItemId: backlogItem._id, projectId: project._id, status: 'To Do', points: 1, assignee: users[1]._id }),
+            new Task({ title: 'Task 2', description: 'Continue development', backlogItemId: backlogItem._id, projectId: project._id, status: 'In Progress', points: 2, assignee: users[2]._id }),
+            new Task({ title: 'Task 3', description: 'Complete development', backlogItemId: backlogItem._id, projectId: project._id, status: 'Done', points: 3, assignee: users[3]._id })
         ];
         for (let task of tasks) {
             await task.save();

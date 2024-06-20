@@ -33,16 +33,16 @@ export default function ProjectDashboardPage() {
 
     // Fetch project data when the project ID changes
     useEffect(() => {
-        const fetchProjectDashboardData = async () => {
+        const fetchProjectData = async () => {
             try {
-                const data = await fetchProjectData(projectId);
+                const data = await fetchProjectDashboardData(projectId);
                 setProjectData(data);
             } catch (error) {
                 console.error('Failed to fetch project data:', error);
             }
         };
 
-        fetchProjectDashboardData();
+        fetchProjectData();
     }, [projectId]);
 
     /**
@@ -70,21 +70,13 @@ export default function ProjectDashboardPage() {
         return <Typography>Loading...</Typography>;
     }
 
-    console.log("projectData: ", projectData);
-
     // Format the burndown data for the chart component
-    const formattedBurndownData = projectData.burndownData.sprints.map(sprint => ({
+    const formattedBurndownData = projectData.burndownData.map(sprint => ({
         ...sprint,
         dailyPoints: sprint.dailyPoints.map(point => ({
             ...point,
             date: new Date(point.date).toISOString()
         }))
-    }));
-
-    // Format the project progress data for the chart component
-    const formattedProjectData = projectData.burndownData.project.map(point => ({
-        ...point,
-        date: new Date(point.date).toISOString()
     }));
 
     return (
@@ -132,12 +124,7 @@ export default function ProjectDashboardPage() {
                             <ScrumBoard sprints={projectData.sprints} />
                         </TabPanel>
                         <TabPanel value={tabValue} index={3}>
-                            {formattedBurndownData && formattedProjectData && (
-                                <BurndownChart
-                                    sprintData={formattedBurndownData}
-                                    projectData={formattedProjectData}
-                                />
-                            )}
+                            {formattedBurndownData && <BurndownChart data={formattedBurndownData} />}
                         </TabPanel>
                         <TabPanel value={tabValue} index={4}>
                             {projectData.sprintVelocityData && <SprintVelocityChart data={projectData.sprintVelocityData} />}
@@ -176,6 +163,7 @@ function TabPanel(props) {
             hidden={value !== index}
             id={`vertical-tabpanel-${index}`}
             aria-labelledby={`vertical-tab-${index}`}
+
             {...other}
         >
             {value === index && (

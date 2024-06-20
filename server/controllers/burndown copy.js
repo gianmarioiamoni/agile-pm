@@ -2,38 +2,44 @@ import BacklogItem from "../models/backlogItem.js";
 import Sprint from "../models/sprint.js";
 import Task from "../models/task.js";
 
+/**
+ * Retrieves the burndown data for a given project.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} - A promise that resolves when the response is sent.
+ */
 export async function getBurndownData(req, res) {
     const { projectId } = req.params;
 
     try {
+        // Retrieve all sprints for the project
         console.log('Fetching sprints for project', projectId);
         const sprints = await Sprint.find({ projectId });
         console.log('Fetched', sprints.length, 'sprints');
 
         const burndownData = [];
-        const projectDailyPoints = [];
-
-        let totalProjectPoints = 0;
-        let totalCompletedPoints = 0;
 
         // Iterate over each sprint
         for (const sprint of sprints) {
             const startDate = new Date(sprint.startDate);
             const endDate = new Date(sprint.endDate);
 
+            // Retrieve all backlog items for the sprint
             console.log('Fetching backlog items for sprint', sprint._id);
             const items = await BacklogItem.find({ sprint: sprint._id });
             console.log('Fetched', items.length, 'backlog items');
             const totalPoints = items.reduce((sum, item) => sum + item.points, 0);
             console.log('Total points:', totalPoints);
 
-            totalProjectPoints += totalPoints;
             const dailyPoints = [];
             let completedPoints = 0;
 
+            // Calculate the completed points for each day in the sprint
             for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
                 const day = new Date(d);
-
+                
+                // Retrieve all tasks that have been completed on the day
                 console.log('Fetching tasks completed on', day);
                 const tasks = await Task.find({
                     backlogItemId: { $in: items.map(item => item._id) },
@@ -41,31 +47,18 @@ export async function getBurndownData(req, res) {
                     updatedAt: { $lte: day }
                 });
                 console.log('Fetched', tasks.length, 'tasks');
-
+                
                 const completedToday = tasks.reduce((sum, task) => sum + task.points, 0);
                 completedPoints += completedToday;
-                totalCompletedPoints += completedToday;
 
                 dailyPoints.push({
                     date: new Date(day),
                     completedPoints,
                     remainingPoints: Math.max(0, totalPoints - completedPoints)
                 });
-
-                // Update project daily points
-                const existingDay = projectDailyPoints.find(p => p.date.getTime() === day.getTime());
-                if (existingDay) {
-                    existingDay.completedPoints = totalCompletedPoints;
-                    existingDay.remainingPoints = Math.max(0, totalProjectPoints - totalCompletedPoints);
-                } else {
-                    projectDailyPoints.push({
-                        date: new Date(day),
-                        completedPoints: totalCompletedPoints,
-                        remainingPoints: Math.max(0, totalProjectPoints - totalCompletedPoints)
-                    });
-                }
             }
 
+            // Add the sprint information and calculated points to the burndown data
             burndownData.push({
                 sprintId: sprint._id,
                 sprintName: sprint.name,
@@ -73,11 +66,14 @@ export async function getBurndownData(req, res) {
             });
         }
 
+        // Send the burndown data as the response
         console.log('Sending burndown data');
-        res.json({ sprints: burndownData, project: projectDailyPoints });
+        console.log('burndownData', burndownData);
+        console.log('burndonwData[0].dailyPoints', burndownData[0].dailyPoints);
+        res.json(burndownData);
     } catch (error) {
+        // Handle any errors that occur during the process
         console.error('Error fetching burndown data:', error);
         res.status(500).send('Server error');
     }
 }
-
