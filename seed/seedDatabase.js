@@ -72,10 +72,10 @@ const seedDatabase = async () => {
 
     // Create Sprints
     const sprints = [
-        new Sprint({ name: 'Sprint 1', projectId: project._id, startDate: new Date(), endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), goal: 'Complete initial setup' }),
-        new Sprint({ name: 'Sprint 2', projectId: project._id, startDate: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000), endDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), goal: 'Develop core features' }),
-        new Sprint({ name: 'Sprint 3', projectId: project._id, startDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), endDate: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000), goal: 'Polish and refine' }),
-        new Sprint({ name: 'Sprint 4', projectId: project._id, startDate: new Date(Date.now() + 22 * 24 * 60 * 60 * 1000), endDate: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000), goal: 'Deploy to production' })
+        new Sprint({ name: 'Sprint 1', projectId: project._id, startDate: new Date(Date.now() + (-3) * 24 * 60 * 60 * 1000), endDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000), goal: 'Complete initial setup' }),
+        new Sprint({ name: 'Sprint 2', projectId: project._id, startDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), endDate: new Date(Date.now() + 12 * 24 * 60 * 60 * 1000), goal: 'Develop core features' }),
+        new Sprint({ name: 'Sprint 3', projectId: project._id, startDate: new Date(Date.now() + 13 * 24 * 60 * 60 * 1000), endDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000), goal: 'Polish and refine' }),
+        new Sprint({ name: 'Sprint 4', projectId: project._id, startDate: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000), endDate: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000), goal: 'Deploy to production' })
     ];
     for (let sprint of sprints) {
         await sprint.save();
@@ -97,12 +97,16 @@ const seedDatabase = async () => {
 
     // create tasks    
     for (let backlogItem of backlogItems) {
-        await backlogItem.save();
+        
         const tasks = [
             new Task({ title: 'Task 1', description: 'Initial task setup', backlogItemId: backlogItem._id, projectId: project._id, status: 'To Do', points: 1, assignee: users[1]._id }),
             new Task({ title: 'Task 2', description: 'Continue development', backlogItemId: backlogItem._id, projectId: project._id, status: 'In Progress', points: 2, assignee: users[2]._id }),
             new Task({ title: 'Task 3', description: 'Complete development', backlogItemId: backlogItem._id, projectId: project._id, status: 'Done', points: 3, assignee: users[3]._id })
         ];
+        backlogItem.tasks = tasks.map(task => task._id); 
+
+        await backlogItem.save();
+        
         for (let task of tasks) {
             await task.save();
         }

@@ -71,11 +71,11 @@ export default function ProjectDashboardPage() {
     }
 
     console.log("projectData: ", projectData);
-
+    console.log("projectData.burndownData: ", projectData.burndownData);
     // Format the burndown data for the chart component
     const formattedBurndownData = projectData.burndownData.sprints.map(sprint => ({
         ...sprint,
-        dailyPoints: sprint.dailyPoints.map(point => ({
+        dailyPoints: sprint.sprintDailyPoints.map(point => ({
             ...point,
             date: new Date(point.date).toISOString()
         }))

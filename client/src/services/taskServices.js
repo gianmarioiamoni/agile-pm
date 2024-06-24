@@ -77,6 +77,15 @@ export const updateTaskStatus = async (taskId, status, backlogItemId) => {
     }
 };
 
+export const updateTasksOrder = async (data) => {
+    try {
+        const response = await axios.put('/server/tasks/updateOrder', data);
+        return response.data;
+    } catch (error) {
+        console.error('Error updating tasks order:', error);
+    }
+};
+
 export const deleteTask = async (taskId, backlogItemId) => {
     try {
         const response = await axios.delete(`/server/tasks/${taskId}`);

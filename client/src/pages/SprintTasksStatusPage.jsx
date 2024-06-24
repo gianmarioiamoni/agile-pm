@@ -7,7 +7,7 @@ import Header from "../components/Header";
 import BacklogItem from "../components/sprint/BacklogItem";
 
 import { getSprint } from "../services/sprintServices";
-import { updateTaskStatus, getTasksByBacklogItemId } from "../services/taskServices";
+import { updateTaskStatus, getTasksByBacklogItemId, updateTasksOrder } from "../services/taskServices";
 import { getBacklogItem } from "../services/backlogServices";
 import { getAssignments } from "../services/assignmentServices"; 
 
@@ -97,11 +97,15 @@ export default function SprintTasksStatusPage() {
         } else {
             const destinationItem = updatedBacklogItems[destinationItemIndex];
             destinationItem.tasks.splice(destinationIndex, 0, movedTask);
+            
+            await updateTasksOrder(destinationItem.tasks.map(task => task._id));
+            console.log("updated tasks order: ", destinationItem.tasks.map(task => task._id));
         }
 
         setBacklogItems(updatedBacklogItems);
 
-        await updateTaskStatus(movedTask._id, sourceItem, destinationDroppableId);
+        // await updateTaskStatus(movedTask._id, sourceItem, destinationDroppableId);
+        // await updateTasksOrder(destinationItem.tasks.map(task => task._id));
     };
 
     /**

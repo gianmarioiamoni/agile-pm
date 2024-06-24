@@ -10,6 +10,7 @@ import {
     getTasksByBacklogItemId, 
     updateTask,
     updateTaskStatus,
+    updateTasksOrder,
     deleteTask,
 } from "../controllers/task.js";
 
@@ -35,6 +36,9 @@ router.put('/:taskId', verifyUser, updateTask);
 
 // update the status of a task
 router.put('/:taskId/updateStatus', verifyUser, updateTaskStatus);
+
+// update the order of tasks
+router.put('/updateOrder', verifyUser, updateTasksOrder);
 
 // delete a task
 router.delete('/:taskId', verifyUser, deleteTask);

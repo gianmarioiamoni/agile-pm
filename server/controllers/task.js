@@ -211,6 +211,16 @@ export const updateTaskStatus = async (req, res) => {
     }
 };
 
+export const updateTasksOrder = async (req, res) => {
+    const { tasks } = req.body;
+    try {
+        await Task.updateMany({ _id: { $in: tasks } }, { $set: { order: tasks.indexOf(_id) } });
+        res.status(200).json({ message: 'Tasks order updated successfully' });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
 
 export const deleteTask = async (req, res) => {
     const { taskId } = req.params;
@@ -250,18 +260,28 @@ const updatePerformance = async (userId, projectId) => {
 // internal utility functions to calculate backlog item points
 const calculateBacklogItemPoints = (tasks) => {
     // logic: 1 point for To Do, 2 points for In Progress, 3 points for Done
-    return tasks.reduce((total, task) => {
-        switch (task.status) {
-            case 'To Do':
-                return total + 1;
-            case 'In Progress':
-                return total + 2;
-            case 'Done':
-                return total + 3;
-            default:
-                return total;
-        }
-    }, 0);
+    // total points = sum of points of all tasks
+
+    // return 0 if no tasks
+    if (!tasks || tasks.length === 0) {
+        return 0;
+    }   
+
+    // return sum of points of all tasks    
+    return tasks.reduce((total, task) => total + task.points, 0);
 };
+    // return tasks.reduce((total, task) => {
+    //     switch (task.status) {
+    //         case 'To Do':
+    //             return total + 1;
+    //         case 'In Progress':
+    //             return total + 2;
+    //         case 'Done':
+    //             return total + 3;
+    //         default:
+    //             return total;
+    //     }
+    // }, 0);
+// };
 
 

@@ -11,6 +11,7 @@ const taskSchema = new Schema({
     status: { type: String, enum: ['To Do', 'In Progress', 'Done'], default: 'To Do' },
     points: { type: Number, default: 0, required: true },
     assignee: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    order: { type: Number, default: 0 },
 }, { timestamps: true }); // Add timestamp to store creation and update dates);
 
 const Task = mongoose.model('Task', taskSchema);

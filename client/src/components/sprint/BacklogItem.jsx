@@ -178,7 +178,8 @@ export default function BacklogItem({
             ...prevTask,
             assignee: newAssignedUser,
         }));
-    }
+    };
+
     // edit task dialog assignee change handler
     const handleAssigneeChangeInEdit = (e) => {
         const newAssigneeId = e.target.value;
@@ -214,7 +215,7 @@ export default function BacklogItem({
         
         if (doneTasks === totalTasks) {
             newStatus = 'Done';
-        } else  if (inProgressTasks > 0) {
+        } else if (inProgressTasks > 0) {
             newStatus = 'In Progress';
         }
 

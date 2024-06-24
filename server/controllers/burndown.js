@@ -1,83 +1,117 @@
+import { get } from "mongoose";
 import BacklogItem from "../models/backlogItem.js";
 import Sprint from "../models/sprint.js";
 import Task from "../models/task.js";
 
+/**
+ * Fetches burndown data for a project.
+ *
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ * @returns {Promise<void>} - A promise that resolves when the data is sent
+ */
 export async function getBurndownData(req, res) {
     const { projectId } = req.params;
 
     try {
-        console.log('Fetching sprints for project', projectId);
+        // Fetch sprints for the project
         const sprints = await Sprint.find({ projectId });
-        console.log('Fetched', sprints.length, 'sprints');
 
-        const burndownData = [];
-        const projectDailyPoints = [];
+        const sprintBurndownData = [];
+        const projectBurndownData = [];
 
-        let totalProjectPoints = 0;
-        let totalCompletedPoints = 0;
+        // calculate total project points
+        const totalProjectPoints = await getTotalProjectPoints(projectId);
+
+        let projectCompletedPoints = 0;
 
         // Iterate over each sprint
         for (const sprint of sprints) {
             const startDate = new Date(sprint.startDate);
             const endDate = new Date(sprint.endDate);
 
-            console.log('Fetching backlog items for sprint', sprint._id);
+            // Fetch backlog items for the sprint
             const items = await BacklogItem.find({ sprint: sprint._id });
-            console.log('Fetched', items.length, 'backlog items');
+            console.log("======= fetched items for sprint", sprint.name, items);
+
             const totalPoints = items.reduce((sum, item) => sum + item.points, 0);
-            console.log('Total points:', totalPoints);
+            
+            const sprintDailyPoints = [];
+            let sprintCompletedPoints = 0;
 
-            totalProjectPoints += totalPoints;
-            const dailyPoints = [];
-            let completedPoints = 0;
-
+            // Iterate over each day in the sprint
             for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
                 const day = new Date(d);
 
-                console.log('Fetching tasks completed on', day);
+                // Set the start and end time for the day
+                const startOfDay = new Date(day);
+                startOfDay.setHours(0, 0, 0, 0);
+
+                const endOfDay = new Date(day);
+                endOfDay.setHours(23, 59, 59, 999);
+
+                // Fetch tasks completed on the day for sprint
+                console.log("§§§§§§ fetching tasks on day", new Date(d));
                 const tasks = await Task.find({
-                    backlogItemId: { $in: items.map(item => item._id) },
-                    status: 'Done',
-                    updatedAt: { $lte: day }
+                    // backlogItemId: { $in: items.map(item => item._id) },
+                    projectId,
+                    updatedAt: { $gte: startOfDay, $lt: endOfDay }
                 });
-                console.log('Fetched', tasks.length, 'tasks');
+                console.log("§§§§§§ tasks fetched on day", new Date(d), tasks.length);
 
-                const completedToday = tasks.reduce((sum, task) => sum + task.points, 0);
-                completedPoints += completedToday;
-                totalCompletedPoints += completedToday;
+                const sprintCompletedTasks = tasks.filter(task => task.backlogItemId  in items.map(item => item._id));
+                console.log("fetched tasks on day", new Date(d), tasks.length);
 
-                dailyPoints.push({
+                // Calculate the completed points for the day
+                const projectCompletedToday = tasks.reduce((sum, task) => sum + task.points, 0);
+                const sprintCompletedToday = sprintCompletedTasks.reduce((sum, task) => sum + task.points, 0);
+
+                sprintCompletedPoints += sprintCompletedToday;
+                projectCompletedPoints += projectCompletedToday;
+                console.log("project completed points", projectCompletedPoints);
+                console.log("********************************");
+
+                // Update daily points array
+                sprintDailyPoints.push({
                     date: new Date(day),
-                    completedPoints,
-                    remainingPoints: Math.max(0, totalPoints - completedPoints)
+                    completedPoints: sprintCompletedPoints,
+                    remainingPoints: Math.max(0, totalPoints - sprintCompletedPoints)
                 });
 
                 // Update project daily points
-                const existingDay = projectDailyPoints.find(p => p.date.getTime() === day.getTime());
+                const existingDay = projectBurndownData.find(p => p.date.getTime() === day.getTime());
                 if (existingDay) {
-                    existingDay.completedPoints = totalCompletedPoints;
-                    existingDay.remainingPoints = Math.max(0, totalProjectPoints - totalCompletedPoints);
+                    existingDay.completedPoints = projectCompletedPoints;
+                    existingDay.remainingPoints = Math.max(0, totalProjectPoints - projectCompletedPoints);
                 } else {
-                    projectDailyPoints.push({
+                    projectBurndownData.push({
                         date: new Date(day),
-                        completedPoints: totalCompletedPoints,
-                        remainingPoints: Math.max(0, totalProjectPoints - totalCompletedPoints)
+                        completedPoints: projectCompletedPoints,
+                        remainingPoints: Math.max(0, totalProjectPoints - projectCompletedPoints)
                     });
                 }
             }
 
-            burndownData.push({
+
+            // Update burndown data array
+            sprintBurndownData.push({
                 sprintId: sprint._id,
                 sprintName: sprint.name,
-                dailyPoints
+                sprintDailyPoints
             });
         }
 
+        // Send the data
         console.log('Sending burndown data');
-        res.json({ sprints: burndownData, project: projectDailyPoints });
+        res.json({ sprints: sprintBurndownData, project: projectBurndownData });
     } catch (error) {
         console.error('Error fetching burndown data:', error);
         res.status(500).send('Server error');
     }
 }
+
+const getTotalProjectPoints = async (projectId) => {
+    const tasks = await Task.find({ projectId });
+    return tasks.length * 3;
+};
 
