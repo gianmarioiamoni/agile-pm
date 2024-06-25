@@ -95,7 +95,8 @@ export async function getBurndownData(req, res) {
             sprintBurndownData.push({
                 sprintId: sprint._id,
                 sprintName: sprint.name,
-                sprintDailyPoints
+                sprintDailyPoints,
+                totalSprintPoints
             });
 
             sprintCompletedPoints = 0;

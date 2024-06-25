@@ -1,8 +1,6 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
 import { Typography } from '@mui/material';
-
 
 /**
  * Component to render a burndown chart using Recharts library.
@@ -15,6 +13,7 @@ import { Typography } from '@mui/material';
 const BurndownChart = ({ sprintData, projectData }) => {
     console.log('sprintData: ', sprintData);
     console.log('projectData: ', projectData);
+
     /**
      * Helper function to format the data for the burndown chart.
      * Calculates the ideal line for each sprint.
@@ -22,10 +21,8 @@ const BurndownChart = ({ sprintData, projectData }) => {
      * @param {Array} data - Data for the burndown chart
      * @return {Array} Formatted data for the burndown chart
     */
-    
     const formatData = (data) => data.flatMap(sprint => {
-        const totalPoints = sprint.dailyPoints[0].remainingPoints;
-        // const totalPoints = data.length * 3;
+        const totalPoints = sprint.totalSprintPoints;
         const idealDecrement = totalPoints / (sprint.dailyPoints.length - 1);
         return sprint.dailyPoints.map((point, index) => ({
             ...point,
@@ -39,7 +36,6 @@ const BurndownChart = ({ sprintData, projectData }) => {
     // Format project data
     const formattedProjectData = projectData.map((point, index) => {
         const totalPoints = projectData[0].remainingPoints;
-        // const totalPoints = projectData.backlog.reduce((sum, item) => sum + item.points, 0);
         const idealDecrement = totalPoints / (projectData.length - 1);
         return {
             ...point,
@@ -54,13 +50,13 @@ const BurndownChart = ({ sprintData, projectData }) => {
             <ResponsiveContainer width="100%" height={400}>
                 <LineChart data={formattedSprintData}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" tickFormatter={(tick) => new Date(tick).toLocaleDateString()} />
+                    <XAxis dataKey="date" tickFormatter={(tick) => new Date(tick).toLocaleDateString()} style={{ fontSize: '0.8rem' }} />
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Line type="monotone" dataKey="completedPoints" stroke="#8884d8" name='Actual Work Completed Line'/>
-                    <Line type="monotone" dataKey="remainingPoints" stroke="#82ca9d" name='Work Remaining Line'/>
-                    <Line type="monotone" dataKey="idealPoints" stroke="#FF0000" strokeDasharray="5 5" name='Ideal Sprint Remaining Line'/>
+                    <Line type="monotone" dataKey="completedPoints" stroke="#8884d8" name='Actual Work Completed Line' />
+                    <Line type="monotone" dataKey="remainingPoints" stroke="#82ca9d" name='Work Remaining Line' />
+                    <Line type="monotone" dataKey="idealPoints" stroke="#FF0000" strokeDasharray="5 5" name='Ideal Sprint Remaining Line' />
                 </LineChart>
             </ResponsiveContainer>
             {/* Render project burndown chart */}
@@ -68,13 +64,13 @@ const BurndownChart = ({ sprintData, projectData }) => {
             <ResponsiveContainer width="100%" height={400}>
                 <LineChart data={formattedProjectData}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" tickFormatter={(tick) => new Date(tick).toLocaleDateString()} />
+                    <XAxis dataKey="date" tickFormatter={(tick) => new Date(tick).toLocaleDateString()} style={{ fontSize: '0.8rem' }} />
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Line type="monotone" dataKey="completedPoints" stroke="#8884d8" name='Actual Work Completed Line'/>
-                    <Line type="monotone" dataKey="remainingPoints" stroke="#82ca9d" name='Work Remaining Line'/>
-                    <Line type="monotone" dataKey="idealPoints" stroke="#FF0000" strokeDasharray="5 5" name='Ideal Project Remaining Line'/>
+                    <Line type="monotone" dataKey="completedPoints" stroke="#8884d8" name='Actual Work Completed Line' />
+                    <Line type="monotone" dataKey="remainingPoints" stroke="#82ca9d" name='Work Remaining Line' />
+                    <Line type="monotone" dataKey="idealPoints" stroke="#FF0000" strokeDasharray="5 5" name='Ideal Project Remaining Line' />
                 </LineChart>
             </ResponsiveContainer>
         </div>
@@ -82,3 +78,4 @@ const BurndownChart = ({ sprintData, projectData }) => {
 };
 
 export default BurndownChart;
+
