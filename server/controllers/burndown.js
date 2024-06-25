@@ -13,6 +13,8 @@ import Task from "../models/task.js";
 export async function getBurndownData(req, res) {
     const { projectId } = req.params;
 
+    const totalProjectTasks = await Task.find({ projectId });
+
     try {
         // Fetch sprints for the project
         const sprints = await Sprint.find({ projectId });
@@ -32,9 +34,10 @@ export async function getBurndownData(req, res) {
 
             // Fetch backlog items for the sprint
             const items = await BacklogItem.find({ sprint: sprint._id });
-            console.log("======= fetched items for sprint", sprint.name, items);
 
-            const totalPoints = items.reduce((sum, item) => sum + item.points, 0);
+            // const totalSprintPoints = items.reduce((sum, item) => sum + item.points, 0);
+            // calculate total sprint point as number of tasks per each items * 3
+            const totalSprintPoints = items.reduce((sum, item) => sum + item.tasks.length * 3, 0);
             
             const sprintDailyPoints = [];
             let sprintCompletedPoints = 0;
@@ -50,32 +53,28 @@ export async function getBurndownData(req, res) {
                 const endOfDay = new Date(day);
                 endOfDay.setHours(23, 59, 59, 999);
 
-                // Fetch tasks completed on the day for sprint
-                console.log("§§§§§§ fetching tasks on day", new Date(d));
-                const tasks = await Task.find({
-                    // backlogItemId: { $in: items.map(item => item._id) },
-                    projectId,
-                    updatedAt: { $gte: startOfDay, $lt: endOfDay }
-                });
-                console.log("§§§§§§ tasks fetched on day", new Date(d), tasks.length);
+                const completedTasksOfTheDay = totalProjectTasks.filter(task => {
+                    return task.updatedAt >= startOfDay && task.updatedAt < endOfDay
+                })
 
-                const sprintCompletedTasks = tasks.filter(task => task.backlogItemId  in items.map(item => item._id));
-                console.log("fetched tasks on day", new Date(d), tasks.length);
+                // utility function to check if an array contains an ObjectId
+                const containsObjectId = (array, id) => {
+                    return array.some(arrayId => arrayId.toString() === id.toString());
+                };
+                const sprintTasks = completedTasksOfTheDay.filter(task => containsObjectId(items.map(item => item._id), task.backlogItemId));
 
                 // Calculate the completed points for the day
-                const projectCompletedToday = tasks.reduce((sum, task) => sum + task.points, 0);
-                const sprintCompletedToday = sprintCompletedTasks.reduce((sum, task) => sum + task.points, 0);
+                const projectCompletedToday = completedTasksOfTheDay.reduce((sum, task) => sum + task.points, 0);
+                const sprintCompletedToday = sprintTasks.reduce((sum, task) => sum + task.points, 0);
 
                 sprintCompletedPoints += sprintCompletedToday;
                 projectCompletedPoints += projectCompletedToday;
-                console.log("project completed points", projectCompletedPoints);
-                console.log("********************************");
 
                 // Update daily points array
                 sprintDailyPoints.push({
                     date: new Date(day),
                     completedPoints: sprintCompletedPoints,
-                    remainingPoints: Math.max(0, totalPoints - sprintCompletedPoints)
+                    remainingPoints: Math.max(0, totalSprintPoints - sprintCompletedPoints)
                 });
 
                 // Update project daily points
@@ -92,13 +91,14 @@ export async function getBurndownData(req, res) {
                 }
             }
 
-
             // Update burndown data array
             sprintBurndownData.push({
                 sprintId: sprint._id,
                 sprintName: sprint.name,
                 sprintDailyPoints
             });
+
+            sprintCompletedPoints = 0;
         }
 
         // Send the data

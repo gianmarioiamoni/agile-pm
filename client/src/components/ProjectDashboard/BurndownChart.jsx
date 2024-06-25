@@ -24,8 +24,8 @@ const BurndownChart = ({ sprintData, projectData }) => {
     */
     
     const formatData = (data) => data.flatMap(sprint => {
-        // const totalPoints = sprint.dailyPoints[0].remainingPoints;
-        const totalPoints = data.length * 3;
+        const totalPoints = sprint.dailyPoints[0].remainingPoints;
+        // const totalPoints = data.length * 3;
         const idealDecrement = totalPoints / (sprint.dailyPoints.length - 1);
         return sprint.dailyPoints.map((point, index) => ({
             ...point,
