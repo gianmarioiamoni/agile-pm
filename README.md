@@ -150,15 +150,20 @@
 
 ![18 - Dashboard - sprints backlog](https://github.com/gianmarioiamoni/agile-pm/assets/113024091/9a146f52-f513-4901-a862-40b3cb6b40af)
 
-![19 - Scrum Board](https://github.com/gianmarioiamoni/agile-pm/assets/113024091/a6ae714b-e494-4efb-8353-6508b6682e1b)
+![Scrum Board 01](https://github.com/gianmarioiamoni/agile-pm/assets/113024091/778ecb72-4aa2-4f1b-8630-635f12abd12f)
+
+![Scrum Board 02](https://github.com/gianmarioiamoni/agile-pm/assets/113024091/0b3de00a-95fd-420b-b036-b87e745d2dc8)
 
 
 - **<span style="color: #805ad5;">Dashboard with Key Metrics</span>**: 
   - the dashboard provides an overview of project metrics such as sprint velocity, task completion rate, and burndown charts
   - users can quickly assess the health and progress of their projects
 
-  ![21 - Project Dashboard - sprint velocity](https://github.com/gianmarioiamoni/agile-pm/assets/113024091/bb9d6bee-4ad6-4a4d-a125-8bcecf2fe1a6)
+  ![Sprints Velocity](https://github.com/gianmarioiamoni/agile-pm/assets/113024091/a88e8975-4315-42f9-8552-9e473e76a589)
 
+  ![Project Progress Report](https://github.com/gianmarioiamoni/agile-pm/assets/113024091/53885831-317c-4988-8bae-79b0070fc42d)
+
+  ![Burndown Chart](https://github.com/gianmarioiamoni/agile-pm/assets/113024091/344ad2f8-b110-4219-9483-cd6cf2696f92)
 
 
 - **<span style="color: #805ad5;">Generation of Reports</span>**: 
