@@ -24,7 +24,8 @@ export const getBacklogItem = async (req, res) => {
 export const getBacklogItems = async (req, res) => {
     const { projectId } = req.params;
     try {
-        const items = await BacklogItem.find({ projectId });
+        // const items = await BacklogItem.find({ projectId });
+        const items = await BacklogItem.find({ projectId }).populate('tasks');
         res.status(200).json(items);
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });

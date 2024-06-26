@@ -131,12 +131,31 @@ export const updateTask = async (req, res) => {
     }
 };
 
+/**
+ * Updates the status of a task and updates the status and points of the
+ * corresponding backlog item if necessary.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} - A promise that resolves when the task status is
+ * updated.
+ */
 export const updateTaskStatus = async (req, res) => {
     const { taskId } = req.params;
     const { status, backlogItemId } = req.body;
 
     try {
+        // Find the task by ID
         const task = await Task.findById(taskId);
+
+        /**
+         * Calculates the updated points of the task based on the old status and
+         * the new status.
+         *
+         * @param {Object} task - The task object.
+         * @param {string} oldStatus - The old status of the task.
+         * @returns {number} - The updated points of the task.
+         */
         const calculateTaskPoints = (task, oldStatus) => {
             switch (oldStatus) {
                 case 'Done':
@@ -170,38 +189,68 @@ export const updateTaskStatus = async (req, res) => {
 
         const oldTaskStatus = task.status;
         task.status = status || task.status;
-        // calculate updated task points
+        // Calculate updated task points
         task.points = calculateTaskPoints(task, oldTaskStatus);
         const updatedTask = await task.save();
 
+        // Update backlog item status if necessary
         if (backlogItemId) {
+            // Find the backlog item by ID and populate tasks
             const backlogItem = await BacklogItem.findById(backlogItemId).populate('tasks');
             const totalTasks = backlogItem.tasks.length;
             const doneTasks = backlogItem.tasks.filter(t => t.status === 'Done').length;
 
-            let newStatus = 'To Do';
+            let newItemStatus = 'To Do';
             if (doneTasks === totalTasks) {
-                newStatus = 'Done';
+                newItemStatus = 'Done';
             } else if (doneTasks > 0) {
-                newStatus = 'In Progress';
+                newItemStatus = 'In Progress';
             }
 
-            // update assignee performance
+            // Update assignee performance if task status has changed
             if (oldTaskStatus !== status) {
                 if (task.assignee) {
                     await updatePerformance(task.assignee, task.projectId);
                 }
             }
 
-            // calculate updated backlog item points
+            // Calculate updated backlog item points
             const newBacklogItemPoints = calculateBacklogItemPoints(backlogItem.tasks);
 
-            // check if item status or points have changed and update if necessary
-            if (backlogItem.status !== newStatus || backlogItem.points !== newBacklogItemPoints) {
-                backlogItem.status = newStatus;
+            // Check if item status or points have changed and update if necessary
+            if (backlogItem.status !== newItemStatus || backlogItem.points !== newBacklogItemPoints) {
+                backlogItem.status = newItemStatus;
                 backlogItem.points = newBacklogItemPoints;
 
                 await backlogItem.save();
+            }
+
+            // Update sprint status if necessary
+            if (backlogItem.sprint) {
+                const sprintId = backlogItem.sprint;
+                const sprint = await Sprint.findById(sprintId).populate("items");
+
+                // If all backlog items of the sprint are "Done", update sprint status to "Completed" if current sprint status is different
+                if (sprint.items.every(item => item.status === "Done")) {
+                    if (sprint.status !== "Completed") {
+                        sprint.status = "Completed";
+                        await sprint.save();
+                    }
+                }
+                // Else if all items status of the sprint are "To do", update sprint status to "Planned" if current sprint status is different
+                else if (sprint.items.every(item => item.status === "To Do")) {
+                    if (sprint.status !== "Planned") {
+                        sprint.status = "Planned";
+                        await sprint.save();
+                    }
+                }
+                // Else if all items status of the sprint are "In Progress", update sprint status to "Active" if current sprint status is different
+                else if (sprint.items.every(item => item.status === "In Progress")) {
+                    if (sprint.status !== "Active") {
+                        sprint.status = "Active";
+                        await sprint.save();
+                    }
+                }
             }
         }
         res.status(200).json(task);
