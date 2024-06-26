@@ -169,8 +169,8 @@
 - **<span style="color: #805ad5;">Generation of Reports</span>**: 
   - detailed reports on project progress and team performance can be generated
   - reports include metrics like task completion times, sprint success rates, and individual performance assessments
-
- ![23 - Project Dashboard - team performance](https://github.com/gianmarioiamoni/agile-pm/assets/113024091/de024312-3889-4f75-95c1-35ae0b2bdf28)
+ 
+  ![Team performance report](https://github.com/gianmarioiamoni/agile-pm/assets/113024091/2ad81c56-d145-4f1c-8d1a-0c11b2649a8d)
 
   
 ### User and Role Management
