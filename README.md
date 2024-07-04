@@ -133,7 +133,7 @@
 
 
   - **<span style="color: #805ad5;">Assignment of Resources to Tasks</span>**: 
-  - resources can be assigned to specific tasks
+    - resources can be assigned to specific tasks
 
   ![16 - Tasks management - resources](https://github.com/gianmarioiamoni/agile-pm/assets/113024091/74c079a4-ecb4-496e-b186-d57ea87b0a07)
 
